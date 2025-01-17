@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.puill.xin","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"show_result":true,"style":"default"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="入门基础，会控制引脚和库">
+<meta property="og:type" content="article">
+<meta property="og:title" content="香橙派开发系列-使用wiringPi控制26个引脚">
+<meta property="og:url" content="http://www.puill.xin/2025/01/17/833700e426b2/index.html">
+<meta property="og:site_name" content="puill&#39;s Blog">
+<meta property="og:description" content="入门基础，会控制引脚和库">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231203135514360-197611242.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231203135740924-939769433.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231203140724436-1605733595.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231203140724436-1605733595.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231203143901252-752924145.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231203144600467-596083947.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231203144731250-545095097.jpg">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231203143901252-752924145.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231203145056097-1083247880.jpg">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231203151426419-193473249.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231203152809718-1765650140.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231203153117748-1504941427.png">
+<meta property="article:published_time" content="2025-01-17T15:51:36.112Z">
+<meta property="article:modified_time" content="2025-01-17T16:08:32.246Z">
+<meta property="article:author" content="puill">
+<meta property="article:tag" content="单片机">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231203135514360-197611242.png">
+
+
+<link rel="canonical" href="http://www.puill.xin/2025/01/17/833700e426b2/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.puill.xin/2025/01/17/833700e426b2/","path":"2025/01/17/833700e426b2/","title":"香橙派开发系列-使用wiringPi控制26个引脚"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>香橙派开发系列-使用wiringPi控制26个引脚 | puill's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">puill's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-文章"><a href="/articles/" rel="section"><i class="fa fa-file-text fa-fw"></i>文章</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-友链"><a href="/friendchains/" rel="section"><i class="fa fa-paperclip fa-fw"></i>友链</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E9%A6%99%E6%A9%99%E6%B4%BE%E4%BD%BF%E7%94%A8%E7%9A%84%E5%8C%85"><span class="nav-number">2.</span> <span class="nav-text">一、香橙派使用的包</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E4%BD%BF%E7%94%A8wiringPi%E5%8C%85%E7%9A%84%E5%91%BD%E4%BB%A4"><span class="nav-number">3.</span> <span class="nav-text">二、使用wiringPi包的命令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%B8%8B%E8%BD%BDwiringOP"><span class="nav-number">3.1.</span> <span class="nav-text">1.下载wiringOP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-gpio-readall%E4%BF%A1%E6%81%AF%E5%88%86%E6%9E%90"><span class="nav-number">3.2.</span> <span class="nav-text">2.gpio readall信息分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E8%AE%BE%E7%BD%AEgpio%E7%9A%84%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.3.</span> <span class="nav-text">3.设置gpio的模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E8%AE%BE%E7%BD%AEgpio%E8%BE%93%E5%87%BA%E7%9A%84%E7%94%B5%E5%B9%B3"><span class="nav-number">3.4.</span> <span class="nav-text">4.设置gpio输出的电平</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81wiringPi%E8%BD%AF%E4%BB%B6%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.</span> <span class="nav-text">三、wiringPi软件实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%88%9D%E5%A7%8B%E5%8C%96%E5%87%BD%E6%95%B0"><span class="nav-number">4.1.</span> <span class="nav-text">1.初始化函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E8%AE%BE%E7%BD%AEgpio%E7%9A%84%E6%A8%A1%E5%BC%8F"><span class="nav-number">4.2.</span> <span class="nav-text">2.设置gpio的模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E8%BE%93%E5%87%BA%E7%94%B5%E5%B9%B3"><span class="nav-number">4.3.</span> <span class="nav-text">3.输出电平</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%89%A7%E8%A1%8C%E4%BB%A3%E7%A0%81"><span class="nav-number">4.4.</span> <span class="nav-text">4.执行代码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%80%E5%90%8E"><span class="nav-number">5.</span> <span class="nav-text">最后</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="puill"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">puill</p>
+  <div class="site-description" itemprop="description">puill的博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="mailto:2256044190@qq.com" title="E-Mail → mailto:2256044190@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.puill.xin/2025/01/17/833700e426b2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="puill">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="puill's Blog">
+      <meta itemprop="description" content="puill的博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="香橙派开发系列-使用wiringPi控制26个引脚 | puill's Blog">
+      <meta itemprop="description" content="入门基础，会控制引脚和库">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          香橙派开发系列-使用wiringPi控制26个引脚
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-01-17 23:51:36" itemprop="dateCreated datePublished" datetime="2025-01-17T23:51:36+08:00">2025-01-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-01-18 00:08:32" itemprop="dateModified" datetime="2025-01-18T00:08:32+08:00">2025-01-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%A6%99%E6%A9%99%E6%B4%BE/" itemprop="url" rel="index"><span itemprop="name">香橙派</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">入门基础，会控制引脚和库</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>不管是对什么开发板来说，开发需要使用到一些包，像stm32就需要用到一些包，香橙派也是一样的，也是需要使用到一些软件包才能进行开发。</p>
+<h1 id="一、香橙派使用的包"><a href="#一、香橙派使用的包" class="headerlink" title="一、香橙派使用的包"></a>一、香橙派使用的包</h1><p>香橙派这里使用的包是<code>wiringOP</code>，这个包有python版，所以用python进行开发要方便一点，但是呢，毕竟我是学嵌入式的，开发单片机都是使用C语言，让我使用python确实不太好，所以我昨天就研究了一下，在<code>/usr/src/</code>目录下有两个<code>wiringOP</code>文件夹</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231203135514360-197611242.png" alt="img"></p>
+<p>这有一个<code>wiringOP</code>和一个<code>wiringOP-Python</code>，有一个是C语言的，有一个是Python的，这里我看了一下<code>wiringOP</code>下的文件，发现它是由<code>wiringPi</code>这个包进行改写的，但是还是可以使用<code>wiringPi</code>中的函数进行开发</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231203135740924-939769433.png" alt="img"></p>
+<p>知道了这个就可以开始开发了，所以我花了点时间对<code>wiringPi</code>中的函数进行了一下学习，随便写了这篇文章。</p>
+<h1 id="二、使用wiringPi包的命令"><a href="#二、使用wiringPi包的命令" class="headerlink" title="二、使用wiringPi包的命令"></a>二、使用<code>wiringPi</code>包的命令</h1><p>学过树莓派的应该对这个包比较熟悉，没有学过的就跟着我一起来学习吧。</p>
+<p>首先使用得先获得这个包，如果你是在香橙派官网中下载的<code>ubuntu</code>或者是其他系统的话，这个包是会在里面的，所以可以不用下载。如果你不是从官网上下载的，需要下载一下这个包。</p>
+<h2 id="1-下载wiringOP"><a href="#1-下载wiringOP" class="headerlink" title="1.下载wiringOP"></a>1.下载<code>wiringOP</code></h2><p>首先需要更新一下软件包</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt update</span><br></pre></td></tr></table></figure>
+
+<p>然后下载一下<code>git</code></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install -y git</span><br></pre></td></tr></table></figure>
+
+<p>下载完成后就可以用<code>git</code>从<code>github</code>上拉取<code>wiringOP</code>软件包了</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone  https://github.com/orangepi-xunlong/wiringOP.git -b next</span><br></pre></td></tr></table></figure>
+
+<p>然后编译一下这个软件包，先到<code>wiringOP</code>这个目录</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd wiringOP</span><br></pre></td></tr></table></figure>
+
+<p>然后编译一下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo ./build clean</span><br></pre></td></tr></table></figure>
+
+<p>然后运行进行安装</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo ./build</span><br></pre></td></tr></table></figure>
+
+<p>安装好后检查一下这个包是否安装成功，这里使用</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpio readall</span><br></pre></td></tr></table></figure>
+
+<p>进行查看，如果出现下面的界面就证明安装成功了</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231203140724436-1605733595.png" alt="img"></p>
+<p>这个界面是可以查看你这个香橙派所对应的引脚和状态的界面。</p>
+<h2 id="2-gpio-readall信息分析"><a href="#2-gpio-readall信息分析" class="headerlink" title="2.gpio readall信息分析"></a>2.<code>gpio readall</code>信息分析</h2><p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231203140724436-1605733595.png" alt="img"></p>
+<p>这里可以看到有很多信息，首先就是芯片的型号<code>H616</code>，然后表格里面有<code>GPIO</code>、<code>wPi</code>、<code>Name</code>、<code>Mode</code>、<code>V</code>、<code>Physical</code>。下面我那个表给大家说明一下</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GPIO</td>
+<td>引脚在寄存器中的地址</td>
+</tr>
+<tr>
+<td>wPi</td>
+<td>在<code>wiringPi</code>中所对应的值</td>
+</tr>
+<tr>
+<td>Name</td>
+<td>引脚的名称</td>
+</tr>
+<tr>
+<td>Mode</td>
+<td>引脚的状态</td>
+</tr>
+<tr>
+<td>V</td>
+<td>改引脚的电平值</td>
+</tr>
+<tr>
+<td>Physical</td>
+<td>引脚的位置</td>
+</tr>
+</tbody></table>
+<p>这里的<code>wPi</code>是在后面会经常使用的一个值，这个需要经常查看一下。</p>
+<p><code>Mode</code>的状态可以看下面的表</p>
+<table>
+<thead>
+<tr>
+<th>状态</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>OFF</td>
+<td>关闭</td>
+</tr>
+<tr>
+<td>OUT</td>
+<td>输出</td>
+</tr>
+<tr>
+<td>IN</td>
+<td>输入&#x2F;上拉输入&#x2F;下拉输入</td>
+</tr>
+</tbody></table>
+<h2 id="3-设置gpio的模式"><a href="#3-设置gpio的模式" class="headerlink" title="3.设置gpio的模式"></a>3.设置<code>gpio</code>的模式</h2><p>学过32的应该知道，要对引脚操作首先需要打开时钟，然后配置引脚的模式，但是在香橙派中就不用这么麻烦，因为底层和用户层之间有一个<code>HAL</code>板件支持包，所以操作起来就非常的简单，只需要设置一下引脚模式即可，这里我设置一下<code>PC10</code>（因为这个引脚好插杜邦线），首先用命令的模式来进行设置。</p>
+<p>这里先将<code>PC10</code>设置为输出模式<code>out</code>，首先找到<code>PC10</code>的<code>wPi</code>值，这里通过前面说的<code>gpio readall</code>就可以查找到，它的<code>wPi</code>值是16，就可以使用下面的命令来进行设置了</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpio mode 16 out</span><br></pre></td></tr></table></figure>
+
+<p>设置完成后可以用<code>gpio readall</code>查看一下状态</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231203143901252-752924145.png" alt="img"></p>
+<p>可以看到<code>PC10</code>的<code>mode</code>变成了<code>OUT</code>。</p>
+<p>输出模式就是输出一些电平，比如说一开始电平<code>V</code>是0，那么变成了输出模式后这个引脚就会输出低电平。</p>
+<h2 id="4-设置gpio输出的电平"><a href="#4-设置gpio输出的电平" class="headerlink" title="4.设置gpio输出的电平"></a>4.设置<code>gpio</code>输出的电平</h2><p>学过单片机的都知道，在单片机中输出的只有高电平和低电平，这个在程序中的表达是：1表示高电平，0表示低电平，所以我们可以通过程序来控制单片机引脚输出高电平和低电平。</p>
+<p>控制操作也是比较简单，使用的是下面的指令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpio write wPi 电平</span><br></pre></td></tr></table></figure>
+
+<p><code>wPi</code>不用多说了，电平是0和1来表示，比如说我让刚才的<code>PC10</code>变成高电平，使用的命令是</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpio write 16 1</span><br></pre></td></tr></table></figure>
+
+<p>执行完成后就会让<code>PC10</code>变成高电平了，这里还是使用<code>gpio readall</code>来进行查看</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231203144600467-596083947.png" alt="img"></p>
+<p>可以看到这个引脚的电平变成了高电平，如果对这个概念还是不明白的话，我用面包板搭建一个简单的电路展示一下</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231203144731250-545095097.jpg" alt="img"></p>
+<p>这里我将LED的负极连接到<code>PC10</code>这个引脚上，然后正极连接到单片机上的3.3V位置，可以看到现在的LED没有亮，是因为<code>PC10</code>这个引脚是高电平，两端都是高电平是不会通的。</p>
+<p>现在我将<code>PC10</code>改成低电平再来看看效果</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpio write 16 0</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231203143901252-752924145.png" alt="img"></p>
+<p>效果如下</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231203145056097-1083247880.jpg" alt="img"></p>
+<p>可以看到这个已经亮了，这个就是改变引脚的电平的指令，并且讲一下电平的概念。</p>
+<h1 id="三、wiringPi软件实现"><a href="#三、wiringPi软件实现" class="headerlink" title="三、wiringPi软件实现"></a>三、<code>wiringPi</code>软件实现</h1><p>前面讲的都是命令行的实现，但是咱不可能一直用命令来写一个复杂的功能，最重要的还是要落实在程序方面，所以现在来给大家介绍一下软件怎么写。</p>
+<h2 id="1-初始化函数"><a href="#1-初始化函数" class="headerlink" title="1.初始化函数"></a>1.初始化函数</h2><p>首先在软件中需要初始化一下引脚，使用的函数是</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span>  <span class="title function_">wiringPiSetup</span> <span class="params">(<span class="type">void</span>)</span> ;</span><br></pre></td></tr></table></figure>
+
+<p>这个函数会初始化一下引脚，但是你调用这个函数的话，在执行的时候需要提升一下权限或者使用<code>root</code>才可以执行，当然这个初始化函数有一个替代的函数，这个替代的函数不需要提权</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">wiringPiSetupSys</span> <span class="params">(<span class="type">void</span>)</span></span><br></pre></td></tr></table></figure>
+
+<p>这个函数不是使用操作系统来进行初始化，而是使用<code>/sys/class/gpio</code>接口来进行初始化的，在此种模式下的管脚号是 Broadcom 的 GPIO 管脚号，这种方法我们不考虑。</p>
+<p>我们首先用一下第一个函数来进行一下初始化</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringPi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    wiringPiSetup();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以进行一下初始化的操作，然后就可以进行后面的操作了。</p>
+<h2 id="2-设置gpio的模式"><a href="#2-设置gpio的模式" class="headerlink" title="2.设置gpio的模式"></a>2.设置<code>gpio</code>的模式</h2><p>这里使用的是</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">pinMode</span> <span class="params">(<span class="type">int</span> pin, <span class="type">int</span> mode)</span></span><br></pre></td></tr></table></figure>
+
+<p>这个函数需要配合上面说的<code>wiringPiSetup</code>函数进行初始化，否则使用不了</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231203151426419-193473249.png" alt="img"></p>
+<p>第一个参数是<code>wPi</code>的值，第二个参数是设置的模式，可以有下面的几种模式：</p>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>OUTPUT</td>
+<td>输出模式</td>
+</tr>
+<tr>
+<td>INPUT</td>
+<td>输入模式</td>
+</tr>
+<tr>
+<td>PWM_OUTPUT</td>
+<td>脉冲输出</td>
+</tr>
+<tr>
+<td>GPIO_CLOCK</td>
+<td>GPIO时钟</td>
+</tr>
+</tbody></table>
+<p>这些模式都是用宏定义定义了的，直接写即可。</p>
+<p>然后我们将<code>PC10</code>的模式设置为输出模式</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringPi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    wiringPiSetup();  <span class="comment">// 记得初始化</span></span><br><span class="line">    pinMode(<span class="number">16</span>, OUTPUT);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以将<code>PC10</code>设置为输出模式了。</p>
+<h2 id="3-输出电平"><a href="#3-输出电平" class="headerlink" title="3.输出电平"></a>3.输出电平</h2><p>然后我们就可以通过代码来输出电平了，这里我们可以按照32的写法，写一个死循环，但是毕竟这个是高级的单片机，所以我们就不写死循环了，毕竟你一个香橙派不止可以跑一个程序，所以这里直接写到循环外面。</p>
+<p>使用的函数是</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">digitalWrite</span> <span class="params">(<span class="type">int</span> pin, <span class="type">int</span> value)</span></span><br></pre></td></tr></table></figure>
+
+<p>这个函数的参数和上面的一样，只不过要说一下<code>value</code>，这个就是电平值</p>
+<table>
+<thead>
+<tr>
+<th>值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>高电平</td>
+</tr>
+<tr>
+<td>0</td>
+<td>低电平</td>
+</tr>
+</tbody></table>
+<p>然后添加进去</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringPi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    wiringPiSetup();  <span class="comment">// 记得初始化</span></span><br><span class="line">    pinMode(<span class="number">16</span>, OUTPUT);</span><br><span class="line">    digitalWrite(<span class="number">16</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>写完后我们就可以执行一下这个代码了。</p>
+<h2 id="4-执行代码"><a href="#4-执行代码" class="headerlink" title="4.执行代码"></a>4.执行代码</h2><p>这里执行代码需要先进行一下编译，编译使用<code>gcc</code>这个工具，没有这个工具的可以下载一下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install gcc</span><br></pre></td></tr></table></figure>
+
+<p>然后就可以开始编译了，这里不写<code>Makefile</code>文件，直接用命令进行编译，命令如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -o 编译出来的文件名 需要编译的文件.c -lwiringPi</span><br></pre></td></tr></table></figure>
+
+<p>这里如果不写<code>-o</code>和<code>编译出来的文件名</code>，编译出来的可执行文件是<code>a.out</code>。</p>
+<p>需要注意一下，最后的<code>-lwiringPi</code>是必须要加上的，如果不加上就会出现下面的问题</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231203152809718-1765650140.png" alt="img"></p>
+<p>这个就像你用<code>pthread</code>线程一样，在编译的时候不加<code>-pthread</code>，所以需要加上。</p>
+<p>编译完成后如果没有出问题就可以用</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./a.out</span><br></pre></td></tr></table></figure>
+
+<p>来执行了。</p>
+<p>如果你用<code>-o</code>来规定了</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231203153117748-1504941427.png" alt="img"></p>
+<p>可以使用</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./别名</span><br></pre></td></tr></table></figure>
+
+<p>来运行，我这是<code>openLED</code>，所以是</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./openLED</span><br></pre></td></tr></table></figure>
+
+<p>执行了LED灯就会亮了。</p>
+<h1 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h1><p>学会了如何操作<code>gpio</code>后就可以控制一些传感器或者元器件了，所以先得把<code>gpio</code>的操作学好就可以控制一些复杂的东西了，后面香橙派还有很多功能我还没有研究完成，等需要用到什么就使用什么即可。</p>
+<p>下一章我会介绍一下输入模式，毕竟在读传感器的时候不能只输出，还得输入呢</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>puill
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://www.puill.xin/2025/01/17/833700e426b2/" title="香橙派开发系列-使用wiringPi控制26个引脚">http://www.puill.xin/2025/01/17/833700e426b2/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" rel="tag"># 单片机</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/01/17/ef0ed158c24d/" rel="prev" title="香橙派开发系列-点亮OLED显示屏">
+                  <i class="fa fa-angle-left"></i> 香橙派开发系列-点亮OLED显示屏
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/01/17/feaf0486f5af/" rel="next" title="香橙派开发系列-使用蓝牙和手机进行信息的交换">
+                  香橙派开发系列-使用蓝牙和手机进行信息的交换 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">puill</span>
+  </div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+--><div>
+<!--添加网站运行时间-->
+<span>小破站已经在风雨中度过了</span>
+<span id="timeDate">载入天数...</span>
+<span id="times">载入时分秒...</span>
+<script>
+    function createtime() {
+        const startTime = '01/10/2025 00:00:00',
+            start = new Date(startTime)
+        let mill = new Date() - start,
+            seconds = Math.floor(mill / 1000),
+            mins = Math.floor(seconds / 60),
+            hours = Math.floor(mins / 60),
+            days = Math.floor(hours / 24)
+        const time = {
+            seconds: seconds - mins * 60,
+            mins: mins - hours * 60,
+            hours: hours - days * 24,
+        }
+        for (const k in time) {
+            time[k] = `${time[k]}`.padStart(2, '0')
+        }
+        document.getElementById("timeDate").innerHTML = ` ${days} 天`
+        document.getElementById("times").innerHTML = ` ${time.hours} 小时 ${time.mins} 分 ${time.seconds} 秒`
+    }
+    setInterval(createtime, 500)
+</script>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

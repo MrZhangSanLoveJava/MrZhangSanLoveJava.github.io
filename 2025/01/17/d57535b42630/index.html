@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.puill.xin","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"show_result":true,"style":"default"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="中断系统一直是单片机中最重要的一个系统">
+<meta property="og:type" content="article">
+<meta property="og:title" content="香橙派开发系列-中断？不！中断！">
+<meta property="og:url" content="http://www.puill.xin/2025/01/17/d57535b42630/index.html">
+<meta property="og:site_name" content="puill&#39;s Blog">
+<meta property="og:description" content="中断系统一直是单片机中最重要的一个系统">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231220182909889-2141115484.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231220183519029-1979238536.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231220192448068-2133076134.jpg">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231220192511244-251167665.jpg">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231220192554739-1728047936.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231220194408929-87332833.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231220201337192-1530467255.png">
+<meta property="article:published_time" content="2025-01-17T15:51:36.123Z">
+<meta property="article:modified_time" content="2025-01-17T16:10:20.164Z">
+<meta property="article:author" content="puill">
+<meta property="article:tag" content="单片机">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231220182909889-2141115484.png">
+
+
+<link rel="canonical" href="http://www.puill.xin/2025/01/17/d57535b42630/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.puill.xin/2025/01/17/d57535b42630/","path":"2025/01/17/d57535b42630/","title":"香橙派开发系列-中断？不！中断！"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>香橙派开发系列-中断？不！中断！ | puill's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">puill's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-文章"><a href="/articles/" rel="section"><i class="fa fa-file-text fa-fw"></i>文章</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-友链"><a href="/friendchains/" rel="section"><i class="fa fa-paperclip fa-fw"></i>友链</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%AD%E6%96%AD"><span class="nav-number">2.</span> <span class="nav-text">一、什么是中断</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%99%AE%E9%80%9A%E5%8D%95%E7%89%87%E6%9C%BA%E5%92%8C%E7%B3%BB%E7%BB%9F%E5%8D%95%E7%89%87%E6%9C%BA%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">3.</span> <span class="nav-text">二、普通单片机和系统单片机的区别</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E4%B8%AD%E6%96%AD%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">4.</span> <span class="nav-text">三、中断的区别</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E9%85%8D%E7%BD%AE%E9%A6%99%E6%A9%99%E6%B4%BE%E7%9A%84%E4%B8%AD%E6%96%AD"><span class="nav-number">5.</span> <span class="nav-text">四、配置香橙派的中断</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E8%BF%9B%E7%A8%8B%E7%89%88"><span class="nav-number">5.1.</span> <span class="nav-text">1.进程版</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-wiringPi%E5%BA%93%E5%87%BD%E6%95%B0%E7%89%88"><span class="nav-number">5.2.</span> <span class="nav-text">2.wiringPi库函数版</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E7%BA%BF%E7%A8%8B%E7%89%88"><span class="nav-number">5.3.</span> <span class="nav-text">3.线程版</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Linux%E5%86%85%E6%A0%B8%E7%9A%84%E7%BA%BF%E7%A8%8B"><span class="nav-number">5.3.1.</span> <span class="nav-text">3.1 Linux内核的线程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="puill"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">puill</p>
+  <div class="site-description" itemprop="description">puill的博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="mailto:2256044190@qq.com" title="E-Mail → mailto:2256044190@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.puill.xin/2025/01/17/d57535b42630/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="puill">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="puill's Blog">
+      <meta itemprop="description" content="puill的博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="香橙派开发系列-中断？不！中断！ | puill's Blog">
+      <meta itemprop="description" content="中断系统一直是单片机中最重要的一个系统">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          香橙派开发系列-中断？不！中断！
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-01-17 23:51:36" itemprop="dateCreated datePublished" datetime="2025-01-17T23:51:36+08:00">2025-01-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-01-18 00:10:20" itemprop="dateModified" datetime="2025-01-18T00:10:20+08:00">2025-01-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%A6%99%E6%A9%99%E6%B4%BE/" itemprop="url" rel="index"><span itemprop="name">香橙派</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">中断系统一直是单片机中最重要的一个系统</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>中断这个在很多单片机中都是比较常见的，像什么51单片机，stm32单片机都是可以通过自己的设置来实现中断的。在香橙派这种比较高级的单片机上也是有中断的，但是呢，这里的中断和51或者stm的单片机有点不同。</p>
+<h1 id="一、什么是中断"><a href="#一、什么是中断" class="headerlink" title="一、什么是中断"></a>一、什么是中断</h1><p>中断这个概念老生常谈了，学过单片机的都应该知道这个，也就是说，你在这打游戏，有一个电话过来了，你就得先停止手上的游戏，然后去处理一下那件事，这个就是中断。这里就不细说中断的概念了，毕竟和香橙派上的中断不太一样。</p>
+<h1 id="二、普通单片机和系统单片机的区别"><a href="#二、普通单片机和系统单片机的区别" class="headerlink" title="二、普通单片机和系统单片机的区别"></a>二、普通单片机和系统单片机的区别</h1><p>这里要划分一下概念，我分为普通单片机和系统单片机两种，普通单片机就是指像51和stm32那种单核单片机，就是按照一定顺序执行的单片机，然后系统单片机就是指这种能在里面运行操作系统的单片机。</p>
+<p>这两种类型的单片机有什么不同呢？</p>
+<p>做过单片机开发的都知道，这种单片机只能单步执行，比如你写的这些程序，它只能一条一条的执行，没办法引出一些线程或者进程的概念，这种单片机的中断我们可以自己配置的，因为我们可以接触到底层环境来直接配置。</p>
+<p>而这种系统单片机，因为有一层系统，所以底层的一些操作都被一层叫做<code>HAL</code>的抽象包给封装了，我们可以使用这个抽象包给的一些接口来对底层进行一些操作，而且这种单片机的芯片都是比较强的，可以支持像什么线程和进程的操作。</p>
+<h1 id="三、中断的区别"><a href="#三、中断的区别" class="headerlink" title="三、中断的区别"></a>三、中断的区别</h1><p>在普通单片机中，我们设置好中断后，满足了中断的条件了，它就会打断它现在正在执行的操作，转向到中断处理函数中去执行中断，就如同这张图一样</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231220182909889-2141115484.png" alt="img"></p>
+<p>就如图一样，每次执行中断的时候就会打断当前执行的内容。</p>
+<p>而在系统单片机中就不一样了，因为系统单片机中它是可以支持多线程和多进程的，所以就可以不用打断当前的系统执行，而是分裂出一个进程或者线程来处理这个中断请求，就如下面这张图</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231220183519029-1979238536.png" alt="img"></p>
+<p>可以看到这种就是这个过程不会影响着我们现在执行的程序，而我们的香橙派就是用到这种方式的中断。</p>
+<h1 id="四、配置香橙派的中断"><a href="#四、配置香橙派的中断" class="headerlink" title="四、配置香橙派的中断"></a>四、配置香橙派的中断</h1><h2 id="1-进程版"><a href="#1-进程版" class="headerlink" title="1.进程版"></a>1.进程版</h2><p>我们配置香橙派的中断其实就可以不用像配置stm32的那种一样复杂了，直接分裂一个线程一直判断是否按下或者是其他内容即可实现这个过程。</p>
+<p>比如在stm32中我们要一个按键按下了后就会执行中断处理函数实现一些内容，这里我们就可以使用一个进程一直去读取这个按键的引脚，当按键按下了，我们就让标志位置为1或者0，然后父进程就读取这个标志位，点亮一个LED灯。</p>
+<p>代码就可以这么写：</p>
+<p>1.先将引脚进行初始化，这里使用的是<code>PC10</code>作为输入引脚，<code>PC7</code>作为输出引脚，然后进行配置：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringPi.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    wiringPiSetup();      <span class="comment">// 初始化</span></span><br><span class="line">    pinMode(<span class="number">16</span>, INPUT);   <span class="comment">// PC10输入</span></span><br><span class="line">    pinMode(<span class="number">13</span>, OUTPUT);  <span class="comment">// PC7作为输入</span></span><br><span class="line">    pullUpDnControl(<span class="number">16</span>, PUD_UP);    <span class="comment">// 上拉输入</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>2.设置完成后就开始创建进程和匿名通道。这里因为要实现进程之间的数据交换，所以使用了一个匿名通道进行信息交换</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringPi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">int</span> ret;       <span class="comment">// 接收返回值</span></span><br><span class="line">    <span class="type">int</span> pd[<span class="number">2</span>];     <span class="comment">// 管道描述符</span></span><br><span class="line">    <span class="type">int</span> pid;       <span class="comment">// 进程ID</span></span><br><span class="line">    wiringPiSetup();      <span class="comment">// 初始化</span></span><br><span class="line">    pinMode(<span class="number">16</span>, INPUT);   <span class="comment">// PC10输入</span></span><br><span class="line">    pinMode(<span class="number">13</span>, OUTPUT);  <span class="comment">// PC7作为输入</span></span><br><span class="line">    pullUpDnControl(<span class="number">16</span>, PUD_UP);    <span class="comment">// 上拉输入</span></span><br><span class="line">    <span class="comment">// 创建匿名管道</span></span><br><span class="line">    ret = pipe(pd);      <span class="comment">// 创建管道</span></span><br><span class="line">    <span class="keyword">if</span> (ret &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="comment">// 错误处理</span></span><br><span class="line">        perror(<span class="string">&quot;pipe&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;     <span class="comment">// 退出程序</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 创建进程</span></span><br><span class="line">    pid = fort();    <span class="comment">// 创建进程</span></span><br><span class="line">    <span class="keyword">if</span> (pid &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="comment">// 错误处理</span></span><br><span class="line">        close(pd[<span class="number">0</span>]);      <span class="comment">// 关闭管道读</span></span><br><span class="line">        close(pd[<span class="number">1</span>]);      <span class="comment">// 关闭管道写</span></span><br><span class="line">        perror(<span class="string">&quot;fort&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (pid == <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="comment">// 子进程处理</span></span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="comment">// 父进程处理</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>3.在子进程中写入判断函数并将标志位发送到父进程中，并让LED灯亮起来。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringPi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">int</span> ret;       <span class="comment">// 接收返回值</span></span><br><span class="line">    <span class="type">int</span> pd[<span class="number">2</span>];     <span class="comment">// 管道描述符</span></span><br><span class="line">    <span class="type">int</span> pid;       <span class="comment">// 进程ID</span></span><br><span class="line">    <span class="type">int</span> flag = <span class="number">1</span>;  <span class="comment">// 标志位</span></span><br><span class="line">    <span class="type">char</span> buf[<span class="number">2</span>];   <span class="comment">// 发送的字符串</span></span><br><span class="line">    wiringPiSetup();      <span class="comment">// 初始化</span></span><br><span class="line">    pinMode(<span class="number">16</span>, INPUT);   <span class="comment">// PC10输入</span></span><br><span class="line">    pinMode(<span class="number">13</span>, OUTPUT);  <span class="comment">// PC7作为输入</span></span><br><span class="line">    pullUpDnControl(<span class="number">16</span>, PUD_UP);    <span class="comment">// 上拉输入</span></span><br><span class="line">    <span class="comment">// 创建匿名管道</span></span><br><span class="line">    ret = pipe(pd);      <span class="comment">// 创建管道</span></span><br><span class="line">    <span class="keyword">if</span> (ret &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="comment">// 错误处理</span></span><br><span class="line">        perror(<span class="string">&quot;pipe&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;     <span class="comment">// 退出程序</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 创建进程</span></span><br><span class="line">    pid = fort();    <span class="comment">// 创建进程</span></span><br><span class="line">    <span class="keyword">if</span> (pid &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="comment">// 错误处理</span></span><br><span class="line">        close(pd[<span class="number">0</span>]);      <span class="comment">// 关闭管道读</span></span><br><span class="line">        close(pd[<span class="number">1</span>]);      <span class="comment">// 关闭管道写</span></span><br><span class="line">        perror(<span class="string">&quot;fort&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (pid == <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="comment">// 子进程处理</span></span><br><span class="line">        close(pd[<span class="number">0</span>]);     <span class="comment">// 关闭读端，因为子进程只需要写入数据</span></span><br><span class="line">        <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">            <span class="keyword">if</span> (digitalRead(<span class="number">16</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">                <span class="comment">// 按键按下</span></span><br><span class="line">                delay(<span class="number">20</span>);</span><br><span class="line">                <span class="keyword">while</span>(digitalRead(<span class="number">16</span>) == <span class="number">0</span>);   <span class="comment">// 消抖</span></span><br><span class="line">                flag = !flag;</span><br><span class="line">                <span class="built_in">sprintf</span>(buf, <span class="string">&quot;%d&quot;</span>, flag); <span class="comment">// 拼接发送的字符串</span></span><br><span class="line">                write(pd[<span class="number">1</span>], buf, <span class="number">2</span>);     <span class="comment">// 向管道写入数据</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="comment">// 父进程处理</span></span><br><span class="line">        close(pd[<span class="number">1</span>]);     <span class="comment">// 关闭写端，因为只用读取内容</span></span><br><span class="line">        <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">            read(pd[<span class="number">0</span>], buf, <span class="number">2</span>);   <span class="comment">// 读取数据</span></span><br><span class="line">            <span class="keyword">if</span> (<span class="built_in">strcmp</span>(buf, <span class="string">&quot;1&quot;</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">                <span class="comment">// 高电平</span></span><br><span class="line">                digitalWrite(<span class="number">13</span>, <span class="number">1</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="comment">// 低电平</span></span><br><span class="line">                digitalWrite(<span class="number">13</span>, <span class="number">0</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后我们就可以执行一下查看一下效果了：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231220192448068-2133076134.jpg" alt="img"></p>
+<p>然后再按下按钮</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231220192511244-251167665.jpg" alt="img"></p>
+<p>为了让大家看得更清楚这个过程我特意添加了一下输出语句来给大家查看一下效果</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231220192554739-1728047936.png" alt="img"></p>
+<p>这种方法就和中断一样，系统的主执行内容不会被影响，毕竟是有另一个进程在读取按键的按下和松开。</p>
+<h2 id="2-wiringPi库函数版"><a href="#2-wiringPi库函数版" class="headerlink" title="2.wiringPi库函数版"></a>2.wiringPi库函数版</h2><p>这种方法是使用<code>wiringPi</code>中的函数来进行实现的，但是我这一直都搞不了，我还在研究这个方法，为了弄这个我今天买了块3b来进行测试，我看看是不是因为zero的不支持还是什么原因，这里后面再补全，先介绍一下这个方法的代码如何写，这里使用的函数是<code>wiringPiISR</code>，函数的原型：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">wiringPiISR</span> <span class="params">(<span class="type">int</span> pin, <span class="type">int</span> mode, <span class="type">void</span> (*function)(<span class="type">void</span>))</span>;</span><br></pre></td></tr></table></figure>
+
+<p>功能：该函数会在指定管脚注册一个中断事件的函数，当指定管脚发生中断事件时，会自动调用该函数。</p>
+<p>第一个参数是你要让哪个引脚注册位中断，比如说<code>PC7</code>，那这就填写13。</p>
+<p>第二个参数是触发模式</p>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>INT_EDGE_FALLING</td>
+<td>下降沿触发</td>
+</tr>
+<tr>
+<td>INT_EDGE_RISING</td>
+<td>上升沿触发</td>
+</tr>
+<tr>
+<td>INT_EDGE_BOTH</td>
+<td>上升沿或下降沿触发</td>
+</tr>
+<tr>
+<td>INT_EDGE_SETUP</td>
+<td>不初始化</td>
+</tr>
+</tbody></table>
+<p>当使用最后的一种方法时，这个函数不会初始化这个引脚，它会默认是在其他敌法进行了初始化。</p>
+<p>第三个参数是中断函数，就是当注册的引脚触发了就会触发这个函数进行执行。</p>
+<p>返回值如果不成功就会返回一个小于0的数，可以用这个返回值来判断一下初始化是否成功。</p>
+<p>知道了这个我们就可以利用这个函数来实现中断：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringPi.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> flag = <span class="number">0</span>;</span><br><span class="line"><span class="type">void</span> <span class="title function_">myinterrinput</span><span class="params">(<span class="type">void</span>)</span>&#123;</span><br><span class="line">    <span class="comment">// 中断处理函数</span></span><br><span class="line">    flag = !flag;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    wiringPiSetup();</span><br><span class="line">    pinMode(<span class="number">16</span>, INPUT);</span><br><span class="line">    pinMode(<span class="number">13</span>, OUTPUT);</span><br><span class="line">    pullUpDnControl(<span class="number">16</span>, PUD_UP);    <span class="comment">// 上拉输入</span></span><br><span class="line">    wiringPiISR(<span class="number">16</span>, INT_EDGE_FALLING, &amp;myinterrinput);</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        digitalWrite(<span class="number">13</span>, flag);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行后，当按键按下后就会执行中断函数，但是我这一执行后就会出现下面的问题</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231220194408929-87332833.png" alt="img"></p>
+<p>这个问题我还在研究到底是为什么，网上也没找到合适的答案，这里我先空着，等3b到了我再试试。</p>
+<h2 id="3-线程版"><a href="#3-线程版" class="headerlink" title="3.线程版"></a>3.线程版</h2><p>这个版本就可以分为Linux内核线程和wiringPi库函数版的线程了。</p>
+<p>这里先使用Linux内核的线程</p>
+<h3 id="3-1-Linux内核的线程"><a href="#3-1-Linux内核的线程" class="headerlink" title="3.1 Linux内核的线程"></a>3.1 Linux内核的线程</h3><p>其实这个也不能称为Linux内核线程，因为之前的linux最初开发时，在内核中并不能真正支持线程。但是它的确可以通过 clone() 系统调用将进程作为可调用度的实体。然后就将线程进行了改写，由NPTL进行接手，我们现在用的线程是NPTL。</p>
+<p>我们可以通过下面的指令来下载NPTL</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install manpages-posix-posix-dev</span><br></pre></td></tr></table></figure>
+
+<p>通过下面的指令来查看一下NPTL的版本</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getconf GNU_LIBPTHREAD_VERSION</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231220201337192-1530467255.png" alt="img"></p>
+<p>我这里的版本是<code>2.35</code>，只要有这个即可。</p>
+<p>这里不过多介绍线程的概念，如果大家对线程感兴趣我后面会出有关于线程的文章给大家介绍一下的。</p>
+<p>现在开始编程</p>
+<p>1.初始化需要的引脚</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringPi.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    wiringPiSetup();      <span class="comment">// 初始化</span></span><br><span class="line">    pinMode(<span class="number">16</span>, INPUT);   <span class="comment">// PC10输入</span></span><br><span class="line">    pinMode(<span class="number">13</span>, OUTPUT);  <span class="comment">// PC7作为输入</span></span><br><span class="line">    pullUpDnControl(<span class="number">16</span>, PUD_UP);    <span class="comment">// 上拉输入</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>2.创建管道和线程，这里线程之间的内容是独立的，和上面的进程一样，需要我们创建一个管道来实现进程间的通讯，所以需要创建一个管道。</p>
+<p>在写之前，我们需要了解一下线程的创建函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;pthread.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">pthred_create</span><span class="params">(<span class="type">pthread_t</span>* thread, <span class="type">const</span> <span class="type">pthread_attr_t</span>* attr, <span class="type">void</span>* (*start_routine)(<span class="type">void</span>*), <span class="type">void</span>* arg)</span>;</span><br><span class="line">功能：</span><br><span class="line">    创建一个线程</span><br><span class="line">参数：</span><br><span class="line">    thread：线程标识符地址。</span><br><span class="line">    attr：线程属性结构体地址，通常设置为<span class="literal">NULL</span>。</span><br><span class="line">    start_routine：线程函数的入口地址。</span><br><span class="line">    arg：传入线程函数的参数。</span><br><span class="line">返回值：</span><br><span class="line">    成功：<span class="number">0</span></span><br><span class="line">    失败：非<span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<p>然后就可以开始写代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringPi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="type">void</span>* <span class="title function_">myinterrinput</span><span class="params">(<span class="type">void</span>* arg)</span>&#123;</span><br><span class="line">    <span class="comment">// 进程执行函数</span></span><br><span class="line">    <span class="type">int</span> flag = <span class="number">0</span>;</span><br><span class="line">    <span class="type">char</span> buf[<span class="number">2</span>];</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">int</span> ret;</span><br><span class="line">    <span class="type">pthread_t</span> tid;       <span class="comment">// 线程标识符</span></span><br><span class="line">    <span class="type">int</span> pd[<span class="number">2</span>];</span><br><span class="line">    <span class="type">char</span> buf[<span class="number">2</span>];</span><br><span class="line"></span><br><span class="line">    wiringPiSetup();     <span class="comment">// 初始化</span></span><br><span class="line">    pinMode(<span class="number">16</span>, INPUT);</span><br><span class="line">    pinMode(<span class="number">13</span>, OUTPUT);</span><br><span class="line">    pullUpDnControl(<span class="number">16</span>, PUD_UP);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建管道</span></span><br><span class="line">    ret = pipe(pd);</span><br><span class="line">    <span class="keyword">if</span> (ret &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        perror(<span class="string">&quot;pipe&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建线程</span></span><br><span class="line">    ret = pthread_create(&amp;tid, <span class="literal">NULL</span>, &amp;myinterrinput, (<span class="type">void</span>*)&amp;pd[<span class="number">1</span>]);       <span class="comment">// 创建进程的函数 这里将管道的描述符传递给线程处理函数</span></span><br><span class="line">    <span class="keyword">if</span> (ret &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        close(pd[<span class="number">0</span>]);      <span class="comment">// 关闭管道读</span></span><br><span class="line">        close(pd[<span class="number">1</span>]);      <span class="comment">// 关闭管道写</span></span><br><span class="line">        perror(<span class="string">&quot;pthread_create&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        <span class="comment">// 主进程处理一些非中断的内容</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>3.然后开始完善处理代码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringPi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span>* <span class="title function_">myinterrinput</span><span class="params">(<span class="type">void</span>* arg)</span>&#123;</span><br><span class="line">    <span class="type">int</span> flag = <span class="number">0</span>;</span><br><span class="line">    <span class="type">char</span> buf[<span class="number">2</span>];</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        <span class="keyword">if</span> (digitalRead(<span class="number">16</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">            <span class="keyword">while</span>(digitalRead(<span class="number">16</span>) == <span class="number">0</span>);</span><br><span class="line">            flag = !flag;</span><br><span class="line">            <span class="built_in">sprintf</span>(buf, <span class="string">&quot;%d&quot;</span>, flag);</span><br><span class="line">            <span class="comment">// 下面的代码需要注意一下，非常重要，用了两次强转，因为传递过来的参数是void类型的，长度不够，所以这里使用了两次强转将长度匹配到4</span></span><br><span class="line">            <span class="keyword">if</span> (write(*(<span class="type">int</span>*)(<span class="type">long</span>*)arg, buf, <span class="number">2</span>) &lt; <span class="number">0</span>)&#123;</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;error\n&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">int</span> ret;</span><br><span class="line">    <span class="type">pthread_t</span> tid;       <span class="comment">// 线程标识符</span></span><br><span class="line">    <span class="type">int</span> pd[<span class="number">2</span>];</span><br><span class="line">    <span class="type">char</span> buf[<span class="number">2</span>];</span><br><span class="line"></span><br><span class="line">    wiringPiSetup();     <span class="comment">// 初始化</span></span><br><span class="line">    pinMode(<span class="number">16</span>, INPUT);</span><br><span class="line">    pinMode(<span class="number">13</span>, OUTPUT);</span><br><span class="line">    pullUpDnControl(<span class="number">16</span>, PUD_UP);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建管道</span></span><br><span class="line">    ret = pipe(pd);</span><br><span class="line">    <span class="keyword">if</span> (ret &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        perror(<span class="string">&quot;pipe&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建线程</span></span><br><span class="line">    ret = pthread_create(&amp;tid, <span class="literal">NULL</span>, &amp;myinterrinput, (<span class="type">void</span>*)&amp;pd[<span class="number">1</span>]);</span><br><span class="line">    <span class="keyword">if</span> (ret &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        close(pd[<span class="number">0</span>]);      <span class="comment">// 关闭管道读</span></span><br><span class="line">        close(pd[<span class="number">1</span>]);      <span class="comment">// 关闭管道写</span></span><br><span class="line">        perror(<span class="string">&quot;pthread_create&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        read(pd[<span class="number">0</span>], buf, <span class="number">2</span>);</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">strcmp</span>(buf, <span class="string">&quot;1&quot;</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">            digitalWrite(<span class="number">13</span>, <span class="number">1</span>);</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;1&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(<span class="built_in">strcmp</span>(buf, <span class="string">&quot;0&quot;</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;0&quot;</span>);</span><br><span class="line">            digitalWrite(<span class="number">13</span>, <span class="number">0</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后开始编译，这里编译的命令如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc threadButton.c -o threadButton -lwiringPi -lpthread</span><br></pre></td></tr></table></figure>
+
+<p>因为<code>pthread</code>是属于外部库，需要使用<code>-l</code>进行连接。</p>
+<p>运行后也是一样的效果，我就懒得拍照了。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>中断其实很有用的，但是对于这种多线程的开发板可以用一些其他的方式来实现这个方法，比如软中断，后面我研究一下如何通过底层实现外中断，毕竟上面的这些方法消耗的资源有点大，而且反应比直接中断要慢。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>puill
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://www.puill.xin/2025/01/17/d57535b42630/" title="香橙派开发系列-中断？不！中断！">http://www.puill.xin/2025/01/17/d57535b42630/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" rel="tag"># 单片机</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/01/17/27a3b7954e84/" rel="prev" title="香橙派开发系列-无屏幕使用香橙派">
+                  <i class="fa fa-angle-left"></i> 香橙派开发系列-无屏幕使用香橙派
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">puill</span>
+  </div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+--><div>
+<!--添加网站运行时间-->
+<span>小破站已经在风雨中度过了</span>
+<span id="timeDate">载入天数...</span>
+<span id="times">载入时分秒...</span>
+<script>
+    function createtime() {
+        const startTime = '01/10/2025 00:00:00',
+            start = new Date(startTime)
+        let mill = new Date() - start,
+            seconds = Math.floor(mill / 1000),
+            mins = Math.floor(seconds / 60),
+            hours = Math.floor(mins / 60),
+            days = Math.floor(hours / 24)
+        const time = {
+            seconds: seconds - mins * 60,
+            mins: mins - hours * 60,
+            hours: hours - days * 24,
+        }
+        for (const k in time) {
+            time[k] = `${time[k]}`.padStart(2, '0')
+        }
+        document.getElementById("timeDate").innerHTML = ` ${days} 天`
+        document.getElementById("times").innerHTML = ` ${time.hours} 小时 ${time.mins} 分 ${time.seconds} 秒`
+    }
+    setInterval(createtime, 500)
+</script>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

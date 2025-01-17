@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.puill.xin","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"show_result":true,"style":"default"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="忘记买屏幕了，所以研究了一下串口控制">
+<meta property="og:type" content="article">
+<meta property="og:title" content="香橙派开发系列-无屏幕使用香橙派">
+<meta property="og:url" content="http://www.puill.xin/2025/01/17/27a3b7954e84/index.html">
+<meta property="og:site_name" content="puill&#39;s Blog">
+<meta property="og:description" content="忘记买屏幕了，所以研究了一下串口控制">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202185932657-1174425800.jpg">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202190107442-27730457.jpg">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202190157802-1495712197.jpg">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202190259947-1652784241.jpg">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202190353525-1044573884.jpg">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202191236851-2026055802.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202191518835-1953636756.jpg">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202191657105-1133119272.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202192010341-1482300985.jpg">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202192041874-1420115892.jpg">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202192132329-104615943.jpg">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202192212336-247609896.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202194830248-458441528.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202194938276-1204902720.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202195121194-610970373.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202195437672-1696146567.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202195545961-1882637112.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202195647137-1137483826.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202200008533-1739091947.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202200354931-1714757678.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202200429605-1610648089.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202205858661-275336374.png">
+<meta property="article:published_time" content="2025-01-17T15:51:36.120Z">
+<meta property="article:modified_time" content="2025-01-17T16:08:19.959Z">
+<meta property="article:author" content="puill">
+<meta property="article:tag" content="单片机">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202185932657-1174425800.jpg">
+
+
+<link rel="canonical" href="http://www.puill.xin/2025/01/17/27a3b7954e84/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.puill.xin/2025/01/17/27a3b7954e84/","path":"2025/01/17/27a3b7954e84/","title":"香橙派开发系列-无屏幕使用香橙派"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>香橙派开发系列-无屏幕使用香橙派 | puill's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">puill's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-文章"><a href="/articles/" rel="section"><i class="fa fa-file-text fa-fw"></i>文章</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-友链"><a href="/friendchains/" rel="section"><i class="fa fa-paperclip fa-fw"></i>友链</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E4%BD%BF%E7%94%A8%E7%9A%84%E4%B8%9C%E8%A5%BF"><span class="nav-number">2.</span> <span class="nav-text">一、使用的东西</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E4%BD%BF%E7%94%A8%E6%AD%A5%E9%AA%A4"><span class="nav-number">3.</span> <span class="nav-text">二、使用步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%B8%8B%E8%BD%BD%E7%B3%BB%E7%BB%9F%E5%88%B0SD%E5%8D%A1%E4%B8%AD"><span class="nav-number">3.1.</span> <span class="nav-text">1.下载系统到SD卡中</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E4%B8%8A%E7%94%B5%E8%BF%9E%E6%8E%A5%E4%B8%B2%E5%8F%A3"><span class="nav-number">3.2.</span> <span class="nav-text">2.上电连接串口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%89%93%E5%BC%80ssh"><span class="nav-number">3.3.</span> <span class="nav-text">3.打开ssh</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E4%BD%BF%E7%94%A8xshell%E8%BF%9E%E6%8E%A5%E9%A6%99%E6%A9%99%E6%B4%BE"><span class="nav-number">3.4.</span> <span class="nav-text">4.使用xshell连接香橙派</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%80%E5%90%8E"><span class="nav-number">4.</span> <span class="nav-text">最后</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="puill"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">puill</p>
+  <div class="site-description" itemprop="description">puill的博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="mailto:2256044190@qq.com" title="E-Mail → mailto:2256044190@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.puill.xin/2025/01/17/27a3b7954e84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="puill">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="puill's Blog">
+      <meta itemprop="description" content="puill的博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="香橙派开发系列-无屏幕使用香橙派 | puill's Blog">
+      <meta itemprop="description" content="忘记买屏幕了，所以研究了一下串口控制">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          香橙派开发系列-无屏幕使用香橙派
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-01-17 23:51:36" itemprop="dateCreated datePublished" datetime="2025-01-17T23:51:36+08:00">2025-01-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-01-18 00:08:19" itemprop="dateModified" datetime="2025-01-18T00:08:19+08:00">2025-01-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%A6%99%E6%A9%99%E6%B4%BE/" itemprop="url" rel="index"><span itemprop="name">香橙派</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">忘记买屏幕了，所以研究了一下串口控制</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>在学单片机之前我就接触到树莓派这个掌间电脑，之前买了一块但是一直放在家里面吃灰，然后这几天突然感觉树莓派很好玩，准备买一块来玩一下，但是树莓派的价格实在是太高了，我还只是个学生没那么多钱，然后呢我在网上找到了一个平替的板子就是这个系列的主题–香橙派，我买了个比较便宜的<code>orange-zero-3</code>，内存是1.5G的，因为我只拿来做Linux的练习不用图形化界面，所以不需要太大的运行内存，但是我还是对电脑的了解还是太少了，我以为可以用一根HDMI线连接到我的笔记本的HDMI口进行操作的，但是电脑上的HDMI口只能输出所以就没办法了，在我这几天逛互联网的时候我找到了一个方法就是使用串口来设置这个板子，正好我有一个<code>USB to TTL</code>，就试了一下，随便写了个笔记。</p>
+<h1 id="一、使用的东西"><a href="#一、使用的东西" class="headerlink" title="一、使用的东西"></a>一、使用的东西</h1><p>先准备一个香橙派<code>zero 3</code>的板子</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202185932657-1174425800.jpg" alt="img"></p>
+<p>然后准备一张SD卡用来下载系统</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202190107442-27730457.jpg" alt="img"></p>
+<p>然后准备一个读卡器，这个读卡器可以去借别人的，我这个就是借的</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202190157802-1495712197.jpg" alt="img"></p>
+<p>准备一个<code>USB转TTL</code>的下载器</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202190259947-1652784241.jpg" alt="img"></p>
+<p>然后准备一根type线，这里我拿的是我的充电线</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202190353525-1044573884.jpg" alt="img"></p>
+<p>准备完成后就可以开始操作了。</p>
+<h1 id="二、使用步骤"><a href="#二、使用步骤" class="headerlink" title="二、使用步骤"></a>二、使用步骤</h1><h2 id="1-下载系统到SD卡中"><a href="#1-下载系统到SD卡中" class="headerlink" title="1.下载系统到SD卡中"></a>1.下载系统到SD卡中</h2><p>首先先将一个系统下载到SD卡中，这里我使用的是Ubuntu的服务器系统，这个系统是没有图形化界面的，因为我只有1.5G的运行内存。</p>
+<p>系统我是在香橙派官网中的资料下载中下载的，这里我把链接放在这，<a target="_blank" rel="noopener" href="http://www.orangepi.cn/html/hardWare/computerAndMicrocontrollers/service-and-support/Orange-Pi-Zero-3.html">Orange-Pi-Zero-3资料下载</a>。当然我也把这些资料放在我的网盘中的。</p>
+<p>下载了操作系统镜像后把SD卡插到下载器上，下载器连接到电脑，然后使用<code>Win32DiskImager</code>软件将镜像文件下载到SD卡中，这里需要注意一下，<strong>这个过程会将SD卡中的内容全部清除，所以要先把这个SD卡中的内容备份一下。</strong> 然后打开<code>Win32DiskImager</code>软件</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202191236851-2026055802.png" alt="img"></p>
+<p>在<code>映像文件</code>那打开你要下载的系统，然后点击写入即可，等待写入完成后将SD卡插到香橙派上</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202191518835-1953636756.jpg" alt="img"></p>
+<p>然后就可以进入下一步了。</p>
+<h2 id="2-上电连接串口"><a href="#2-上电连接串口" class="headerlink" title="2.上电连接串口"></a>2.上电连接串口</h2><p>这里先用<code>USB转TTL</code>连接到香橙派上，如何连接呢？这里可以看看引脚图</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202191657105-1133119272.png" alt="img"></p>
+<p>可以看到最上面的那三个引脚就是我们需要使用的串口引脚<code>TX</code>、<code>RX</code>、<code>GND</code>，然后我们用<code>USB转TTL</code>进行连接，这里的连接如下表格：</p>
+<table>
+<thead>
+<tr>
+<th>USB转TTL</th>
+<th>香橙派</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TX</td>
+<td>RX</td>
+</tr>
+<tr>
+<td>RX</td>
+<td>TX</td>
+</tr>
+<tr>
+<td>GND</td>
+<td>GND</td>
+</tr>
+</tbody></table>
+<p>连接完成图</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202192010341-1482300985.jpg" alt="img"></p>
+<p>然后把这一端连接到电脑上</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202192041874-1420115892.jpg" alt="img"></p>
+<p>然后将Type线连接到电脑上为其供电</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202192132329-104615943.jpg" alt="img"></p>
+<p>然后打开<code>串口助手</code></p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202192212336-247609896.png" alt="img"></p>
+<p>这里需要注意一下串口的波特率为<code>115200</code>，如果说你波特率调错了得到的内容就都是乱码，然后给香橙派上电，并且打开串口就会收到香橙派的启动信息</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202194830248-458441528.png" alt="img"></p>
+<p>这个就是收到的信息，然后等待一会就可以进入到输入内容了，首先查看一下它的IP地址</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202194938276-1204902720.png" alt="img"></p>
+<p>在输入框中输入命令后需要按一下回车，然后再点击发送，这样就可以发送命令了，发送完后会有一个反馈</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202195121194-610970373.png" alt="img"></p>
+<p>这个就是查看的内容了。</p>
+<h2 id="3-打开ssh"><a href="#3-打开ssh" class="headerlink" title="3.打开ssh"></a>3.打开ssh</h2><p>一直使用串口助手并不是一个长久的方法，在Linux中可以使用一个远程连接的方法，这个方法是<code>ssh</code>，但是这个方法需要连接到网络得到一个IP地址，而且这个需要在同一个局域网中才可以连接。</p>
+<p>实现我们先更新一下软件包</p>
+<p>执行的命令是<code>sudo apt update</code>，执行这个命令需要获取<code>root</code>权限，所以加上了一个<code>sudo</code></p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202195437672-1696146567.png" alt="img"></p>
+<p>然后需要输入一下<code>root</code>的密码，这里的密码默认是<code>orangepi</code>，也是在输入指令框那发送，然后输入完后就可以开始更新</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202195545961-1882637112.png" alt="img"></p>
+<p>更新完成后要下载<code>openssh</code>这个软件，服务端的系统是默认开启的，所以可以跳过这个步骤，使用的命令是<code>sudo apt-get install openssh-server</code></p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202195647137-1137483826.png" alt="img"></p>
+<p>然后下载完成后就查看一下<code>ssh</code>是否打开，使用<code>sudo ps -e |grep ssh</code>，如果出现下面的内容就证明<code>ssh</code>打开，一般都会打开的。</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202200008533-1739091947.png" alt="img"></p>
+<p>如果没有打开可以使用<code>sudo server ssh start</code>进行打开，然后再查看是否有该线程即可。</p>
+<h2 id="4-使用xshell连接香橙派"><a href="#4-使用xshell连接香橙派" class="headerlink" title="4.使用xshell连接香橙派"></a>4.使用xshell连接香橙派</h2><p>首先需要执行<code>ifconfig</code>来查看一下香橙派的IP地址，然后打开<code>xshell</code>软件</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202200354931-1714757678.png" alt="img"></p>
+<p>然后点击<code>新建</code></p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202200429605-1610648089.png" alt="img"></p>
+<p>在新建里面填一下用<code>ifconfig</code>获取的IP地址，然后点击连接，连接后需要输入一下用户名和密码，这里直接用<code>root</code>账号，因为<code>root</code>是知道密码的。</p>
+<p>然后就可以进入界面了</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202312/3083010-20231202205858661-275336374.png" alt="img"></p>
+<p>需要注意一下就是要保证你的电脑和香橙派是连接同一个局域网，否则是连接不了的。</p>
+<h1 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h1><p>我后面还会出一些关于香橙派的一些文章，大家感兴趣的可以关注一下我。</p>
+<p>香橙派还是比较便宜的。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>puill
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://www.puill.xin/2025/01/17/27a3b7954e84/" title="香橙派开发系列-无屏幕使用香橙派">http://www.puill.xin/2025/01/17/27a3b7954e84/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" rel="tag"># 单片机</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/01/17/10bcd339aa70/" rel="prev" title="香橙派开发系列-输入模式和上拉下拉">
+                  <i class="fa fa-angle-left"></i> 香橙派开发系列-输入模式和上拉下拉
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/01/17/d57535b42630/" rel="next" title="香橙派开发系列-中断？不！中断！">
+                  香橙派开发系列-中断？不！中断！ <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">puill</span>
+  </div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+--><div>
+<!--添加网站运行时间-->
+<span>小破站已经在风雨中度过了</span>
+<span id="timeDate">载入天数...</span>
+<span id="times">载入时分秒...</span>
+<script>
+    function createtime() {
+        const startTime = '01/10/2025 00:00:00',
+            start = new Date(startTime)
+        let mill = new Date() - start,
+            seconds = Math.floor(mill / 1000),
+            mins = Math.floor(seconds / 60),
+            hours = Math.floor(mins / 60),
+            days = Math.floor(hours / 24)
+        const time = {
+            seconds: seconds - mins * 60,
+            mins: mins - hours * 60,
+            hours: hours - days * 24,
+        }
+        for (const k in time) {
+            time[k] = `${time[k]}`.padStart(2, '0')
+        }
+        document.getElementById("timeDate").innerHTML = ` ${days} 天`
+        document.getElementById("times").innerHTML = ` ${time.hours} 小时 ${time.mins} 分 ${time.seconds} 秒`
+    }
+    setInterval(createtime, 500)
+</script>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

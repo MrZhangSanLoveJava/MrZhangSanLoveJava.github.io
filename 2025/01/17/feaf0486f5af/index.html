@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.puill.xin","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"show_result":true,"style":"default"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="用蓝牙实现无线传输数据">
+<meta property="og:type" content="article">
+<meta property="og:title" content="香橙派开发系列-使用蓝牙和手机进行信息的交换">
+<meta property="og:url" content="http://www.puill.xin/2025/01/17/feaf0486f5af/index.html">
+<meta property="og:site_name" content="puill&#39;s Blog">
+<meta property="og:description" content="用蓝牙实现无线传输数据">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131222614043-381623405.jpg">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131222952266-1526676184.jpg">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131223407901-1242056721.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131223545021-2054088621.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131223713062-1270983779.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131224015613-183098500.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131225350954-637982947.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131232923132-1431987147.jpg">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131233636527-494670284.jpg">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131233741588-579644404.jpg">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131233820799-2037271568.jpg">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201004955316-115234185.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201005302098-113983016.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201005337757-1243728913.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201005401317-2122540859.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201005541612-792900492.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201011437761-796252053.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201011632150-2099482164.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201012139484-1871459667.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201222725359-170013347.jpg">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201222924734-1412345816.jpg">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201223956644-1830750314.jpg">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201224021569-740821848.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201224151378-596771392.jpg">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201224204795-1231226835.png">
+<meta property="article:published_time" content="2025-01-17T15:51:36.115Z">
+<meta property="article:modified_time" content="2025-01-17T16:08:38.917Z">
+<meta property="article:author" content="puill">
+<meta property="article:tag" content="单片机">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131222614043-381623405.jpg">
+
+
+<link rel="canonical" href="http://www.puill.xin/2025/01/17/feaf0486f5af/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.puill.xin/2025/01/17/feaf0486f5af/","path":"2025/01/17/feaf0486f5af/","title":"香橙派开发系列-使用蓝牙和手机进行信息的交换"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>香橙派开发系列-使用蓝牙和手机进行信息的交换 | puill's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">puill's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-文章"><a href="/articles/" rel="section"><i class="fa fa-file-text fa-fw"></i>文章</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-友链"><a href="/friendchains/" rel="section"><i class="fa fa-paperclip fa-fw"></i>友链</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81HC05%E8%93%9D%E7%89%99%E6%A8%A1%E5%9D%97"><span class="nav-number">2.</span> <span class="nav-text">一、HC05蓝牙模块</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-HC05%E6%A6%82%E8%BF%B0"><span class="nav-number">2.1.</span> <span class="nav-text">1.HC05概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-HC05%E7%9A%84%E8%BF%9E%E6%8E%A5%E5%9B%BE"><span class="nav-number">2.2.</span> <span class="nav-text">2.HC05的连接图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E8%BF%9B%E5%85%A5HC05%E7%9A%84%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.3.</span> <span class="nav-text">3.进入HC05的命令模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%B8%B8%E7%94%A8%E7%9A%84AT%E6%8C%87%E4%BB%A4"><span class="nav-number">2.4.</span> <span class="nav-text">4.常用的AT指令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E6%A3%80%E6%9F%A5AT%E6%98%AF%E5%90%A6%E4%B8%8A%E7%BA%BF"><span class="nav-number">2.4.1.</span> <span class="nav-text">4.1 检查AT是否上线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E9%87%8D%E5%90%AF%E6%A8%A1%E5%9D%97"><span class="nav-number">2.4.2.</span> <span class="nav-text">4.2 重启模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E8%8E%B7%E5%8F%96%E8%BD%AF%E4%BB%B6%E7%89%88%E6%9C%AC%E5%8F%B7"><span class="nav-number">2.4.3.</span> <span class="nav-text">4.3 获取软件版本号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-%E6%81%A2%E5%A4%8D%E9%BB%98%E8%AE%A4%E7%8A%B6%E6%80%81"><span class="nav-number">2.4.4.</span> <span class="nav-text">4.4 恢复默认状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-%E8%8E%B7%E5%8F%96%E8%93%9D%E7%89%99%E7%9A%84%E5%90%8D%E7%A7%B0"><span class="nav-number">2.4.5.</span> <span class="nav-text">4.5 获取蓝牙的名称</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-6-%E8%AE%BE%E7%BD%AE%E8%93%9D%E7%89%99%E6%A8%A1%E5%9D%97%E7%9A%84%E6%B3%A2%E7%89%B9%E7%8E%87"><span class="nav-number">2.4.6.</span> <span class="nav-text">4.6 设置蓝牙模块的波特率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-7-%E6%9F%A5%E8%AF%A2%E8%93%9D%E7%89%99%E7%9A%84%E8%BF%9E%E6%8E%A5%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.4.7.</span> <span class="nav-text">4.7 查询蓝牙的连接模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-8-%E6%9F%A5%E8%AF%A2%E6%A8%A1%E5%9D%97%E8%A7%92%E8%89%B2"><span class="nav-number">2.4.8.</span> <span class="nav-text">4.8 查询模块角色</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E8%BF%9E%E6%8E%A5%E7%94%B5%E8%84%91"><span class="nav-number">2.5.</span> <span class="nav-text">5.连接电脑</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E9%80%9A%E8%BF%87HC05%E5%8F%91%E9%80%81%E6%B6%88%E6%81%AF"><span class="nav-number">2.6.</span> <span class="nav-text">6.通过HC05发送消息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-stm32%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81"><span class="nav-number">2.7.</span> <span class="nav-text">7.stm32完整代码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E9%A6%99%E6%A9%99%E6%B4%BE%E4%B8%B2%E5%8F%A3%E9%80%9A%E8%AE%AF"><span class="nav-number">3.</span> <span class="nav-text">二、香橙派串口通讯</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%89%93%E5%BC%80%E4%B8%B2%E5%8F%A3%E8%AE%BE%E5%A4%87"><span class="nav-number">3.1.</span> <span class="nav-text">1.打开串口设备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%8E%A5%E7%BA%BF"><span class="nav-number">3.2.</span> <span class="nav-text">2.接线</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E4%B8%B2%E5%8F%A3%E5%87%BD%E6%95%B0"><span class="nav-number">3.3.</span> <span class="nav-text">3.串口函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E6%89%93%E5%BC%80%E4%B8%B2%E5%8F%A3%E6%96%87%E4%BB%B6"><span class="nav-number">3.3.1.</span> <span class="nav-text">3.1 打开串口文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E5%85%B3%E9%97%AD%E4%B8%B2%E5%8F%A3%E6%96%87%E4%BB%B6"><span class="nav-number">3.3.2.</span> <span class="nav-text">3.2 关闭串口文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E5%8F%91%E9%80%81%E4%B8%80%E4%B8%AA%E5%AD%97%E7%AC%A6"><span class="nav-number">3.3.3.</span> <span class="nav-text">3.3 发送一个字符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E5%8F%91%E9%80%81%E4%B8%80%E4%B8%AA%E8%A7%84%E5%AE%9A%E5%A5%BD%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">3.3.4.</span> <span class="nav-text">3.4 发送一个规定好的字符串</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-printf"><span class="nav-number">3.3.5.</span> <span class="nav-text">3.5 printf</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-6-%E8%BF%94%E5%9B%9E%E7%AD%89%E5%BE%85%E8%AF%BB%E5%8F%96%E7%9A%84%E5%AD%97%E7%AC%A6%E6%95%B0"><span class="nav-number">3.3.6.</span> <span class="nav-text">3.6 返回等待读取的字符数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-7-%E8%AF%BB%E5%8F%96%E5%AD%97%E7%AC%A6"><span class="nav-number">3.3.7.</span> <span class="nav-text">3.7 读取字符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-8-%E7%BC%93%E5%86%B2%E5%8C%BA%E5%87%BD%E6%95%B0"><span class="nav-number">3.3.8.</span> <span class="nav-text">3.8 缓冲区函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E8%BE%93%E5%87%BA%E5%86%85%E5%AE%B9"><span class="nav-number">3.4.</span> <span class="nav-text">4.输出内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E6%8E%A5%E6%94%B6%E5%86%85%E5%AE%B9"><span class="nav-number">3.5.</span> <span class="nav-text">5.接收内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E6%8E%A5%E6%94%B6%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">3.6.</span> <span class="nav-text">6.接收字符串</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E4%BD%BF%E7%94%A8hc05%E8%BF%9E%E6%8E%A5%E9%A6%99%E6%A9%99%E6%B4%BE"><span class="nav-number">4.</span> <span class="nav-text">三、使用hc05连接香橙派</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E9%80%9A%E8%BF%87%E8%93%9D%E7%89%99%E5%8F%91%E9%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%BB%99%E6%89%8B%E6%9C%BA"><span class="nav-number">4.1.</span> <span class="nav-text">1.通过蓝牙发送字符串给手机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%89%8B%E6%9C%BA%E5%8F%91%E9%80%81%E5%86%85%E5%AE%B9%E7%BB%99%E9%A6%99%E6%A9%99%E6%B4%BE"><span class="nav-number">4.2.</span> <span class="nav-text">2.手机发送内容给香橙派</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="puill"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">puill</p>
+  <div class="site-description" itemprop="description">puill的博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="mailto:2256044190@qq.com" title="E-Mail → mailto:2256044190@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.puill.xin/2025/01/17/feaf0486f5af/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="puill">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="puill's Blog">
+      <meta itemprop="description" content="puill的博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="香橙派开发系列-使用蓝牙和手机进行信息的交换 | puill's Blog">
+      <meta itemprop="description" content="用蓝牙实现无线传输数据">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          香橙派开发系列-使用蓝牙和手机进行信息的交换
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-01-17 23:51:36" itemprop="dateCreated datePublished" datetime="2025-01-17T23:51:36+08:00">2025-01-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-01-18 00:08:38" itemprop="dateModified" datetime="2025-01-18T00:08:38+08:00">2025-01-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%A6%99%E6%A9%99%E6%B4%BE/" itemprop="url" rel="index"><span itemprop="name">香橙派</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">用蓝牙实现无线传输数据</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>隔了这么久我准备再玩一下香橙派，最近这段时间还是比较的忙，我搭建了个论坛和博客，经常被网络攻击，所以我也是一直在弄网络去了，然后今天比较空闲就想着把单子做一下，这个单子需要使用到HC05蓝牙模块，所以我准备写一篇博客来使用香橙派控制HC05蓝牙模块。</p>
+<h1 id="一、HC05蓝牙模块"><a href="#一、HC05蓝牙模块" class="headerlink" title="一、HC05蓝牙模块"></a>一、HC05蓝牙模块</h1><p>这个模块是非常经典的一个蓝牙模块，我之前有一单也是使用到这个模块，可以看一下我的这个视频<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1PH4y117oV/?share_source=copy_web&vd_source=4bb508bdc624514980a5500e28ea3819">【作息控制系统使用说明】</a>，这个项目也是使用到蓝牙模块的，只不过当时时间紧任务重所以就没有写一篇博客来好好记录一下这个项目，等后面我会单独拿一个模块来介绍一下我做的这些小项目。</p>
+<h2 id="1-HC05概述"><a href="#1-HC05概述" class="headerlink" title="1.HC05概述"></a>1.HC05概述</h2><p>HC05是嵌入式蓝牙串口通讯模块，也就是使用串口就可以和HC05进行通讯并发送信息给蓝牙的接收端，这个模块有两种工作方式：</p>
+<p>1 命令响应工作模式</p>
+<p>2 自动连接工作模式</p>
+<p>在自动连接的工作模式下又可以分为主、从、回环这三种模式，当传输数据时，根据事先设定的方式连接并传输数据。</p>
+<p>在命令模式下，用户可以使用串口连接模块，并发送<code>AT</code>指令对模块进行设置。</p>
+<h2 id="2-HC05的连接图"><a href="#2-HC05的连接图" class="headerlink" title="2.HC05的连接图"></a>2.HC05的连接图</h2><p>这里我直接使用<code>TTL to USB</code>进行连接，因为我要设置一下这个模块的一些传输和内容。</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131222614043-381623405.jpg" alt="img"></p>
+<p>这里和串口连接的模式一样</p>
+<table>
+<thead>
+<tr>
+<th>HC05</th>
+<th>TTL</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>3.3</td>
+<td>VCC</td>
+</tr>
+<tr>
+<td>TXD</td>
+<td>RXD</td>
+</tr>
+<tr>
+<td>RXD</td>
+<td>TXD</td>
+</tr>
+<tr>
+<td>GND</td>
+<td>GND</td>
+</tr>
+</tbody></table>
+<h2 id="3-进入HC05的命令模式"><a href="#3-进入HC05的命令模式" class="headerlink" title="3.进入HC05的命令模式"></a>3.进入HC05的命令模式</h2><p>首先我们需要通过<code>AT</code>指令来设置模块的一些内容，然后我们才好进入下面的一些操作，首先在这个模块上有一个按钮</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131222952266-1526676184.jpg" alt="img"></p>
+<p>在上电之前需要长按这个按键，然后再上电就可以进入命令模式，在进入命令模式后，模块上的LED等会缓慢的闪烁，如果没有进入就会闪得很快。</p>
+<h2 id="4-常用的AT指令"><a href="#4-常用的AT指令" class="headerlink" title="4.常用的AT指令"></a>4.常用的AT指令</h2><p>AT指令列表已经烂大街了，所以这里不全部说明，我只拿出一些常用的来说明即可。</p>
+<h3 id="4-1-检查AT是否上线"><a href="#4-1-检查AT是否上线" class="headerlink" title="4.1 检查AT是否上线"></a>4.1 检查AT是否上线</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AT\r\n</span><br></pre></td></tr></table></figure>
+
+<p>如果模块在就会返回<code>OK</code></p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131223407901-1242056721.png" alt="img"></p>
+<h3 id="4-2-重启模块"><a href="#4-2-重启模块" class="headerlink" title="4.2 重启模块"></a>4.2 重启模块</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AT+RESET\r\n</span><br></pre></td></tr></table></figure>
+
+<p>如果执行成功就会返回<code>OK</code>，并进入自动连接模式</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131223545021-2054088621.png" alt="img"></p>
+<h3 id="4-3-获取软件版本号"><a href="#4-3-获取软件版本号" class="headerlink" title="4.3 获取软件版本号"></a>4.3 获取软件版本号</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AT_VERSION?\r\n</span><br></pre></td></tr></table></figure>
+
+<p>执行完成后会返回版本信息和<code>OK</code></p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131223713062-1270983779.png" alt="img"></p>
+<h3 id="4-4-恢复默认状态"><a href="#4-4-恢复默认状态" class="headerlink" title="4.4 恢复默认状态"></a>4.4 恢复默认状态</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AT+ORGL\r\n</span><br></pre></td></tr></table></figure>
+
+<p>执行完成后会返回<code>OK</code>，并将模块恢复为出厂设置。</p>
+<h3 id="4-5-获取蓝牙的名称"><a href="#4-5-获取蓝牙的名称" class="headerlink" title="4.5 获取蓝牙的名称"></a>4.5 获取蓝牙的名称</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AT+NAME?\r\n</span><br></pre></td></tr></table></figure>
+
+<p>执行完成后会返回蓝牙名称并返回<code>OK</code></p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131224015613-183098500.png" alt="img"></p>
+<h3 id="4-6-设置蓝牙模块的波特率"><a href="#4-6-设置蓝牙模块的波特率" class="headerlink" title="4.6 设置蓝牙模块的波特率"></a>4.6 设置蓝牙模块的波特率</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AT+UART=波特率,停止位,校验位\r\n</span><br></pre></td></tr></table></figure>
+
+<p>这里我们设置一个比较常见的，波特率9600，停止位1位，无校验位</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AT+UART=9600,1,0</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以了。</p>
+<h3 id="4-7-查询蓝牙的连接模式"><a href="#4-7-查询蓝牙的连接模式" class="headerlink" title="4.7 查询蓝牙的连接模式"></a>4.7 查询蓝牙的连接模式</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AT+CMODE?\r\n</span><br></pre></td></tr></table></figure>
+
+<p>返回当前模式，1代表任意模式，也就是蓝牙名称和蓝牙地址都可以连接，这里就不多说了，一般默认是1就可以了。</p>
+<h3 id="4-8-查询模块角色"><a href="#4-8-查询模块角色" class="headerlink" title="4.8 查询模块角色"></a>4.8 查询模块角色</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AT+ROLE?</span><br></pre></td></tr></table></figure>
+
+<p>这里默认的是<code>Slave</code>从角色，也就是被动连接，不用动。</p>
+<h2 id="5-连接电脑"><a href="#5-连接电脑" class="headerlink" title="5.连接电脑"></a>5.连接电脑</h2><p>这里我踩了个大坑，因为我之前的设置是将波特率改为9600了，所以在串口的时候我就用9600进行连接，结果没有任何的反应，后面查了一下手册才发现它默认的波特率是<code>38400</code>，就很尴尬。</p>
+<p>这里连接好电脑后先发送个<code>AT</code>指令来查看一下是否返回OK，如果没返回有可能是因为坏了或者是你没长按按键进入命令模式。</p>
+<p>然后修改一下波特率，因为我们后面初始化串口不想给那么大的波特率</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131225350954-637982947.png" alt="img"></p>
+<p>初始化完成后要记得重启一下模块，然后模块的波特率就设置好看，但是AT指令模式下还是那个波特率（又踩坑了，当不想改文章）。</p>
+<h2 id="6-通过HC05发送消息"><a href="#6-通过HC05发送消息" class="headerlink" title="6.通过HC05发送消息"></a>6.通过HC05发送消息</h2><p>这里我先用stm32来演示，因为我还在做单子所以先拿这个演示。</p>
+<p>首先先写串口的初始化函数，这里我使用的是<code>USART1</code>，初始化代码就不展示了，因为今天的主题不是stm32，然后在main函数中我们使用重写的<code>printf</code>来通过串口发送数据。不知道的可以看我这篇博客<a target="_blank" rel="noopener" href="https://www.cnblogs.com/Lavender-edgar/p/17591746.html">异步通讯点灯</a>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    OLED_Init();</span><br><span class="line">    MX_Init_KEY();</span><br><span class="line">    MX_Init_HC05();</span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;hello\r\n&quot;</span>);</span><br><span class="line">        OLED_ShowString(<span class="number">1</span>, <span class="number">1</span>, <span class="string">&quot;hello&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后需要在手机上下载<code>蓝牙调试宝</code>，在应用商城都可以下载，这我就不给你们压缩包了，要不然我老喜欢挂码。</p>
+<p>首先要把蓝牙模块连接到面包板上，然后就用手机连接好蓝牙</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131232923132-1431987147.jpg" alt="img"></p>
+<p>记住串口反接并且要接地即可。</p>
+<p>然后打开蓝牙助手的界面</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131233636527-494670284.jpg" alt="img"></p>
+<p>找到里面有一个<code>HC-05</code>，然后连接即可，第一次连接需要你输入一个配对码，这里输入1234或者0000都可以</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131233741588-579644404.jpg" alt="img"></p>
+<p>然后给单片机上电后就会显示出hello来</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131233820799-2037271568.jpg" alt="img"></p>
+<p>学到这你已经会使用蓝牙进行发送信息了，stm32就先不再出现了，后面就是香橙派的内容了。</p>
+<h2 id="7-stm32完整代码"><a href="#7-stm32完整代码" class="headerlink" title="7.stm32完整代码"></a>7.stm32完整代码</h2><p>usart.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;hc05.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">MX_Init_HC05</span><span class="params">()</span>&#123;</span><br><span class="line">    GPIO_InitTypeDef GPIO_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    USART_InitTypeDef USART_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    </span><br><span class="line">    RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);</span><br><span class="line">    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);</span><br><span class="line">    </span><br><span class="line">    GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF_PP;</span><br><span class="line">    GPIO_InitStruct.GPIO_Pin = GPIO_Pin_9;</span><br><span class="line">    GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">    GPIO_Init(GPIOA, &amp;GPIO_InitStruct);</span><br><span class="line">    GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IPU;</span><br><span class="line">    GPIO_InitStruct.GPIO_Pin = GPIO_Pin_10;</span><br><span class="line">    GPIO_Init(GPIOA, &amp;GPIO_InitStruct);</span><br><span class="line">    </span><br><span class="line">    USART_InitStruct.USART_BaudRate = <span class="number">9600</span>;</span><br><span class="line">    USART_InitStruct.USART_HardwareFlowControl = USART_HardwareFlowControl_None;</span><br><span class="line">    USART_InitStruct.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;</span><br><span class="line">    USART_InitStruct.USART_Parity = USART_Parity_No;</span><br><span class="line">    USART_InitStruct.USART_StopBits = USART_StopBits_1;</span><br><span class="line">    USART_InitStruct.USART_WordLength = USART_WordLength_8b;</span><br><span class="line">    USART_Init(USART1, &amp;USART_InitStruct);</span><br><span class="line">    USART_Cmd(USART1, ENABLE);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">fputc</span><span class="params">(<span class="type">int</span> ch, FILE *f)</span></span><br><span class="line">&#123;      </span><br><span class="line">	<span class="keyword">while</span>((USART1-&gt;SR&amp;<span class="number">0X40</span>)==<span class="number">0</span>);  </span><br><span class="line">    USART1-&gt;DR = (u8) ch;      </span><br><span class="line">	<span class="keyword">return</span> ch;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h1 id="二、香橙派串口通讯"><a href="#二、香橙派串口通讯" class="headerlink" title="二、香橙派串口通讯"></a>二、香橙派串口通讯</h1><p>在介绍使用香橙派使用HC05模块前先介绍一下串口通讯，并如何配置串口通讯。</p>
+<h2 id="1-打开串口设备"><a href="#1-打开串口设备" class="headerlink" title="1.打开串口设备"></a>1.打开串口设备</h2><p>在香橙派中，串口通讯是使用设备来进行传输的， 所以我们需要在系统设置中将串口进行打开。</p>
+<p>在打开之前先了解一下香橙派的串口引脚分布</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201004955316-115234185.png" alt="img"></p>
+<p>在3b中有3个串口可供选择，然后通过</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo orangepi-config</span><br></pre></td></tr></table></figure>
+
+<p>来开启设备，进入到设置页面</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201005302098-113983016.png" alt="img"></p>
+<p>然后选择第一个，按一下回车即可，然后在下面的页面中选择<code>Hardware</code></p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201005337757-1243728913.png" alt="img"></p>
+<p>然后找到你要开启的串口</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201005401317-2122540859.png" alt="img"></p>
+<p>我这选择的是<code>UART7</code>，使用方向键移动到那后按一下空格就选中，然后按一下回车保存，之后会提示是否重启，然后按一下回车就可以重启了。</p>
+<p>重启完成后使用</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls /dev/ ttyS*</span><br></pre></td></tr></table></figure>
+
+<p>来查看可操作的设备文件，这里只会显示你开启的设备</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201005541612-792900492.png" alt="img"></p>
+<p>我们刚才选择了<code>UART7</code>后它这里就会有相应的设备，那个<code>ttyS1</code>是默认开启的，我们不用理他。</p>
+<h2 id="2-接线"><a href="#2-接线" class="headerlink" title="2.接线"></a>2.接线</h2><p>这里就需要非常非常注意了，我在测试的时候就是这里没有弄好，线接反了，导致一直发送不了。</p>
+<p>按照前面给的那张图进行接线后我们就可以写代码了。</p>
+<p><strong>注意：这里很重要，很多人玩51单片机来玩这个会忽略一个问题就是GND必须要和单片机的GND接在一起，很多人会单独给这个引脚接GND是错误的。</strong></p>
+<h2 id="3-串口函数"><a href="#3-串口函数" class="headerlink" title="3.串口函数"></a>3.串口函数</h2><p>这里使用的串口函数库是</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringSerial.h&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-1-打开串口文件"><a href="#3-1-打开串口文件" class="headerlink" title="3.1 打开串口文件"></a>3.1 打开串口文件</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">serialOpen</span><span class="params">(<span class="type">const</span> <span class="type">char</span>* path, <span class="type">int</span> butrl)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>第一个参数是设备的路径，比如说我们这需要使用到<code>UART1</code>，那设备地址就是<code>/dev/ttyS7</code>。</p>
+<p>第二个参数是波特率，比如9600。</p>
+<p>这个函数的返回值是一个文件描述符，我们使用一个变量来接收就可以了。</p>
+<h3 id="3-2-关闭串口文件"><a href="#3-2-关闭串口文件" class="headerlink" title="3.2 关闭串口文件"></a>3.2 关闭串口文件</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">serialClose</span><span class="params">(<span class="type">int</span> fd)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>参数是打开的设备描述符。</p>
+<h3 id="3-3-发送一个字符"><a href="#3-3-发送一个字符" class="headerlink" title="3.3 发送一个字符"></a>3.3 发送一个字符</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">serialPutchar</span><span class="params">(<span class="type">int</span> fd, <span class="type">char</span> c)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>将一个字符发送到打开的文件描述符fd所对应的设备文件。</p>
+<h3 id="3-4-发送一个规定好的字符串"><a href="#3-4-发送一个规定好的字符串" class="headerlink" title="3.4 发送一个规定好的字符串"></a>3.4 发送一个规定好的字符串</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">serialPuts</span><span class="params">(<span class="type">int</span> fd, <span class="type">char</span>* s)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>发送一个规定好的字符串，然后以0结尾。</p>
+<h3 id="3-5-printf"><a href="#3-5-printf" class="headerlink" title="3.5 printf"></a>3.5 printf</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">serialPrintf</span><span class="params">(<span class="type">int</span> fd, <span class="type">char</span>* message, ...)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这个和printf的用法类似。</p>
+<h3 id="3-6-返回等待读取的字符数"><a href="#3-6-返回等待读取的字符数" class="headerlink" title="3.6 返回等待读取的字符数"></a>3.6 返回等待读取的字符数</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">serialDataAvail</span><span class="params">(<span class="type">int</span> fd)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>返回的是等待读取的字符数。</p>
+<h3 id="3-7-读取字符"><a href="#3-7-读取字符" class="headerlink" title="3.7 读取字符"></a>3.7 读取字符</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">serialGetChar</span><span class="params">(<span class="type">int</span> fd)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>返回下一个待读取的字符，如果这个在10s内没有读取到字符就会返回-1。</p>
+<h3 id="3-8-缓冲区函数"><a href="#3-8-缓冲区函数" class="headerlink" title="3.8 缓冲区函数"></a>3.8 缓冲区函数</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">serialFlush</span><span class="params">(<span class="type">int</span> fd)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>抛弃所有接收的数据或者等待写入设备完成。</p>
+<h2 id="4-输出内容"><a href="#4-输出内容" class="headerlink" title="4.输出内容"></a>4.输出内容</h2><p>通过学习了上面的内容后我们可以简单写一个输出字符的代码来输出0~9</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringPi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringSerial.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">int</span> fd = <span class="number">-1</span>, i;</span><br><span class="line">    wiringPiSetup();</span><br><span class="line">    fd = serialOpen(<span class="string">&quot;/dev/ttyS7&quot;</span>, <span class="number">9600</span>);    <span class="comment">// 设置串口设备和波特率</span></span><br><span class="line">    <span class="keyword">if</span> (fd &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="comment">// 设备打开失败</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;设备打开失败\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    serialFlush(fd);</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)&#123;</span><br><span class="line">        serialPutchar(fd, i + <span class="string">&#x27;0&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    serialClose(fd);     <span class="comment">// 关闭设备</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行效果如下：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201011437761-796252053.png" alt="img"></p>
+<p>然后也可以使用printf来个高级一点的输出</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringPi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringSerial.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">int</span> fd = <span class="number">-1</span>, i;</span><br><span class="line">    wiringPiSetup();</span><br><span class="line">    fd = serialOpen(<span class="string">&quot;/dev/ttyS7&quot;</span>, <span class="number">9600</span>);    <span class="comment">// 设置串口设备和波特率</span></span><br><span class="line">    <span class="keyword">if</span> (fd &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="comment">// 设备打开失败</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;设备打开失败\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    serialFlush(fd);</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)&#123;</span><br><span class="line">        serialPrintf(fd, <span class="string">&quot;this is%d\r\n&quot;</span>, i);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    serialClose(fd);     <span class="comment">// 关闭设备</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出的内容如下：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201011632150-2099482164.png" alt="img"></p>
+<h2 id="5-接收内容"><a href="#5-接收内容" class="headerlink" title="5.接收内容"></a>5.接收内容</h2><p>我们可以通过串口来接收一下用户输入的内容，并判断输入的字符是不是我们需要的，然后通过串口返回</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringPi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringSerial.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">int</span> fd = <span class="number">-1</span>, i;</span><br><span class="line">    <span class="type">int</span> c;</span><br><span class="line">    wiringPiSetup();</span><br><span class="line">    fd = serialOpen(<span class="string">&quot;/dev/ttyS7&quot;</span>, <span class="number">9600</span>);    <span class="comment">// 设置串口设备和波特率</span></span><br><span class="line">    <span class="keyword">if</span> (fd &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="comment">// 设备打开失败</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;设备打开失败\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    serialFlush(fd);</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        c = serialGetchar(fd);</span><br><span class="line">        <span class="keyword">if</span> (c == <span class="number">-1</span>)&#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (c == <span class="string">&#x27;1&#x27;</span>)&#123;</span><br><span class="line">            serialPrintf(fd, <span class="string">&quot;this is 1&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%c&quot;</span>, c);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    serialClose(fd);     <span class="comment">// 关闭设备</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出的内容：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201012139484-1871459667.png" alt="img"></p>
+<p>这里大家可以看到我在这个while循环中添加了一个printf，但是没有截屏给出效果，是因为在这个串口运行的过程中一直在读取的是串口的设备，没有使用输入输出流设备，所以导致我们在输入后没办法显示出内容来，这个的解决办法我还不太清楚，等我研究好了我在出一篇文章来介绍。</p>
+<h2 id="6-接收字符串"><a href="#6-接收字符串" class="headerlink" title="6.接收字符串"></a>6.接收字符串</h2><p>做串口最让人沉醉的就是读取字符串的操作了,在<code>wiringSerial</code>中有一个函数可以获取缓冲区的长度，我们可以判断这个来读取输入的数据的长度，然后使用一个<code>for</code>循环来循环读取和放置在一个数组中，之后进行输出即可，代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringPi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringSerial.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">int</span> fd = <span class="number">-1</span>;</span><br><span class="line">    <span class="type">int</span> i, ch, j = <span class="number">0</span>, len;</span><br><span class="line">    <span class="type">char</span> str[<span class="number">1024</span>];</span><br><span class="line">    wiringPiSetup();</span><br><span class="line">    fd = serialOpen(<span class="string">&quot;/dev/ttyS7&quot;</span>, <span class="number">9600</span>);</span><br><span class="line">    <span class="keyword">if</span> (fd &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;打开设备文件失败\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        len = serialDataAvail(fd);     <span class="comment">// 获取缓冲区的长度</span></span><br><span class="line">        <span class="keyword">if</span> (len == <span class="number">-1</span>)&#123;</span><br><span class="line">            <span class="comment">// 超时退出循环</span></span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(len &gt; <span class="number">0</span>)&#123;</span><br><span class="line">            serialPrintf(fd, <span class="string">&quot;%d\n&quot;</span>, len);    <span class="comment">// 这一行是测试的</span></span><br><span class="line">            <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; len;  i++)&#123;</span><br><span class="line">                ch = serialGetchar(fd);       <span class="comment">// 读取字符</span></span><br><span class="line">                str[j++] = ch;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    str[j] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, str);</span><br><span class="line">    serialClose(fd);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="三、使用hc05连接香橙派"><a href="#三、使用hc05连接香橙派" class="headerlink" title="三、使用hc05连接香橙派"></a>三、使用hc05连接香橙派</h1><p>学会了上面的操作后我们就可以来用香橙派连接hc05了，这个操作也非常非常的简单，和单片机的连接一致，注意不要连错就行了。</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201222725359-170013347.jpg" alt="img"></p>
+<h2 id="1-通过蓝牙发送字符串给手机"><a href="#1-通过蓝牙发送字符串给手机" class="headerlink" title="1.通过蓝牙发送字符串给手机"></a>1.通过蓝牙发送字符串给手机</h2><p>本质的思路还是一样的，就是使用串口是输入输出就可以搞定，代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringPi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringSerial.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">int</span> fd = <span class="number">-1</span>, i;</span><br><span class="line">    <span class="type">int</span> c;</span><br><span class="line">    wiringPiSetup();</span><br><span class="line">    fd = serialOpen(<span class="string">&quot;/dev/ttyS7&quot;</span>, <span class="number">9600</span>);    <span class="comment">// 设置串口设备和波特率</span></span><br><span class="line">    <span class="keyword">if</span> (fd &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="comment">// 设备打开失败</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;设备打开失败\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    serialFlush(fd);</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        serialPrintf(fd, <span class="string">&quot;hello\r\n&quot;</span>);</span><br><span class="line">        delayMicroseconds(<span class="number">30000</span>);     <span class="comment">// 延时函数，免得发送得过快</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    serialClose(fd);     <span class="comment">// 关闭设备</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后在调试助手中就可以看到蓝牙模块发送的内容了：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201222924734-1412345816.jpg" alt="img"></p>
+<h2 id="2-手机发送内容给香橙派"><a href="#2-手机发送内容给香橙派" class="headerlink" title="2.手机发送内容给香橙派"></a>2.手机发送内容给香橙派</h2><p>这里可以使用刚才我们测试的接收字符串，只不过这里有一个问题就是这个工具只能发送字符所对应的ascii码，不能正常的输入字符进行输出。</p>
+<p>比如我们手机输入字符0，那就得输入ascii码的30</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201223956644-1830750314.jpg" alt="img"></p>
+<p>然后在香橙派中就会显示：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201224021569-740821848.png" alt="img"></p>
+<p>然后我们还可以用这个来输入0~9</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201224151378-596771392.jpg" alt="img"></p>
+<p>然后显示</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201224204795-1231226835.png" alt="img"></p>
+<p>学会了这个后我们就可以编写一个用蓝牙点灯的程序了，其实就是使用蓝牙接收到关键字后给LED灯高低电平，这里就直接给代码了，不展示图片了</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringPi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringSerial.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">int</span> fd = <span class="number">-1</span>;</span><br><span class="line">    <span class="type">int</span> i, ch, j = <span class="number">0</span>, len;</span><br><span class="line">    <span class="type">char</span> str[<span class="number">1024</span>];</span><br><span class="line">    wiringPiSetup();</span><br><span class="line">    fd = serialOpen(<span class="string">&quot;/dev/ttyS7&quot;</span>, <span class="number">9600</span>);</span><br><span class="line">    <span class="keyword">if</span> (fd &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;打开设备文件失败\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        len = serialDataAvail(fd);</span><br><span class="line">        <span class="keyword">if</span> (len == <span class="number">-1</span>)&#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(len &gt; <span class="number">0</span>)&#123;</span><br><span class="line">            serialPrintf(fd, <span class="string">&quot;%d\n&quot;</span>, len);</span><br><span class="line">            <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; len;  i++)&#123;</span><br><span class="line">                ch = serialGetchar(fd);</span><br><span class="line">                str[j++] = ch;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    str[j] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, str);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">strcmp</span>(str, <span class="string">&quot;0&quot;</span>))&#123;</span><br><span class="line">        <span class="comment">// 点灯</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="comment">// 灭灯</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    serialClose(fd);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>串口很好玩，蓝牙模块也好玩，学会了这一节我们就可以使用蓝牙做一个简单的远程开关灯的项目了，当然拿香橙派做这个项目就很浪费，毕竟香橙派可以直接使用网络来实现，做一个网页，然后内网穿透，这样可以很容易的在远程进行控制了，等我最近忙完有时间我做一个。</p>
+<p>大家可以关注一下我的论坛和博客，有不懂的或者有趣的问题可以放在我的论坛中进行提问</p>
+<p><a target="_blank" rel="noopener" href="https://bbs.lavenderedgar.asia/">马桶论坛</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.lavenderedgar.asia/">马桶博客</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>puill
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://www.puill.xin/2025/01/17/feaf0486f5af/" title="香橙派开发系列-使用蓝牙和手机进行信息的交换">http://www.puill.xin/2025/01/17/feaf0486f5af/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" rel="tag"># 单片机</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/01/17/833700e426b2/" rel="prev" title="香橙派开发系列-使用wiringPi控制26个引脚">
+                  <i class="fa fa-angle-left"></i> 香橙派开发系列-使用wiringPi控制26个引脚
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/01/17/10bcd339aa70/" rel="next" title="香橙派开发系列-输入模式和上拉下拉">
+                  香橙派开发系列-输入模式和上拉下拉 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">puill</span>
+  </div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+--><div>
+<!--添加网站运行时间-->
+<span>小破站已经在风雨中度过了</span>
+<span id="timeDate">载入天数...</span>
+<span id="times">载入时分秒...</span>
+<script>
+    function createtime() {
+        const startTime = '01/10/2025 00:00:00',
+            start = new Date(startTime)
+        let mill = new Date() - start,
+            seconds = Math.floor(mill / 1000),
+            mins = Math.floor(seconds / 60),
+            hours = Math.floor(mins / 60),
+            days = Math.floor(hours / 24)
+        const time = {
+            seconds: seconds - mins * 60,
+            mins: mins - hours * 60,
+            hours: hours - days * 24,
+        }
+        for (const k in time) {
+            time[k] = `${time[k]}`.padStart(2, '0')
+        }
+        document.getElementById("timeDate").innerHTML = ` ${days} 天`
+        document.getElementById("times").innerHTML = ` ${time.hours} 小时 ${time.mins} 分 ${time.seconds} 秒`
+    }
+    setInterval(createtime, 500)
+</script>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
