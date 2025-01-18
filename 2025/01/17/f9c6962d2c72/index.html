@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/aaa.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.puill.xin","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"show_result":true,"style":"default"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="使用DMA直接数据读取硬件快速处理接口和内存的直接数据交换，不需要CPU的参与">
+<meta property="og:type" content="article">
+<meta property="og:title" content="09 DMA配合ADC多通道">
+<meta property="og:url" content="http://www.puill.xin/2025/01/17/f9c6962d2c72/index.html">
+<meta property="og:site_name" content="puill&#39;s Blog">
+<meta property="og:description" content="使用DMA直接数据读取硬件快速处理接口和内存的直接数据交换，不需要CPU的参与">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240808211140049-962440252.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240808211226965-1102066633.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240808211437368-184154653.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240808211620579-1992848281.png">
+<meta property="article:published_time" content="2025-01-17T13:36:38.000Z">
+<meta property="article:modified_time" content="2025-01-18T06:23:54.064Z">
+<meta property="article:author" content="puill">
+<meta property="article:tag" content="单片机">
+<meta property="article:tag" content="环境搭建">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240808211140049-962440252.png">
+
+
+<link rel="canonical" href="http://www.puill.xin/2025/01/17/f9c6962d2c72/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.puill.xin/2025/01/17/f9c6962d2c72/","path":"2025/01/17/f9c6962d2c72/","title":"09 DMA配合ADC多通道"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>09 DMA配合ADC多通道 | puill's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">puill's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-文章"><a href="/articles/" rel="section"><i class="fa fa-file-text fa-fw"></i>文章</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-友链"><a href="/friendchains/" rel="section"><i class="fa fa-paperclip fa-fw"></i>友链</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E4%BB%80%E4%B9%88%E6%98%AFDMA"><span class="nav-number">2.</span> <span class="nav-text">一、什么是DMA</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81DMA%E4%BB%8B%E7%BB%8D"><span class="nav-number">3.</span> <span class="nav-text">二、DMA介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-stm32%E7%9A%84DMA"><span class="nav-number">3.1.</span> <span class="nav-text">1.stm32的DMA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-DMA%E7%9A%84%E5%86%85%E9%83%A8%E7%BB%93%E6%9E%84"><span class="nav-number">3.2.</span> <span class="nav-text">2.DMA的内部结构</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E4%BB%A3%E7%A0%81%E7%9A%84%E7%BC%96%E5%86%99"><span class="nav-number">4.</span> <span class="nav-text">三、代码的编写</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%95%B0%E6%8D%AE%E8%BD%AC%E8%BF%90"><span class="nav-number">4.1.</span> <span class="nav-text">1.数据转运</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E5%BC%80%E5%90%AF%E6%97%B6%E9%92%9F"><span class="nav-number">4.1.1.</span> <span class="nav-text">1.1 开启时钟</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E9%85%8D%E7%BD%AEDMA%E7%BB%93%E6%9E%84%E4%BD%93"><span class="nav-number">4.1.2.</span> <span class="nav-text">1.2 配置DMA结构体</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E5%BC%80%E5%A7%8B%E8%BD%AC%E6%8D%A2"><span class="nav-number">4.1.3.</span> <span class="nav-text">1.3 开始转换</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-ADC%E5%8D%95%E9%80%9A%E9%81%93%E8%BD%AC%E6%8D%A2"><span class="nav-number">4.2.</span> <span class="nav-text">2.ADC单通道转换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%BC%80%E5%90%AF%E6%97%B6%E9%92%9F"><span class="nav-number">4.2.1.</span> <span class="nav-text">2.1 开启时钟</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E9%85%8D%E7%BD%AEGPIO%E5%92%8CADC"><span class="nav-number">4.2.2.</span> <span class="nav-text">2.2 配置GPIO和ADC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E9%85%8D%E7%BD%AEDMA"><span class="nav-number">4.2.3.</span> <span class="nav-text">2.3 配置DMA</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%E4%BD%BF%E8%83%BDADC"><span class="nav-number">4.2.4.</span> <span class="nav-text">2.4 使能ADC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-DMA%E8%BD%AC%E7%A7%BB%E5%87%BD%E6%95%B0"><span class="nav-number">4.2.5.</span> <span class="nav-text">2.5 DMA转移函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-ADC%E5%A4%9A%E9%80%9A%E9%81%93%E8%BD%AC%E6%8D%A2"><span class="nav-number">4.3.</span> <span class="nav-text">3.ADC多通道转换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-ADC%E8%BF%9E%E7%BB%AD%E8%BD%AC%E6%8D%A2"><span class="nav-number">4.4.</span> <span class="nav-text">4.ADC连续转换</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="puill"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">puill</p>
+  <div class="site-description" itemprop="description">puill的博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="mailto:2256044190@qq.com" title="E-Mail → mailto:2256044190@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.puill.xin/2025/01/17/f9c6962d2c72/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="puill">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="puill's Blog">
+      <meta itemprop="description" content="puill的博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="09 DMA配合ADC多通道 | puill's Blog">
+      <meta itemprop="description" content="使用DMA直接数据读取硬件快速处理接口和内存的直接数据交换，不需要CPU的参与">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          09 DMA配合ADC多通道
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-01-17 21:36:38" itemprop="dateCreated datePublished" datetime="2025-01-17T21:36:38+08:00">2025-01-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-01-18 14:23:54" itemprop="dateModified" datetime="2025-01-18T14:23:54+08:00">2025-01-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/stm32/" itemprop="url" rel="index"><span itemprop="name">stm32</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">使用DMA直接数据读取硬件快速处理接口和内存的直接数据交换，不需要CPU的参与</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>前面介绍了ADC数模转换，得到了内部的温度值和外部电压值，我感觉这样太消耗CPU的资源了，所以我准备用DMA来帮我从AD的数据寄存器中拿出数据出来，就不用再去读取AD的数据寄存器了。</p>
+<h1 id="一、什么是DMA"><a href="#一、什么是DMA" class="headerlink" title="一、什么是DMA"></a>一、什么是DMA</h1><p>DMA叫做直接存储器存取，就不需要我们CPU通过软件将外部寄存器或者内部的存储器的数据读取到一个地方，而是由DMA控制器来进行操作，这种方法只需要让CPU为DMA配置好一些基本的配置后，当DMA接收到对应的信号就会自动的执行，省去了CPU进行这种毫无意义的操作。</p>
+<p>一般使用DMA都是在大量数据处理和ADC多通道操作的地方，而我们这暂时只用到ADC，所以重点还是对于ADC多通道的DMA设置。</p>
+<h1 id="二、DMA介绍"><a href="#二、DMA介绍" class="headerlink" title="二、DMA介绍"></a>二、DMA介绍</h1><h2 id="1-stm32的DMA"><a href="#1-stm32的DMA" class="headerlink" title="1.stm32的DMA"></a>1.stm32的DMA</h2><p>在stm32f103c8t6中有2个DMA外设，分别是DMA1和DMA2，这两个DMA是连接在<code>AHB</code>高速外部总线上的，所以我们要使用DMA开启的时钟要开启<code>AHB</code>，而不是<code>APB</code>了。</p>
+<p>这两个DMA中又分别有着许多通道，在DMA1中有7个通道，在DMA2中有5个通道，我们使用DMA进行转运就是使用的是这些通道。</p>
+<p>如果我们是对外设和存储器进行转运就需要找到这个外设所对应的通道是哪一个了，下图就是这个的介绍。</p>
+<p>下图是DMA1通道连接的外设：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240808211140049-962440252.png" alt="img"></p>
+<p>下面是DMA2通道连接的外设：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240808211226965-1102066633.png" alt="img"></p>
+<p>可以看到要让DMA转运外设的内容需要看这个DMA的通道是不是连接到该外设，如果没有连接，你进行配置是没办法触发的，所以要对应着来进行配置。</p>
+<h2 id="2-DMA的内部结构"><a href="#2-DMA的内部结构" class="headerlink" title="2.DMA的内部结构"></a>2.DMA的内部结构</h2><p>这里还是借用人家的图，因为我画的不是很清晰，人家的还是很清晰：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240808211437368-184154653.png" alt="img"></p>
+<p>这里可以看到有两个东西，一个是外设寄存器，外设寄存器主要是外部的设备，另一个是存储器，是在内部的，这个其实可以抽象成一个是A另一个是B，就是这个样子：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240808211620579-1992848281.png" alt="img"></p>
+<p>我们可以设置从A到B或者从B到A这个方向的，然后在A端和B端都可以设置三个东西，分别是起始地址、数据宽度、地址是否自增。</p>
+<p>起始地址就是你需要转运的数据或者需要存储的空间它的地址是在哪里，在学指针的时候肯定说过，地址是一个变量在计算机中的实际位置，我们对这个地址所对应的空间赋值，那这个变量就得到这个值了。</p>
+<p>然后数据宽度是指你这个需要传输的数据是什么类型的，是int还是char还是short，就是确定一个类型。</p>
+<p>地址自增就是你给的这个地址，当一个数据传输过去了，它的地址会不会增加，可以自增也可以不自增。</p>
+<p>再往下看，看到一个传输计数器，这个的功能是限制DMA传输的次数，当这个次数自减为0就结束这一次的数据传输，每次传输一个数据时这个寄存器中的值就会减一。</p>
+<p>旁边的自动重装寄存器只有在硬件模式中可以用，当这个传输计数器为0后，自动重装寄存器就会把值再给传输计数器，这样就是一个循环执行，所以被称为硬件模式。</p>
+<p>当然有硬件模式也就有软件模式，而软件模式是没有用这个自动重装寄存器的，因为软件模式是有软件进行控制的，当传输完成后软件会自动的对传输计数器进行赋值，然后再继续运行。</p>
+<p>然后就是硬件选择和软件选择了，这里是由M2M进行控制的，硬件选择对应的就是上面的硬件模式，而软件选择对应的就是软件模式，这里就是使用M2M进行控制。</p>
+<h1 id="三、代码的编写"><a href="#三、代码的编写" class="headerlink" title="三、代码的编写"></a>三、代码的编写</h1><p>上面了解了内部结构后，我们就可以来进行软件编写了，这里分为两种，一个是数据转运，另一个是ADC多通道转运。</p>
+<h2 id="1-数据转运"><a href="#1-数据转运" class="headerlink" title="1.数据转运"></a>1.数据转运</h2><p>实现来讲解一下数据转运，可能后面我需要DMA为我转运陀螺仪的信息，然后这里先介绍一下。</p>
+<h3 id="1-1-开启时钟"><a href="#1-1-开启时钟" class="headerlink" title="1.1 开启时钟"></a>1.1 开启时钟</h3><p>在使用stm32外设第一步都是要开启时钟，只有把时钟开启后下面的操作才会有意义。</p>
+<p>上面提到了，DMA是挂载到AHB总线上的，所以我们要操作<code>RCC_AHBPeriphClockCmd()</code>函数才可以打开<code>AHB</code>总线上的外设，这里的代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1);</span><br></pre></td></tr></table></figure>
+
+<p>这里打开的是DMA1，也可以打开DMA2，代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA2);</span><br></pre></td></tr></table></figure>
+
+<p>这里主要是取决于你使用的是那个DMA设备。</p>
+<h3 id="1-2-配置DMA结构体"><a href="#1-2-配置DMA结构体" class="headerlink" title="1.2 配置DMA结构体"></a>1.2 配置DMA结构体</h3><p>DMA的配置和配置GPIO一样，首先是创建结构体，然后对结构体中的内容进行赋值，配置DMA的结构体如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">  <span class="type">uint32_t</span> DMA_PeripheralBaseAddr; <span class="comment">/*!&lt; 指定 DMAy Channelx 的外设基址。 */</span></span><br><span class="line"></span><br><span class="line">  <span class="type">uint32_t</span> DMA_MemoryBaseAddr;     <span class="comment">/*!&lt; 指定 DMAy Channelx 的内存基址。 */</span></span><br><span class="line"></span><br><span class="line">  <span class="type">uint32_t</span> DMA_DIR;                <span class="comment">/*!&lt; 指定外围设备是源还是目标。</span></span><br><span class="line"><span class="comment">  此参数的值可以是 @ref DMA_data_transfer_direction */</span></span><br><span class="line"></span><br><span class="line">  <span class="type">uint32_t</span> DMA_BufferSize;         <span class="comment">/*!&lt; 指定指定通道的缓冲区大小（以数据单位为单位）。</span></span><br><span class="line"><span class="comment">  数据单元等于 DMA_PeripheralDataSize 中设置的配置</span></span><br><span class="line"><span class="comment">  或根据转移方向DMA_MemoryDataSize成员。 */</span></span><br><span class="line"></span><br><span class="line">  <span class="type">uint32_t</span> DMA_PeripheralInc;      <span class="comment">/*!&lt; 指定外设地址寄存器是否递增。</span></span><br><span class="line"><span class="comment">  此参数的值可以是 @ref DMA_peripheral_incremented_mode */</span></span><br><span class="line"></span><br><span class="line">  <span class="type">uint32_t</span> DMA_MemoryInc;          <span class="comment">/*!&lt; 指定内存地址寄存器是否递增。</span></span><br><span class="line"><span class="comment">  此参数的值可以是 @ref DMA_memory_incremented_mode */</span></span><br><span class="line"></span><br><span class="line">  <span class="type">uint32_t</span> DMA_PeripheralDataSize; <span class="comment">/*!&lt; 指定外围设备数据宽度。</span></span><br><span class="line"><span class="comment">  此参数的值可以是 @ref DMA_peripheral_data_size */</span></span><br><span class="line"></span><br><span class="line">  <span class="type">uint32_t</span> DMA_MemoryDataSize;     <span class="comment">/*!&lt; 指定内存数据宽度。</span></span><br><span class="line"><span class="comment">  此参数的值可以是 @ref DMA_memory_data_size */</span></span><br><span class="line"></span><br><span class="line">  <span class="type">uint32_t</span> DMA_Mode;               <span class="comment">/*!&lt; 指定 DMAy Channelx 的操作模式。</span></span><br><span class="line"><span class="comment">  此参数的值可以是 @ref DMA_circular_normal_mode。</span></span><br><span class="line"><span class="comment">  @note：如果内存到内存，则无法使用循环缓冲模式。</span></span><br><span class="line"><span class="comment">  在选定的通道上配置数据传输 */</span></span><br><span class="line"></span><br><span class="line">  <span class="type">uint32_t</span> DMA_Priority;           <span class="comment">/*!&lt; 指定 DMAy Channelx 的软件优先级。</span></span><br><span class="line"><span class="comment">  此参数的值可以是 @ref DMA_priority_level */</span></span><br><span class="line"></span><br><span class="line">  <span class="type">uint32_t</span> DMA_M2M;                <span class="comment">/*!&lt; 指定是否将 DMAy Channelx 用于内存到内存的传输。</span></span><br><span class="line"><span class="comment">  此参数的值可以是 @ref DMA_memory_to_memory */</span></span><br><span class="line">&#125;DMA_InitTypeDef;</span><br></pre></td></tr></table></figure>
+
+<p>第一个参数<code>DMA_PeripheralBaseAddr</code>是指定A端的地址。</p>
+<p>第二个参数<code>DMA_MemoryBaseAddr</code>是指定B端的地址。</p>
+<p>第三个参数<code>DMA_DIR</code>是指定传输方向，可以选下面这几个传输：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>介绍</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DMA_DIR_PeripheralDST</td>
+<td>B到A</td>
+</tr>
+<tr>
+<td>DMA_DIR_PeripheralSRC</td>
+<td>A到B</td>
+</tr>
+</tbody></table>
+<p>第四个参数<code>DMA_BufferSize</code>就是设置传输寄存器的，比如我这要传输10个数据，那这要填写10，也就是运行10次传输。</p>
+<p>第五个参数<code>DMA_PeripheralInc</code>是指A端的地址是否自增，如果这里填写自增，那传输一次，A端的地址就自增1，以此类推。</p>
+<p>第六个参数<code>DMA_MemoryInc</code>是指B端的地址是否自增，如果这里填写自增，那传输一次，B端的地址就自增1，以此类推。</p>
+<p>第七个参数<code>DMA_PeripheralDataSize</code>是指A端要传输的数据是什么类型的，可以选择字节8位、半字16位、字32位。</p>
+<p>第八个参数<code>DMA_MemoryDataSize</code>是指B端要传输的数据是什么类型的，可以选择字节8位、半字16位、字32位。</p>
+<p>第九个参数<code>DMA_Mode</code>是指是什么模式的，可以选择下面这两个参数：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>介绍</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DMA_Mode_Circular</td>
+<td>循环模式，只有在硬件触发才可以选择</td>
+</tr>
+<tr>
+<td>DMA_Mode_Normal</td>
+<td>正常模式，没有自动重装寄存器</td>
+</tr>
+</tbody></table>
+<p>第十个参数<code>DMA_Priority</code>是选择传输的优先级的。</p>
+<p>第十一个参数<code>DMA_M2M</code>用来指定传输的方式，下面是参数介绍：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>介绍</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DMA_M2M_Enable</td>
+<td>存储器到存储器</td>
+</tr>
+<tr>
+<td>DMA_M2M_Disable</td>
+<td>外设到存储器</td>
+</tr>
+</tbody></table>
+<p>其实就是选择是软件模式还是硬件模式，如果选择<code>DMA_M2M_Disable</code>就是硬件模式，如果选择<code>DMA_M2M_Enable</code>就是软件模式。</p>
+<p>这样我们就可以写一个初始化的代码了，这里是要数据的转运，而这个数据是在代码中定义的变量，在代码中定义的变量其实存放在存储器中的，所以这里是存储器到存储器，那么初始化代码就是这样的：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">DMA_InitTypeDef DMA_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">DMA_InitStruct.DMA_PeripheralBaseAddr = (<span class="type">uint32_t</span>)&amp;arr_A;                     <span class="comment">// A端地址   arr_A是一个长为10的字节数组，这里是把arr_A的地址存放进去</span></span><br><span class="line">DMA_InitStruct.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;         <span class="comment">// A端数据长度  读取的是字节也就是8位</span></span><br><span class="line">DMA_InitStruct.DMA_PeripheralInc = DMA_PeripheralInc_Enable;                    <span class="comment">// A端地址是否自增     这里的数据寄存器需要自增地址</span></span><br><span class="line"></span><br><span class="line">DMA_InitStruct.DMA_MemoryBaseAddr = (<span class="type">uint32_t</span>)&amp;arr_B;                    <span class="comment">// B端地址   从A端转移过来的数据存放位置的地址，这里是arr_B的地址，arr_B是一个长为10的字节数组</span></span><br><span class="line">DMA_InitStruct.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;              <span class="comment">// B端数据长度  读取的是字节也就是8位</span></span><br><span class="line">DMA_InitStruct.DMA_MemoryInc = DMA_MemoryInc_Enable;                              <span class="comment">// B端地址是否自增  这里需要地址进行自增</span></span><br><span class="line"></span><br><span class="line">DMA_InitStruct.DMA_BufferSize = <span class="number">10</span>;                                               <span class="comment">// 传输计数器的值</span></span><br><span class="line">DMA_InitStruct.DMA_Mode = DMA_Mode_Normal;                                     <span class="comment">// 模式选择，这里选择正常模式</span></span><br><span class="line">DMA_InitStruct.DMA_DIR = DMA_DIR_PeripheralSRC;                                  <span class="comment">// 传输方向，A作为源端B作为目标端</span></span><br><span class="line">DMA_InitStruct.DMA_M2M = DMA_M2M_Enable;                                        <span class="comment">// 传输是存储器到存储器还是外设到存储器</span></span><br><span class="line">DMA_InitStruct.DMA_Priority = DMA_Priority_Medium;                               <span class="comment">// DMA转换的转换优先级</span></span><br><span class="line"></span><br><span class="line">DMA_Init(DMA1_Channel1, &amp;DMA_InitStruct);</span><br></pre></td></tr></table></figure>
+
+<p>这样就初始化完成了，有很多地方大家需要注意一下，在填写A端和B端的字节的时候要区分前面的名称，我在写DMA转换ADC数据的时候就把B端的字节搞错了，我写成<code>DMA_PeripheralDataSize_HalfWord</code>而这里得填写<code>DMA_MemoryDataSize_HalfWord</code>，就因为这里的数据填写错误，导致读取的值不对。</p>
+<h3 id="1-3-开始转换"><a href="#1-3-开始转换" class="headerlink" title="1.3 开始转换"></a>1.3 开始转换</h3><p>到这里大家可能就像直接使用<code>DMA_Cmd</code>进行使能后运行DMA了，但是这里我们设置的是正常模式，当一次转换后计数器中的值就为0了，再进行转换是转换不了的，所以我们要用软件手动的为计数器中添加值。</p>
+<p>当添加值后就可以继续运行了，那这里是不是可以直接用<code>DMA_SetCurrDataCounter</code>函数进行设置值呢？</p>
+<p>是不行的，stm32中规定，要软件为计数器中添加值之前是需要将DMA失能的，在失能后才能修改计数器中的值，所以这里我们要将DMA进行失能，然后修改后使能，这样DMA才可以继续运行，所以这里的运行代码为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">DMA_Cmd(DMA1_Channel1, DISABLE);     <span class="comment">// 失能DMA1的通道1</span></span><br><span class="line">DMA_SetCurrDataCounter(<span class="number">10</span>);     <span class="comment">// 修改计数器的值</span></span><br><span class="line">DMA_Cmd(DMA1_Channel1, ENABLE);      <span class="comment">// 使能DMA1的通道1</span></span><br></pre></td></tr></table></figure>
+
+<p>这个运行函数可以写一个函数进行封装，当要进行转换的时候进行一次调用即可。</p>
+<p>当然这样还不是很完善，我们让它运行后怎么知道运行完成了，我们好查看数据呢？</p>
+<p>这里当传输完成后会置一个标志位，我们可以通过这个标志位来进行判断是否转换完成，这里的标志位有点多，每个通道都有一个对应的标志位，而且在每个过程中都有一个标志位的产生，这里就将过程中的标志位写出来，然后DMA编号和通道就用x和y表示：</p>
+<table>
+<thead>
+<tr>
+<th>标志位</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DMAx_FLAG_GLy</td>
+<td>DMA全局标志位</td>
+</tr>
+<tr>
+<td>DMAx_FLAG_TCy</td>
+<td>传输完成标志位</td>
+</tr>
+<tr>
+<td>DMAx_FLAG_HTy</td>
+<td>传输过半标志位</td>
+</tr>
+<tr>
+<td>DMAx_FLAG_TEy</td>
+<td>传输错误标志位</td>
+</tr>
+</tbody></table>
+<p>然后用<code>DMA_GetFlagStatus</code>函数判断这个标志位是否产生，当产生后就可以读取数据了，然后再手动清除一下这个标志位，使用<code>DMA_ClearFlag</code>函数即可清除，该进后的代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">DMA_Cmd(DMA1_Channel1, DISABLE);     <span class="comment">// 失能DMA1的通道1</span></span><br><span class="line">DMA_SetCurrDataCounter(<span class="number">10</span>);     <span class="comment">// 修改计数器的值</span></span><br><span class="line">DMA_Cmd(DMA1_Channel1, ENABLE);      <span class="comment">// 使能DMA1的通道1</span></span><br><span class="line"><span class="keyword">while</span> (DMA_GetFlagStatus(DMA1_FLAG_TC1) == RESET);</span><br><span class="line">DMA_ClearFlag(DMA1_FLAG_TC1);     <span class="comment">// 手动清除标志位</span></span><br></pre></td></tr></table></figure>
+
+<p>这样的代码就比较完整了，然后传输完成后就访问<code>arr_B</code>即可，就是数组的引用了，这个都比较简单。</p>
+<h2 id="2-ADC单通道转换"><a href="#2-ADC单通道转换" class="headerlink" title="2.ADC单通道转换"></a>2.ADC单通道转换</h2><p>在ADC中也是一样的道理，首先配置ADC然后GPIO空，然后配置DMA即可。</p>
+<h3 id="2-1-开启时钟"><a href="#2-1-开启时钟" class="headerlink" title="2.1 开启时钟"></a>2.1 开启时钟</h3><p>首先这开启时钟，这里就把全部的时钟都进行打开，分别打开GPIO口、ADC和DMA的时钟，代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);      <span class="comment">// 开启GPIOA的时钟</span></span><br><span class="line">RCC_APB2PeriphClockCmd(RCC_APB2Perph_ADC1, ENABLE);      <span class="comment">// 开启ADC1的时钟</span></span><br><span class="line">RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);      <span class="comment">// 开启DMA的时钟</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-配置GPIO和ADC"><a href="#2-2-配置GPIO和ADC" class="headerlink" title="2.2 配置GPIO和ADC"></a>2.2 配置GPIO和ADC</h3><p>这里是前面讲过的，所以这里直接就上代码即可：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">ADC_InitTypeDef ADC_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">GPIO_InitTypeDef GPIO_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"></span><br><span class="line">GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AIN;       <span class="comment">// 模拟输入</span></span><br><span class="line">GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0;</span><br><span class="line">GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">GPIO_Init(GPIOA, &amp;GPIO_InitStruct);</span><br><span class="line"></span><br><span class="line"><span class="comment">/*设置ADC时钟*/</span></span><br><span class="line">RCC_ADCCLKConfig(RCC_PCLK2_Div6);</span><br><span class="line"></span><br><span class="line">ADC_InitStruct.ADC_ContinuousConvMode = DISABLE;                                  <span class="comment">// 不连续转换</span></span><br><span class="line">ADC_InitStruct.ADC_DataAlign = ADC_DataAlign_Right;                              <span class="comment">// 右对齐</span></span><br><span class="line">ADC_InitStruct.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;                 <span class="comment">// 软件触发</span></span><br><span class="line">ADC_InitStruct.ADC_Mode = ADC_Mode_Independent;                                  <span class="comment">// 单独模式</span></span><br><span class="line">ADC_InitStruct.ADC_NbrOfChannel = <span class="number">1</span>;                                             <span class="comment">// 通道数     </span></span><br><span class="line">ADC_InitStruct.ADC_ScanConvMode = DISABLE;                                        <span class="comment">// 不连续扫描</span></span><br><span class="line"></span><br><span class="line">ADC_Init(ADC1, &amp;ADC_InitStruct);</span><br></pre></td></tr></table></figure>
+
+<p>上面的配置是单通道，不连续转换的ADC。</p>
+<h3 id="2-3-配置DMA"><a href="#2-3-配置DMA" class="headerlink" title="2.3 配置DMA"></a>2.3 配置DMA</h3><p>接下来就是要配置DMA了，在这ADC是外设，所以在配置DMA的模式就要选择外设到存储器了，模式的话因为上面是软件触发非连续模式，这里因为选择了外设到存储器，所以需要注意一下哪一个DMA中的通道是连接到ADC1上，这边查看了一下是在DMA1中的通道1是连接到ADC1上的，代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">DMA_InitTypeDef DMA_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">DMA_InitStruct.DMA_PeripheralBaseAddr = (<span class="type">uint32_t</span>)&amp;ADC1-&gt;DR;                     <span class="comment">// A端地址   ADC数据寄存器的地址</span></span><br><span class="line">DMA_InitStruct.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;         <span class="comment">// A端数据长度  读取的是半字也就是16位</span></span><br><span class="line">DMA_InitStruct.DMA_PeripheralInc = DMA_PeripheralInc_Disable;                    <span class="comment">// A端地址是否自增     这里的数据寄存器不需要自增地址</span></span><br><span class="line"></span><br><span class="line">DMA_InitStruct.DMA_MemoryBaseAddr = (<span class="type">uint32_t</span>)&amp;adc_read_value;                    <span class="comment">// B端地址   用一个数组来存放ADC读取的结果</span></span><br><span class="line">DMA_InitStruct.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;              <span class="comment">// B端数据长度  读取的是半字也就是16位</span></span><br><span class="line">DMA_InitStruct.DMA_MemoryInc = DMA_MemoryInc_Enable;                              <span class="comment">// B端地址是否自增  这里需要地址进行自增</span></span><br><span class="line"></span><br><span class="line">DMA_InitStruct.DMA_BufferSize = <span class="number">1</span>;                                               <span class="comment">// 传输计数器的值</span></span><br><span class="line">DMA_InitStruct.DMA_Mode = DMA_Mode_Normal;                                     <span class="comment">// 模式选择，这里选择正常模式</span></span><br><span class="line">DMA_InitStruct.DMA_DIR = DMA_DIR_PeripheralSRC;                                  <span class="comment">// 传输方向，A到B</span></span><br><span class="line">DMA_InitStruct.DMA_M2M = DMA_M2M_Disable;                                        <span class="comment">// 传输是外设到存储器</span></span><br><span class="line">DMA_InitStruct.DMA_Priority = DMA_Priority_Medium;                               <span class="comment">// DMA转换的转换优先级</span></span><br><span class="line">DMA_Init(DMA1_Channel1, &amp;DMA_InitStruct);</span><br></pre></td></tr></table></figure>
+
+<p>这里因为选择了<code>DMA_Mode_Normal</code>正常模式，所以没有自动重装寄存器，所以在每次需要使DMA运行的时候就要调用一下<code>DMA_SetCurrDataCounter</code>为其重装值，这样DMA才可以再次运行。</p>
+<h3 id="2-4-使能ADC"><a href="#2-4-使能ADC" class="headerlink" title="2.4 使能ADC"></a>2.4 使能ADC</h3><p>配置完成后就可以使能ADC来和DMA了，然后再调用ADC的DMA使能，让DMA接收到ADC转换完成信号后开始转移数据。</p>
+<p>这里先用<code>ADC_Cmd</code>对ADC进行使能，然后用<code>ADC_DMACmd</code>对ADC触发的DMA进行使能，然后使能或者失能DMA，这里一般是配置完成后先不启用DMA，等后面专门写一个DMA运行函数配置好计数器中的值后再使能。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ADC_Cmd(ADC1, ENABLE);     <span class="comment">// 使能ADC1</span></span><br><span class="line">ADC_DMACmd(ADC1, ENABLE);  <span class="comment">// 使能ADC1的DMA</span></span><br><span class="line">DMA_Cmd(DMA1_Channel1, DISABLE);  <span class="comment">// 先失能</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-5-DMA转移函数"><a href="#2-5-DMA转移函数" class="headerlink" title="2.5 DMA转移函数"></a>2.5 DMA转移函数</h3><p>这里就单独将DMA的运行拿出来，因为正常模式也就是软件模式下，DMA在进行一次转移后（计数器中的值为0）不会自动为计数器进行赋值的，需要软件手动的为计数器进行赋值。</p>
+<p>并且这里的ADC是使用单独模式并且不是循环模式，需要软件进行触发才能进行一次ADC转换。</p>
+<p>所以这要把这一步单独拿出来，这样使用DMA就很方便，代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ADC_RegularChannelConfig(ADC1, ADC_Channel_0, <span class="number">1</span>, ADC_SampleTime_239Cycles5);     <span class="comment">// 添加需要采集的ADC到组中</span></span><br><span class="line">DMA_Cmd(DMA1_Channel1, DISABLE);</span><br><span class="line">DMA_SetCurrDataCounter(DMA1_Channel1, <span class="number">1</span>);    <span class="comment">// 为计数器重装值</span></span><br><span class="line">DMA_Cmd(DMA1_Channel1, ENABLE);    <span class="comment">// 使能DMA</span></span><br><span class="line">ADC_SoftwareStartConvCmd(ADC1, ENABLE);    <span class="comment">// 软件触发ADC转换</span></span><br><span class="line"><span class="keyword">while</span> (DMA_GetFlagStatus(DMA1_FLAG_TC1) == RESET);</span><br><span class="line">DMA_ClearFlag(DMA1_FLAG_TC1);     <span class="comment">// 手动清除标志位</span></span><br></pre></td></tr></table></figure>
+
+<p>这里当ADC转换完成后我们不用程序来进行读取，而是由DMA来进行读取，当转换完成后ADC会发送一个信号给DMA，这个是需要在上面使能ADC的DMA才可以让DMA接收这个信号的</p>
+<h2 id="3-ADC多通道转换"><a href="#3-ADC多通道转换" class="headerlink" title="3.ADC多通道转换"></a>3.ADC多通道转换</h2><p>其实上面了解了单通道后，这里可以在此基础上进行改写，改写的方法也是很简单的，只不过就是在<code>ADC_InitStruct.ADC_ContinuousConvMode</code>中给连续转换，然后在<code>ADC_InitStruct.ADC_NbrOfChannel</code>填写要转换的通道数，最后改一下DMA的计数器的值即可，完整代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">Init</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);      <span class="comment">// 开启GPIOA的时钟</span></span><br><span class="line">  RCC_APB2PeriphClockCmd(RCC_APB2Perph_ADC1, ENABLE);      <span class="comment">// 开启ADC1的时钟</span></span><br><span class="line">  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);      <span class="comment">// 开启DMA的时钟</span></span><br><span class="line"></span><br><span class="line">  ADC_InitTypeDef ADC_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">  GPIO_InitTypeDef GPIO_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">  DMA_InitTypeDef DMA_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"></span><br><span class="line">  GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AIN;       <span class="comment">// 模拟输入</span></span><br><span class="line">  GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1;</span><br><span class="line">  GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">  GPIO_Init(GPIOA, &amp;GPIO_InitStruct);</span><br><span class="line"></span><br><span class="line">  <span class="comment">/*设置ADC时钟*/</span></span><br><span class="line">  RCC_ADCCLKConfig(RCC_PCLK2_Div6);</span><br><span class="line"></span><br><span class="line">  ADC_InitStruct.ADC_ContinuousConvMode = ENABLE;                                  <span class="comment">// 连续转换</span></span><br><span class="line">  ADC_InitStruct.ADC_DataAlign = ADC_DataAlign_Right;                              <span class="comment">// 右对齐</span></span><br><span class="line">  ADC_InitStruct.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;                 <span class="comment">// 软件触发</span></span><br><span class="line">  ADC_InitStruct.ADC_Mode = ADC_Mode_Independent;                                  <span class="comment">// 单独模式</span></span><br><span class="line">  ADC_InitStruct.ADC_NbrOfChannel = <span class="number">2</span>;                                             <span class="comment">// 通道数     </span></span><br><span class="line">  ADC_InitStruct.ADC_ScanConvMode = DISABLE;                                        <span class="comment">// 不连续扫描</span></span><br><span class="line"></span><br><span class="line">  ADC_Init(ADC1, &amp;ADC_InitStruct);</span><br><span class="line">  </span><br><span class="line">  DMA_InitStruct.DMA_PeripheralBaseAddr = (<span class="type">uint32_t</span>)&amp;ADC1-&gt;DR;                     <span class="comment">// A端地址   ADC数据寄存器的地址</span></span><br><span class="line">  DMA_InitStruct.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;         <span class="comment">// A端数据长度  读取的是半字也就是16位</span></span><br><span class="line">  DMA_InitStruct.DMA_PeripheralInc = DMA_PeripheralInc_Disable;                    <span class="comment">// A端地址是否自增     这里的数据寄存器不需要自增地址</span></span><br><span class="line"></span><br><span class="line">  DMA_InitStruct.DMA_MemoryBaseAddr = (<span class="type">uint32_t</span>)&amp;adc_read_value;                    <span class="comment">// B端地址   用一个数组来存放ADC读取的结果</span></span><br><span class="line">  DMA_InitStruct.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;              <span class="comment">// B端数据长度  读取的是半字也就是16位</span></span><br><span class="line">  DMA_InitStruct.DMA_MemoryInc = DMA_MemoryInc_Enable;                              <span class="comment">// B端地址是否自增  这里需要地址进行自增</span></span><br><span class="line"></span><br><span class="line">  DMA_InitStruct.DMA_BufferSize = <span class="number">2</span>;                                               <span class="comment">// 传输计数器的值</span></span><br><span class="line">  DMA_InitStruct.DMA_Mode = DMA_Mode_Normal;                                     <span class="comment">// 模式选择，这里选择正常模式</span></span><br><span class="line">  DMA_InitStruct.DMA_DIR = DMA_DIR_PeripheralSRC;                                  <span class="comment">// 传输方向，A到B</span></span><br><span class="line">  DMA_InitStruct.DMA_M2M = DMA_M2M_Disable;                                        <span class="comment">// 传输是外设到存储器</span></span><br><span class="line">  DMA_InitStruct.DMA_Priority = DMA_Priority_Medium;                               <span class="comment">// DMA转换的转换优先级</span></span><br><span class="line">  DMA_Init(DMA1_Channel1, &amp;DMA_InitStruct);</span><br><span class="line"></span><br><span class="line">  ADC_RegularChannelConfig(ADC1, ADC_Channel_0, <span class="number">1</span>, ADC_SampleTime_239Cycles5);     <span class="comment">// 添加需要采集的ADC到组中</span></span><br><span class="line">  ADC_RegularChannelConfig(ADC1, ADC_Channel_1, <span class="number">2</span>, ADC_SampleTime_239Cycles5);     <span class="comment">// 添加需要采集的ADC到组中</span></span><br><span class="line"></span><br><span class="line">  ADC_Cmd(ADC1, ENABLE);     <span class="comment">// 使能ADC1</span></span><br><span class="line">  ADC_DMACmd(ADC1, ENABLE);  <span class="comment">// 使能ADC1的DMA</span></span><br><span class="line">  DMA_Cmd(DMA1_Channel1, DISABLE);  <span class="comment">// 先失能</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">Start_DMA</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">  DMA_Cmd(DMA1_Channel1, DISABLE);</span><br><span class="line">  DMA_SetCurrDataCounter(DMA1_Channel1, <span class="number">2</span>);    <span class="comment">// 为计数器重装值</span></span><br><span class="line">  DMA_Cmd(DMA1_Channel1, ENABLE);    <span class="comment">// 使能DMA</span></span><br><span class="line">  ADC_SoftwareStartConvCmd(ADC1, ENABLE);    <span class="comment">// 软件触发ADC转换</span></span><br><span class="line">  <span class="keyword">while</span> (DMA_GetFlagStatus(DMA1_FLAG_TC1) == RESET);</span><br><span class="line">  DMA_ClearFlag(DMA1_FLAG_TC1);     <span class="comment">// 手动清除标志位</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在调用初始化完成后需要进行ADC转换并且使用DMA转移就可以调用上面的<code>Start_DMA</code>函数进行。</p>
+<h2 id="4-ADC连续转换"><a href="#4-ADC连续转换" class="headerlink" title="4.ADC连续转换"></a>4.ADC连续转换</h2><p>上面的代码有点不智能，需要软件进行一次触发才能进行一次ADC转换并且还需要手动的为DMA计数器手动赋值，多多少少还是有软件控制的，而这里介绍一下，全过程都由硬件执行。</p>
+<p>实现的方法很简单，让ADC配置为连续扫描模式，然后DMA配置为循环模式，然后配置完成后直接使能DMA并且来一次软件触发ADC，这样就可以让ADC连续的转换并且DMA不需要手动赋值就可以一直转换了。</p>
+<p>代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">Init</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);      <span class="comment">// 开启GPIOA的时钟</span></span><br><span class="line">  RCC_APB2PeriphClockCmd(RCC_APB2Perph_ADC1, ENABLE);      <span class="comment">// 开启ADC1的时钟</span></span><br><span class="line">  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);      <span class="comment">// 开启DMA的时钟</span></span><br><span class="line"></span><br><span class="line">  ADC_InitTypeDef ADC_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">  GPIO_InitTypeDef GPIO_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">  DMA_InitTypeDef DMA_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"></span><br><span class="line">  GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AIN;       <span class="comment">// 模拟输入</span></span><br><span class="line">  GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1;</span><br><span class="line">  GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">  GPIO_Init(GPIOA, &amp;GPIO_InitStruct);</span><br><span class="line"></span><br><span class="line">  <span class="comment">/*设置ADC时钟*/</span></span><br><span class="line">  RCC_ADCCLKConfig(RCC_PCLK2_Div6);</span><br><span class="line"></span><br><span class="line">  ADC_InitStruct.ADC_ContinuousConvMode = ENABLE;                                  <span class="comment">// 连续转换</span></span><br><span class="line">  ADC_InitStruct.ADC_DataAlign = ADC_DataAlign_Right;                              <span class="comment">// 右对齐</span></span><br><span class="line">  ADC_InitStruct.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;                 <span class="comment">// 软件触发</span></span><br><span class="line">  ADC_InitStruct.ADC_Mode = ADC_Mode_Independent;                                  <span class="comment">// 单独模式</span></span><br><span class="line">  ADC_InitStruct.ADC_NbrOfChannel = <span class="number">2</span>;                                             <span class="comment">// 通道数     </span></span><br><span class="line">  ADC_InitStruct.ADC_ScanConvMode = ENABLE;                                        <span class="comment">// 连续扫描</span></span><br><span class="line"></span><br><span class="line">  ADC_Init(ADC1, &amp;ADC_InitStruct);</span><br><span class="line">  </span><br><span class="line">  DMA_InitStruct.DMA_PeripheralBaseAddr = (<span class="type">uint32_t</span>)&amp;ADC1-&gt;DR;                     <span class="comment">// A端地址   ADC数据寄存器的地址</span></span><br><span class="line">  DMA_InitStruct.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;         <span class="comment">// A端数据长度  读取的是半字也就是16位</span></span><br><span class="line">  DMA_InitStruct.DMA_PeripheralInc = DMA_PeripheralInc_Disable;                    <span class="comment">// A端地址是否自增     这里的数据寄存器不需要自增地址</span></span><br><span class="line"></span><br><span class="line">  DMA_InitStruct.DMA_MemoryBaseAddr = (<span class="type">uint32_t</span>)&amp;adc_read_value;                    <span class="comment">// B端地址   用一个数组来存放ADC读取的结果</span></span><br><span class="line">  DMA_InitStruct.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;              <span class="comment">// B端数据长度  读取的是半字也就是16位</span></span><br><span class="line">  DMA_InitStruct.DMA_MemoryInc = DMA_MemoryInc_Enable;                              <span class="comment">// B端地址是否自增  这里需要地址进行自增</span></span><br><span class="line"></span><br><span class="line">  DMA_InitStruct.DMA_BufferSize = <span class="number">2</span>;                                               <span class="comment">// 传输计数器的值</span></span><br><span class="line">  DMA_InitStruct.DMA_Mode = DMA_Mode_Circular;                                     <span class="comment">// 模式选择，这里选择正常模式</span></span><br><span class="line">  DMA_InitStruct.DMA_DIR = DMA_DIR_PeripheralSRC;                                  <span class="comment">// 传输方向，A到B</span></span><br><span class="line">  DMA_InitStruct.DMA_M2M = DMA_M2M_Disable;                                        <span class="comment">// 传输是外设到存储器</span></span><br><span class="line">  DMA_InitStruct.DMA_Priority = DMA_Priority_Medium;                               <span class="comment">// DMA转换的转换优先级</span></span><br><span class="line">  DMA_Init(DMA1_Channel1, &amp;DMA_InitStruct);</span><br><span class="line"></span><br><span class="line">  ADC_RegularChannelConfig(ADC1, ADC_Channel_0, <span class="number">1</span>, ADC_SampleTime_239Cycles5);     <span class="comment">// 添加需要采集的ADC到组中</span></span><br><span class="line">  ADC_RegularChannelConfig(ADC1, ADC_Channel_1, <span class="number">2</span>, ADC_SampleTime_239Cycles5);     <span class="comment">// 添加需要采集的ADC到组中</span></span><br><span class="line"></span><br><span class="line">  ADC_Cmd(ADC1, ENABLE);     <span class="comment">// 使能ADC1</span></span><br><span class="line">  ADC_DMACmd(ADC1, ENABLE);  <span class="comment">// 使能ADC1的DMA</span></span><br><span class="line">  DMA_Cmd(DMA1_Channel1, ENABLE);  <span class="comment">// 使能DMA</span></span><br><span class="line">  ADC_SoftwareStartConvCmd(ADC1, ENABLE);    <span class="comment">// 软件触发ADC转换</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以让ADC连续转换多通道的ADC通道，并且可以让DMA自动进行数据转运不用再手动为其赋值，一直运行。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>使用DMA可以大量节约CPU的资源，对于大量的数据传递会消耗CPU大量的时间，在转移过程中就没办法执行其他功能，所以DMA对于大量数据转运有着很大的帮助，并且节约了大量的时间。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>puill
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://www.puill.xin/2025/01/17/f9c6962d2c72/" title="09 DMA配合ADC多通道">http://www.puill.xin/2025/01/17/f9c6962d2c72/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" rel="tag"># 单片机</a>
+              <a href="/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" rel="tag"># 环境搭建</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/01/17/33a6745a9cf3/" rel="prev" title="11 IIC通讯协议">
+                  <i class="fa fa-angle-left"></i> 11 IIC通讯协议
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/01/17/769e4c55fdc1/" rel="next" title="08 ADC模数转换">
+                  08 ADC模数转换 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">puill</span>
+  </div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+--><div>
+<!--添加网站运行时间-->
+<span>小破站已经在风雨中度过了</span>
+<span id="timeDate">载入天数...</span>
+<span id="times">载入时分秒...</span>
+<script>
+    function createtime() {
+        const startTime = '01/10/2025 00:00:00',
+            start = new Date(startTime)
+        let mill = new Date() - start,
+            seconds = Math.floor(mill / 1000),
+            mins = Math.floor(seconds / 60),
+            hours = Math.floor(mins / 60),
+            days = Math.floor(hours / 24)
+        const time = {
+            seconds: seconds - mins * 60,
+            mins: mins - hours * 60,
+            hours: hours - days * 24,
+        }
+        for (const k in time) {
+            time[k] = `${time[k]}`.padStart(2, '0')
+        }
+        document.getElementById("timeDate").innerHTML = ` ${days} 天`
+        document.getElementById("times").innerHTML = ` ${time.hours} 小时 ${time.mins} 分 ${time.seconds} 秒`
+    }
+    setInterval(createtime, 500)
+</script>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

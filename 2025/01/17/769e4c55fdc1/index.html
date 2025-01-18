@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/aaa.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.puill.xin","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"show_result":true,"style":"default"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="模数的转换">
+<meta property="og:type" content="article">
+<meta property="og:title" content="08 ADC模数转换">
+<meta property="og:url" content="http://www.puill.xin/2025/01/17/769e4c55fdc1/index.html">
+<meta property="og:site_name" content="puill&#39;s Blog">
+<meta property="og:description" content="模数的转换">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240807160126872-1557009759.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240807160348899-2123484267.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240807170545439-550640096.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240807171234748-2076890587.jpg">
+<meta property="article:published_time" content="2025-01-17T13:36:38.000Z">
+<meta property="article:modified_time" content="2025-01-18T06:22:36.325Z">
+<meta property="article:author" content="puill">
+<meta property="article:tag" content="单片机">
+<meta property="article:tag" content="环境搭建">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240807160126872-1557009759.png">
+
+
+<link rel="canonical" href="http://www.puill.xin/2025/01/17/769e4c55fdc1/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.puill.xin/2025/01/17/769e4c55fdc1/","path":"2025/01/17/769e4c55fdc1/","title":"08 ADC模数转换"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>08 ADC模数转换 | puill's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">puill's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-文章"><a href="/articles/" rel="section"><i class="fa fa-file-text fa-fw"></i>文章</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-友链"><a href="/friendchains/" rel="section"><i class="fa fa-paperclip fa-fw"></i>友链</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E4%BB%80%E4%B9%88%E6%98%AFADC"><span class="nav-number">2.</span> <span class="nav-text">一、什么是ADC</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81stm%E4%B8%AD%E7%9A%84ADC"><span class="nav-number">3.</span> <span class="nav-text">二、stm中的ADC</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81adc%E5%86%85%E9%83%A8%E7%BB%93%E6%9E%84"><span class="nav-number">4.</span> <span class="nav-text">三、adc内部结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9B%E3%80%81adc%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-number">5.</span> <span class="nav-text">四、adc代码实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E9%85%8D%E7%BD%AE%E5%A4%96%E9%83%A8%E5%BC%95%E8%84%9A"><span class="nav-number">5.1.</span> <span class="nav-text">1.配置外部引脚</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%89%93%E5%BC%80ADC%E7%9A%84%E6%97%B6%E9%92%9F%E5%92%8C%E5%88%86%E9%A2%91"><span class="nav-number">5.2.</span> <span class="nav-text">2.打开ADC的时钟和分频</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E9%85%8D%E7%BD%AEADC"><span class="nav-number">5.3.</span> <span class="nav-text">3.配置ADC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%A0%A1%E5%87%86ADC"><span class="nav-number">5.4.</span> <span class="nav-text">4.校准ADC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E8%A7%A6%E5%8F%91ADC%E8%BD%AC%E6%8D%A2"><span class="nav-number">5.5.</span> <span class="nav-text">5.触发ADC转换</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E8%AF%BB%E5%8F%96%E7%94%B5%E5%8E%8B%E5%80%BC"><span class="nav-number">6.</span> <span class="nav-text">五、读取电压值</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E8%AF%BB%E5%8F%96%E5%86%85%E9%83%A8%E6%B8%A9%E5%BA%A6"><span class="nav-number">7.</span> <span class="nav-text">六、读取内部温度</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">8.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="puill"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">puill</p>
+  <div class="site-description" itemprop="description">puill的博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="mailto:2256044190@qq.com" title="E-Mail → mailto:2256044190@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.puill.xin/2025/01/17/769e4c55fdc1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="puill">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="puill's Blog">
+      <meta itemprop="description" content="puill的博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="08 ADC模数转换 | puill's Blog">
+      <meta itemprop="description" content="模数的转换">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          08 ADC模数转换
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-01-17 21:36:38" itemprop="dateCreated datePublished" datetime="2025-01-17T21:36:38+08:00">2025-01-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-01-18 14:22:36" itemprop="dateModified" datetime="2025-01-18T14:22:36+08:00">2025-01-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/stm32/" itemprop="url" rel="index"><span itemprop="name">stm32</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">模数的转换</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>这一节终于到模数转换了，我在做那个项目的时候忘记如何配置模数转换器了，所以这一章是在我学完后并且在项目中实现后写的文章，这里我会结合项目来介绍如何用adc采集外部模拟量后转换为数字量和用stm32内部的温度传感器通过adc采集后显示出来。</p>
+<h1 id="一、什么是ADC"><a href="#一、什么是ADC" class="headerlink" title="一、什么是ADC"></a>一、什么是ADC</h1><p>ADC又叫做模数转换，即模拟量转换为数字量，什么是模拟量什么是数字量呢？</p>
+<p>模拟量就是一种没有规律的量，比如说声音，声音就是一个模拟量。</p>
+<p>数字量是用数字表达的一个量，就像上上节输出比较那说的PWM波就是一个数字量。</p>
+<p>而ADC这个设备就是将这些模拟量转换为用数字表达的数字量。</p>
+<h1 id="二、stm中的ADC"><a href="#二、stm中的ADC" class="headerlink" title="二、stm中的ADC"></a>二、stm中的ADC</h1><p>在stm32f103中，有3个ADC，这3个都是12位分辨率逐次逼近型的ADC，每个ADC都有很多个通道，下图是stm32f103ADC资源：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240807160126872-1557009759.png" alt="img"></p>
+<p>可以看到ADC1有18个通道，包括16个外部ADC采集和两个内部ADC，而ADC2和ADC3都是外部ADC采集通道。</p>
+<h1 id="三、adc内部结构"><a href="#三、adc内部结构" class="headerlink" title="三、adc内部结构"></a>三、adc内部结构</h1><p>我们要写代码还是需要先了解一下adc其中的内部结构，这样写代码才好写，下图就是adc的内部结构：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240807160348899-2123484267.png" alt="img"></p>
+<p>可以看到有一个AD转换器，我们需要配置它才可以进行AD转换，从左到右可以看到，是由输入到一个选择器中来进行选择输入的通道到AD转换器中的，这里可以选择GPIO口和内部的温度和参考电压。</p>
+<p>选择通道后就进去到AD转换器中，在AD转换器中有两个组来存放需要转换的AD信息，分别是规则组和注入组，这里是可以在配置AD转换器那配置使用哪个组的。</p>
+<p>在配置AD转换器中还需要配置一个触发控制和RCC，触发控制选择的可多了，我们可以使用软件直接触发，也可以使用定时器来进行触发。</p>
+<p>而RCC这里就需要注意了，ADC虽然是接到APB2的，但是在进入APB2后还要经过一个分频，因为ADC的时钟最大不能超过12MHz，如果超过了ADC的运行就是超频运行，对于ADC的伤害还是比较大的。</p>
+<p>然后AD转换器会将注入组或者规则组中转换后的数据发送个AD数据寄存器中，在AD寄存器中我们就可以把转换的数据读取出来了。</p>
+<p>这个就是adc的内部结构，了解了这个adc的内部结构后我们就可以写代码了。</p>
+<h1 id="四、adc代码实现"><a href="#四、adc代码实现" class="headerlink" title="四、adc代码实现"></a>四、adc代码实现</h1><p>上面了解了adc的内部结构后我们知道adc的使用步骤，首先是如果使用外部输入，就需要配置外部输入端口，然后打开ADC的时钟，并且配置ADC的分频，然后就可以配置ADC，配置完成后将要转换的数据塞到注入组或者是规则组中进行转换，最后从AD数据寄存器中进行读取转换后的结构即可。</p>
+<h2 id="1-配置外部引脚"><a href="#1-配置外部引脚" class="headerlink" title="1.配置外部引脚"></a>1.配置外部引脚</h2><p>这里是对于外部模拟信号输入，只有从外部读取模拟需要才需要配置外部引脚，如果是直接使用内部来读取温度值，这一步就可以直接省略。</p>
+<p>首先配置外部引脚还是一样的，需要打开时钟：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOx, ENABLE);</span><br></pre></td></tr></table></figure>
+
+<p>打开时钟后就可以配置GPIO和引脚了，这里的引脚的模式是需要注意一下的，我们这里不能选择什么上拉下拉什么什么的了，而是要选择模拟输入<code>GPIO_Mode_AIN</code>。</p>
+<p>我之前的代码为什么读取不了ADC的值，就是因为我这设置成浮空输入了，浮空、上拉、下拉输入都是输入的是数字量，而我们这里需要让它输入个模拟量来进行转换，所以这里一定要注意。</p>
+<p>那么代码就如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AIN;    <span class="comment">// 这里是模拟输入</span></span><br><span class="line">GPIO_InitStruct.GPIO_Pin = GPIO_Pin_x;</span><br><span class="line">GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">GPIO_Init(GPIOx, &amp;GPIO_InitStruct);</span><br></pre></td></tr></table></figure>
+
+<p>这样GPIO口就配置完成了。</p>
+<h2 id="2-打开ADC的时钟和分频"><a href="#2-打开ADC的时钟和分频" class="headerlink" title="2.打开ADC的时钟和分频"></a>2.打开ADC的时钟和分频</h2><p>首先要使用ADC也要打开时钟，ADC是在APB2总线下的器件，所以打开时钟使用的函数也是<code>RCC_APB2PeriphClockCmd</code>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADCx, ENABLE);</span><br></pre></td></tr></table></figure>
+
+<p>这里ADCx是具体哪个ADC设备，比如ADC1那这里就是：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);</span><br></pre></td></tr></table></figure>
+
+<p>当这个时钟打开后，ADC的时钟频率就为72MHz，而上面我们提到，ADC的最大时钟频率为12MHz，这里如果直接使用就超频了，所以我们需要进行一下分频，分频使用的函数如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">RCC_ADCCLKConfig</span><span class="params">(<span class="type">uint32_t</span> RCC_PCLK2)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这里的参数可以选择下面这几个：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RCC_PCLK2_Div2</td>
+<td>ADC clock &#x3D; PCLK2&#x2F;2 2分频</td>
+</tr>
+<tr>
+<td>RCC_PCLK2_Div4</td>
+<td>ADC clock &#x3D; PCLK2&#x2F;4 4分频</td>
+</tr>
+<tr>
+<td>RCC_PCLK2_Div6</td>
+<td>ADC clock &#x3D; PCLK2&#x2F;6 6分频</td>
+</tr>
+<tr>
+<td>RCC_PCLK2_Div8</td>
+<td>ADC clock &#x3D; PCLK2&#x2F;8 8分频</td>
+</tr>
+</tbody></table>
+<p>这里的PCLK2就是APB2总线的频率，这里经过分频我们的PCLK2就是72MHz，我们要得到12MHz只能进行6分频，当然也可以选择8分频，那adc的频率就是9MHz。</p>
+<p>所以代码就如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RCC_ADCCLKConfig(RCC_PCLK2_Div6);</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-配置ADC"><a href="#3-配置ADC" class="headerlink" title="3.配置ADC"></a>3.配置ADC</h2><p>设置完时钟后就可以开始配置ADC了，配置ADC的方式和配置GPIO一样，创建个结构体，然后用Init函数进行初始化，这样就可以了。</p>
+<p>首先创建一个结构体，结构体的类型为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">  <span class="type">uint32_t</span> ADC_Mode;                      <span class="comment">/*!&lt; 将ADC配置为在独立或双模式下运行。</span></span><br><span class="line"><span class="comment">  此参数的值可以是 @ref ADC_mode */</span></span><br><span class="line"></span><br><span class="line">  FunctionalState ADC_ScanConvMode;       <span class="comment">/*!&lt; 指定是否在以下位置执行转换</span></span><br><span class="line"><span class="comment">  扫描（多通道）或单通道（单通道）模式。</span></span><br><span class="line"><span class="comment">  此参数可以设置为 ENABLE 或 DISABLE */</span></span><br><span class="line"></span><br><span class="line">  FunctionalState ADC_ContinuousConvMode; <span class="comment">/*!&lt; 指定是否在以下位置执行转换</span></span><br><span class="line"><span class="comment">  连续或单一模式。</span></span><br><span class="line"><span class="comment">  此参数可以设置为 ENABLE 或 DISABLE。 */</span></span><br><span class="line"></span><br><span class="line">  <span class="type">uint32_t</span> ADC_ExternalTrigConv;          <span class="comment">/*!&lt; 定义用于启动常规通道的模数转换的外部触发器。此参数</span></span><br><span class="line"><span class="comment">  的值可以是 @ref ADC_external_trigger_sources_for_regular_channels_conversion */</span></span><br><span class="line"></span><br><span class="line">  <span class="type">uint32_t</span> ADC_DataAlign;                 <span class="comment">/*!&lt; 指定ADC数据对齐是左对齐还是右对齐。</span></span><br><span class="line"><span class="comment">  此参数的值可以是 @ref ADC_data_align*/</span></span><br><span class="line"></span><br><span class="line">  <span class="type">uint8_t</span> ADC_NbrOfChannel;               <span class="comment">/*!&lt; 指定要转换的ADC通道数</span></span><br><span class="line"><span class="comment">  将音序器用于常规频道组。</span></span><br><span class="line"><span class="comment">  此参数的范围必须介于 1 到 16 之间。 */</span></span><br><span class="line">&#125;ADC_InitTypeDef;</span><br></pre></td></tr></table></figure>
+
+<p>第一个参数<code>ADC_Mode</code>，这个是选择adc的运行模式的，单模式是只有一个ADC运行，而双模式是两个ADC一起运行。</p>
+<p>第二个参数<code>ADC_ScanConvMode</code>是决定这个组中可以有多少个转换的adc信息，这里如果是<code>DISABLE</code>，就是非扫描模式，只能放一个ADC数据进行转换，如果是<code>ENABLE</code>就是扫描模式，可以放多个ADC数据</p>
+<p>第三个参数<code>ADC_ContinuousConvMode</code>是选择单通道还是扫描模式，当是单次扫描，就每次需要我们手动的将ADC中的数据手动的拿出来，而扫描模式的话就是在转换完成后自动的将数据放在寄存器中。</p>
+<p>第四个参数<code>ADC_ExternalTrigConv</code>可以选择触发方式，有软件触发，TIM触发等等。</p>
+<p>第五个参数<code>ADC_DataAlign</code>是选择对其模式，如果需要直接读取后就能使用的数据，那这里就选择右对齐。</p>
+<p>第六个参数<code>ADC_NbrOfChannel</code>是指定要转换的ADC通道的个数。</p>
+<p>这里我就选择单一模式非扫描模式，并且是软件触发，右对齐，只有一个通道需要转换，那代码就可以这样写：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ADC_InitStruct.ADC_ContinuousConvMode = DISABLE;           <span class="comment">// 单一模式</span></span><br><span class="line">ADC_InitStruct.ADC_DataAlign = ADC_DataAlign_Right;        <span class="comment">// 右对齐</span></span><br><span class="line">ADC_InitStruct.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;     <span class="comment">// 软件触发</span></span><br><span class="line">ADC_InitStruct.ADC_Mode = ADC_Mode_Independent;            <span class="comment">// 单独模式</span></span><br><span class="line">ADC_InitStruct.ADC_NbrOfChannel = <span class="number">1</span>;</span><br><span class="line">ADC_InitStruct.ADC_ScanConvMode = DISABLE;</span><br></pre></td></tr></table></figure>
+
+<p>然后初始化：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ADC_Init(ADC1, &amp;ADC_InitStruct);</span><br></pre></td></tr></table></figure>
+
+<p>初始化完成后就使能ADC：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ADC_Cmd(ADC1, ENABLE);</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-校准ADC"><a href="#4-校准ADC" class="headerlink" title="4.校准ADC"></a>4.校准ADC</h2><p>为了使ADC采集的数据是精准的，这里就需要让ADC进行一下校准，校准只需要使用函数来控制ADC进行校准就可以了，校准的过程主要是先将校准位清除，然后再为校准位置1即可。</p>
+<p>这里使用的代码就这四个：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">ADC_ResetCalibration</span><span class="params">(ADC_TypeDef* ADCx)</span>;    <span class="comment">// 将校准位复位</span></span><br><span class="line"></span><br><span class="line">FlagStatus <span class="title function_">ADC_GetResetCalibrationStatus</span><span class="params">(ADC_TypeDef* ADCx)</span>;     <span class="comment">// 判断校准位是否复位</span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">ADC_StartCalibration</span><span class="params">(ADC_TypeDef* ADCx)</span>;     <span class="comment">// 将校准位置位</span></span><br><span class="line"></span><br><span class="line">FlagStatus <span class="title function_">ADC_GetCalibrationStatus</span><span class="params">(ADC_TypeDef* ADCx)</span>;      <span class="comment">// 判断校准位是否置位</span></span><br></pre></td></tr></table></figure>
+
+<p>代码就可以这样写：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ADC_ResetCalibration(ADC1);     <span class="comment">// 将校准位复位</span></span><br><span class="line"><span class="keyword">while</span>(ADC_GetResetCalibrationStatus(ADC1) == SET);         <span class="comment">// 判断校准位是否复位</span></span><br><span class="line">ADC_StartCalibration(ADC1);     <span class="comment">// 将校准位置位</span></span><br><span class="line"><span class="keyword">while</span> (ADC_GetCalibrationStatus(ADC1) == RESET);      <span class="comment">// 判断校准位是否置位</span></span><br></pre></td></tr></table></figure>
+
+<p>这里主要是判断一个寄存器的位是否被置位和复位。</p>
+<h2 id="5-触发ADC转换"><a href="#5-触发ADC转换" class="headerlink" title="5.触发ADC转换"></a>5.触发ADC转换</h2><p>校准完成后就可以配置需要转换的ADC到AD转换器中，然后用软件触发进行转换后读取即可，这里的代码也是比较简单的，首先将要转换的ADC通道放到规则组中，使用的函数是：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">ADC_RegularChannelConfig</span><span class="params">(ADC_TypeDef* ADCx, <span class="type">uint8_t</span> ADC_Channel, <span class="type">uint8_t</span> Rank, <span class="type">uint8_t</span> ADC_SampleTime)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>第一个参数<code>ADCx</code>是ADC的设备号，第二个参数<code>ADC_Channel</code>是ADC的通道号，第三个<code>Rank</code>是这个转换的在这个组中是第几个，第四个<code>ADC_SampleTime</code>是采样时间，采样时间越长，精度越高。</p>
+<p>这里我就将通道0塞进去：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ADC_RegularChannelConfig(ADC1, ADC_Channel_0, <span class="number">1</span>, ADC_SampleTime_239Cycles5);</span><br></pre></td></tr></table></figure>
+
+<p>这里的采样时间用的是239.5，比较长，为了精度。</p>
+<p>然后将需要转换的通道塞入组中后就可以使用软件进行软件触发转换了，使用的函数为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">ADC_SoftwareStartConvCmd</span><span class="params">(ADC_TypeDef* ADCx, FunctionalState NewState)</span></span><br></pre></td></tr></table></figure>
+
+<p>直接上代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ADC_SoftwareStartConvCmd(ADC1, ENABLE);</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以使用软件触发来进行转换了，如果知道是否转换完成呢？</p>
+<p>其实在转换完成时，adc会产生一个EOF标志，我们可以判断这个标志来知道adc是否转换完成了，我们使用<code>ADC_GetFlagStatus</code>来判断这个标志：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET);</span><br></pre></td></tr></table></figure>
+
+<p>当产生这个信号后，这个循环就会跳出，我们就可以从AD数据寄存器中读取转换值了，读取方式也是很简单，使用<code>ADC_GetConversionValue</code>函数就可以读取了，当值取出后，ADC会自动将EOF标志清空，为下一次转换做准备</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> ADC_GetConversionValue(ADC1);</span><br></pre></td></tr></table></figure>
+
+<h1 id="五、读取电压值"><a href="#五、读取电压值" class="headerlink" title="五、读取电压值"></a>五、读取电压值</h1><p>这个需要来配合这电路图来进行分析了</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240807170545439-550640096.png" alt="img"></p>
+<p>这里可以看到有两个电阻，比如我这VBIN输入的是3.3，那ADC读取到的值就为VBIN&#x2F;20*10。这样就很明白读取到的值和转换公式了，直接上代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">ADC_InitTypeDef ADC_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">GPIO_InitTypeDef GPIO_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"></span><br><span class="line">RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);</span><br><span class="line">RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);</span><br><span class="line"></span><br><span class="line">GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AIN;       <span class="comment">// 模拟输入</span></span><br><span class="line">GPIO_InitStruct.GPIO_Pin = ADC;</span><br><span class="line">GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">GPIO_Init(ADC_GPIO, &amp;GPIO_InitStruct);</span><br><span class="line"></span><br><span class="line"><span class="comment">/*设置ADC时钟*/</span></span><br><span class="line">RCC_ADCCLKConfig(RCC_PCLK2_Div6);</span><br><span class="line"></span><br><span class="line">ADC_InitStruct.ADC_ContinuousConvMode = DISABLE;           <span class="comment">// 单一模式</span></span><br><span class="line">ADC_InitStruct.ADC_DataAlign = ADC_DataAlign_Right;        <span class="comment">// 右对齐</span></span><br><span class="line">ADC_InitStruct.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;     <span class="comment">// 软件触发</span></span><br><span class="line">ADC_InitStruct.ADC_Mode = ADC_Mode_Independent;            <span class="comment">// 单独模式</span></span><br><span class="line">ADC_InitStruct.ADC_NbrOfChannel = <span class="number">1</span>;</span><br><span class="line">ADC_InitStruct.ADC_ScanConvMode = DISABLE;</span><br><span class="line"></span><br><span class="line">ADC_Init(ADC1, &amp;ADC_InitStruct);</span><br><span class="line">ADC_Cmd(ADC1, ENABLE);</span><br><span class="line"></span><br><span class="line"><span class="comment">// ADC校准</span></span><br><span class="line">ADC_ResetCalibration(ADC1);</span><br><span class="line"><span class="keyword">while</span> (ADC_GetResetCalibrationStatus(ADC1) == SET);</span><br><span class="line">ADC_StartCalibration(ADC1);</span><br><span class="line"><span class="keyword">while</span> (ADC_GetCalibrationStatus(ADC1) == RESET);</span><br></pre></td></tr></table></figure>
+
+<p>上面的是初始化代码，下面的是读取代码加转换：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">uint32_t</span> ave = <span class="number">0</span>;</span><br><span class="line"><span class="type">uint8_t</span> i;</span><br><span class="line"><span class="type">float</span> v = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">50</span>; i++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// ADC规则组通道配置</span></span><br><span class="line">    ADC_RegularChannelConfig(ADC1, ADC_Channel_0, <span class="number">1</span>, ADC_SampleTime_239Cycles5);</span><br><span class="line">    ADC_SoftwareStartConvCmd(ADC1, ENABLE);</span><br><span class="line">    <span class="keyword">while</span> (ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET);</span><br><span class="line">    ave = ADC_GetConversionValue(ADC1);</span><br><span class="line">    Delay_Ms(<span class="number">10</span>);</span><br><span class="line">&#125;</span><br><span class="line">v = (ave / <span class="number">50.0</span>) * <span class="number">3.3</span> / <span class="number">4096</span>;</span><br><span class="line"><span class="keyword">return</span> ave * <span class="number">20.0</span> / <span class="number">10.0</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这里我采集了50次后取平均值，这样采集的数据要准确有点，测试到的电压如下：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240807171234748-2076890587.jpg" alt="img"></p>
+<h1 id="六、读取内部温度"><a href="#六、读取内部温度" class="headerlink" title="六、读取内部温度"></a>六、读取内部温度</h1><p>在介绍ADC通道的时候介绍到了，内部温度测试的是在ADC1中的通道16，这种内部设置的不需要配置外部GPIO口，直接可以通过配置ADC即可：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">ADC_InitTypeDef ADC_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"></span><br><span class="line">RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);</span><br><span class="line"></span><br><span class="line"><span class="comment">/*设置ADC时钟*/</span></span><br><span class="line">RCC_ADCCLKConfig(RCC_PCLK2_Div6);</span><br><span class="line"></span><br><span class="line">ADC_InitStruct.ADC_ContinuousConvMode = DISABLE;           <span class="comment">// 单一模式</span></span><br><span class="line">ADC_InitStruct.ADC_DataAlign = ADC_DataAlign_Right;        <span class="comment">// 右对齐</span></span><br><span class="line">ADC_InitStruct.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;     <span class="comment">// 软件触发</span></span><br><span class="line">ADC_InitStruct.ADC_Mode = ADC_Mode_Independent;            <span class="comment">// 单独模式</span></span><br><span class="line">ADC_InitStruct.ADC_NbrOfChannel = <span class="number">1</span>;</span><br><span class="line">ADC_InitStruct.ADC_ScanConvMode = DISABLE;</span><br><span class="line"></span><br><span class="line">ADC_Init(ADC1, &amp;ADC_InitStruct);</span><br><span class="line">ADC_Cmd(ADC1, ENABLE);</span><br><span class="line"></span><br><span class="line"><span class="comment">// ADC校准</span></span><br><span class="line">ADC_ResetCalibration(ADC1);</span><br><span class="line"><span class="keyword">while</span> (ADC_GetResetCalibrationStatus(ADC1) == SET);</span><br><span class="line">ADC_StartCalibration(ADC1);</span><br><span class="line"><span class="keyword">while</span> (ADC_GetCalibrationStatus(ADC1) == RESET);</span><br></pre></td></tr></table></figure>
+
+<p>配置的代码和前面的一样，主要是塞入组的时候要塞入通道16：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">uint32_t</span> ave = <span class="number">0</span>;</span><br><span class="line"><span class="type">uint8_t</span> i;</span><br><span class="line"><span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">50</span>; i++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// ADC规则组通道配置</span></span><br><span class="line">    ADC_RegularChannelConfig(ADC1, ADC_Channel_16, <span class="number">1</span>, ADC_SampleTime_239Cycles5);</span><br><span class="line">    ADC_SoftwareStartConvCmd(ADC1, ENABLE);</span><br><span class="line">    <span class="keyword">while</span> (ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET);</span><br><span class="line">    ave = ADC_GetConversionValue(ADC1);</span><br><span class="line">    Delay_Ms(<span class="number">10</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以得到温度了，我看其它大佬写的文章需要进行一个转换，但是我感觉都不需要进行转换就可以得到真实的温度，可能不行，后面我会进行验证的。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>对于ADC的介绍就先介绍到这了，后面会结合DMA进行多通道的AD转换，这里先只介绍了最简单的，对于我现在的项目够用，追求速度的话我后面再改为DMA。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>puill
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://www.puill.xin/2025/01/17/769e4c55fdc1/" title="08 ADC模数转换">http://www.puill.xin/2025/01/17/769e4c55fdc1/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" rel="tag"># 单片机</a>
+              <a href="/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" rel="tag"># 环境搭建</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/01/17/f9c6962d2c72/" rel="prev" title="09 DMA配合ADC多通道">
+                  <i class="fa fa-angle-left"></i> 09 DMA配合ADC多通道
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/01/17/67157ff102f4/" rel="next" title="07 输入捕获和编码器接口">
+                  07 输入捕获和编码器接口 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">puill</span>
+  </div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+--><div>
+<!--添加网站运行时间-->
+<span>小破站已经在风雨中度过了</span>
+<span id="timeDate">载入天数...</span>
+<span id="times">载入时分秒...</span>
+<script>
+    function createtime() {
+        const startTime = '01/10/2025 00:00:00',
+            start = new Date(startTime)
+        let mill = new Date() - start,
+            seconds = Math.floor(mill / 1000),
+            mins = Math.floor(seconds / 60),
+            hours = Math.floor(mins / 60),
+            days = Math.floor(hours / 24)
+        const time = {
+            seconds: seconds - mins * 60,
+            mins: mins - hours * 60,
+            hours: hours - days * 24,
+        }
+        for (const k in time) {
+            time[k] = `${time[k]}`.padStart(2, '0')
+        }
+        document.getElementById("timeDate").innerHTML = ` ${days} 天`
+        document.getElementById("times").innerHTML = ` ${time.hours} 小时 ${time.mins} 分 ${time.seconds} 秒`
+    }
+    setInterval(createtime, 500)
+</script>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/aaa.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.puill.xin","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"show_result":true,"style":"default"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="定时器和PWM的控制操作1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="06 定时器和PWM（1）">
+<meta property="og:url" content="http://www.puill.xin/2025/01/17/4dff7e1a6b94/index.html">
+<meta property="og:site_name" content="puill&#39;s Blog">
+<meta property="og:description" content="定时器和PWM的控制操作1">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202407/3083010-20240731111559043-328370503.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202407/3083010-20240731114837880-1114930503.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202407/3083010-20240731115206151-1655877682.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202407/3083010-20240731145853440-1506660610.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202407/3083010-20240731150352588-103987578.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202407/3083010-20240731150905333-2121755911.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202407/3083010-20240731151403977-1619864766.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202407/3083010-20240731152155454-1787089970.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202407/3083010-20240731160909597-366055006.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202407/3083010-20240731160922043-862972203.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202407/3083010-20240731160930913-14232135.png">
+<meta property="article:published_time" content="2025-01-17T13:36:38.000Z">
+<meta property="article:modified_time" content="2025-01-18T06:21:33.267Z">
+<meta property="article:author" content="puill">
+<meta property="article:tag" content="单片机">
+<meta property="article:tag" content="环境搭建">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img2023.cnblogs.com/blog/3083010/202407/3083010-20240731111559043-328370503.png">
+
+
+<link rel="canonical" href="http://www.puill.xin/2025/01/17/4dff7e1a6b94/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.puill.xin/2025/01/17/4dff7e1a6b94/","path":"2025/01/17/4dff7e1a6b94/","title":"06 定时器和PWM（1）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>06 定时器和PWM（1） | puill's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">puill's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-文章"><a href="/articles/" rel="section"><i class="fa fa-file-text fa-fw"></i>文章</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-友链"><a href="/friendchains/" rel="section"><i class="fa fa-paperclip fa-fw"></i>友链</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="nav-number">2.</span> <span class="nav-text">一、定时器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="nav-number">2.1.</span> <span class="nav-text">1.什么是定时器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%9C%A8stm32%E4%B8%AD%E7%9A%84%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="nav-number">2.2.</span> <span class="nav-text">2.在stm32中的定时器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%9F%BA%E6%9C%AC%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="nav-number">2.2.1.</span> <span class="nav-text">2.1 基本定时器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E9%80%9A%E7%94%A8%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="nav-number">2.2.2.</span> <span class="nav-text">2.2 通用定时器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E9%AB%98%E7%BA%A7%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="nav-number">2.2.3.</span> <span class="nav-text">2.3 高级定时器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%AE%9A%E6%97%B6%E5%99%A8%E7%9A%84%E5%86%85%E9%83%A8%E7%BB%93%E6%9E%84"><span class="nav-number">2.3.</span> <span class="nav-text">3.定时器的内部结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E6%97%A0%E9%A2%84%E8%A3%85%E6%97%B6%E8%AE%B8"><span class="nav-number">2.3.1.</span> <span class="nav-text">3.1 无预装时许</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E6%9C%89%E9%A2%84%E8%A3%85%E6%97%B6%E8%AE%B8"><span class="nav-number">2.3.2.</span> <span class="nav-text">3.2 有预装时许</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%BC%80%E5%A7%8B%E5%86%99%E4%BB%A3%E7%A0%81"><span class="nav-number">2.4.</span> <span class="nav-text">4.开始写代码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E6%89%93%E5%BC%80TIM%E6%97%B6%E9%92%9F"><span class="nav-number">2.4.1.</span> <span class="nav-text">4.1 打开TIM时钟</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E9%80%89%E6%8B%A9%E5%AE%9A%E6%97%B6%E5%99%A8%E7%9A%84%E6%97%B6%E9%92%9F"><span class="nav-number">2.4.2.</span> <span class="nav-text">4.2 选择定时器的时钟</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E9%85%8D%E7%BD%AE%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="nav-number">2.4.3.</span> <span class="nav-text">4.3 配置定时器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-%E6%89%93%E5%BC%80TIM%E4%B8%AD%E6%96%AD"><span class="nav-number">2.4.4.</span> <span class="nav-text">4.4 打开TIM中断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-%E9%85%8D%E7%BD%AENVIC"><span class="nav-number">2.4.5.</span> <span class="nav-text">4.5 配置NVIC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-6-%E5%90%AF%E5%8A%A8TIM%E6%97%B6%E9%92%9F"><span class="nav-number">2.4.6.</span> <span class="nav-text">4.6 启动TIM时钟</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-7-%E4%B9%A6%E5%86%99%E4%B8%AD%E6%96%AD%E6%9C%8D%E5%8A%A1%E5%87%BD%E6%95%B0"><span class="nav-number">2.4.7.</span> <span class="nav-text">4.7 书写中断服务函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E5%AE%9A%E6%97%B6%E6%97%B6%E9%97%B4%E7%9A%84%E8%AE%A1%E7%AE%97"><span class="nav-number">2.5.</span> <span class="nav-text">5.定时时间的计算</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%A4%96%E9%83%A8%E6%97%B6%E9%92%9F%E6%A8%A1%E5%BC%8F%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="nav-number">3.</span> <span class="nav-text">二、外部时钟模式定时器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81PWM"><span class="nav-number">4.</span> <span class="nav-text">三、PWM</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-PWM%E5%B7%A5%E4%BD%9C%E8%BF%87%E7%A8%8B"><span class="nav-number">4.1.</span> <span class="nav-text">1.PWM工作过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-PWM%E5%86%85%E9%83%A8%E7%BB%93%E6%9E%84"><span class="nav-number">4.2.</span> <span class="nav-text">2.PWM内部结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E9%85%8D%E7%BD%AEGPIO%E5%8F%A3"><span class="nav-number">4.2.1.</span> <span class="nav-text">2.1 配置GPIO口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E9%85%8D%E7%BD%AEPWM"><span class="nav-number">4.2.2.</span> <span class="nav-text">2.2 配置PWM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E4%BD%BF%E8%83%BD%E8%BE%93%E5%87%BA%E6%AF%94%E8%BE%83%E9%80%9A%E9%81%93"><span class="nav-number">4.2.3.</span> <span class="nav-text">2.3 使能输出比较通道</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%E4%BD%BF%E8%83%BD%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="nav-number">4.2.4.</span> <span class="nav-text">2.4 使能定时器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-%E8%AE%A1%E7%AE%97%E5%87%BA%E5%8D%A0%E7%A9%BA%E6%AF%94"><span class="nav-number">4.2.5.</span> <span class="nav-text">2.5 计算出占空比</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9B%E3%80%81LED%E5%91%BC%E5%90%B8%E7%81%AF"><span class="nav-number">5.</span> <span class="nav-text">四、LED呼吸灯</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="puill"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">puill</p>
+  <div class="site-description" itemprop="description">puill的博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="mailto:2256044190@qq.com" title="E-Mail → mailto:2256044190@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.puill.xin/2025/01/17/4dff7e1a6b94/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="puill">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="puill's Blog">
+      <meta itemprop="description" content="puill的博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="06 定时器和PWM（1） | puill's Blog">
+      <meta itemprop="description" content="定时器和PWM的控制操作1">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          06 定时器和PWM（1）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-01-17 21:36:38" itemprop="dateCreated datePublished" datetime="2025-01-17T21:36:38+08:00">2025-01-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-01-18 14:21:33" itemprop="dateModified" datetime="2025-01-18T14:21:33+08:00">2025-01-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/stm32/" itemprop="url" rel="index"><span itemprop="name">stm32</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">定时器和PWM的控制操作1</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>前面介绍了一下外部中断，这一节主要介绍一下内部定时器和PWM，这两个知识还是比较重要的。</p>
+<h1 id="一、定时器"><a href="#一、定时器" class="headerlink" title="一、定时器"></a>一、定时器</h1><h2 id="1-什么是定时器"><a href="#1-什么是定时器" class="headerlink" title="1.什么是定时器"></a>1.什么是定时器</h2><p>定时器其实和计数器一样，我们通过设置一个值，当计数器运行一个计数寄存器向上加1或者向下减1达到这个值后，会发送一个事件，以此运行即可。</p>
+<p>这个就是定时器。</p>
+<h2 id="2-在stm32中的定时器"><a href="#2-在stm32中的定时器" class="headerlink" title="2.在stm32中的定时器"></a>2.在stm32中的定时器</h2><p>在stm32中定时器是以TIMx来命名的，在stm32中有三类定时器，分别是基本定时器、通用定时器和高级定时器。</p>
+<h3 id="2-1-基本定时器"><a href="#2-1-基本定时器" class="headerlink" title="2.1 基本定时器"></a>2.1 基本定时器</h3><p>基本定时器的编号为<code>TIM6</code>和<code>TIM7</code>，它们是属于<code>APB1</code>总线中的外设。</p>
+<p>它们的功能有：定时中断、主模式触发DAC。</p>
+<p>基本定时器属于最基本的定时器，在stm32f103中没有基本定时器。</p>
+<h3 id="2-2-通用定时器"><a href="#2-2-通用定时器" class="headerlink" title="2.2 通用定时器"></a>2.2 通用定时器</h3><p>通用定时器的编号为<code>TIM2</code>、<code>TIM3</code>、<code>TIM4</code>、<code>TIM5</code>，它们是属于<code>APB1</code>总线中的外设。</p>
+<p>通用定时器有基本定时器的全部功能，并且在此功能上还添加了内外时钟源选择、输入捕获、输出比较、编码器接口和主从模式等功能。</p>
+<p>我们使用通用定时器可以做PWM的输出和捕获。</p>
+<h3 id="2-3-高级定时器"><a href="#2-3-高级定时器" class="headerlink" title="2.3 高级定时器"></a>2.3 高级定时器</h3><p>高级定时器的编号为<code>TIM1</code>和<code>TIM8</code>，它们是属于<code>APB2</code>总线中的外设。</p>
+<p>高级定时器有通用定时器的全部功能，并且增加了重复计数器、死区生成、互补输出、刹车输入等功能。</p>
+<p>其中死区生成、互补输出、刹车输入是针对与三项无刷电机的功能。</p>
+<p>在stm32f103c8t6中有一个高级定时器和三个通用定时器，编号分别是<code>TIM1</code>、<code>TIM2</code>、<code>TIM3</code>和<code>TIM4</code>。</p>
+<p>接下来我们来了解一下定时器的内部结构。</p>
+<h2 id="3-定时器的内部结构"><a href="#3-定时器的内部结构" class="headerlink" title="3.定时器的内部结构"></a>3.定时器的内部结构</h2><p>这里的图我借用了江科大的图</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202407/3083010-20240731111559043-328370503.png" alt="img"></p>
+<p>我们可以设置定时器是使用内部时钟还是外部时钟，也可以捕获外部的PWM信号，然后选择模式是内部模式还是外部模式或者是编码器模式，通过选择模式后进入到时基单元，时基单元主要是用来运行定时器的，预分频器是将输入的时钟再次进行分频，然后根据这个再次分好的频率来运行计数器<code>CNT</code>，当计数器达到自动重装器中的值后会发出一个信号给中断输出控制，中断输出控制发送中断信号给<code>NVIC</code>，这样就可以完成一次定时器中断了。</p>
+<p>对于在运行过程中，我们通过代码修改自动重装值<code>ARR</code>中的值时，stm32有两种模式，一种是无预装时许，另一种是有预装时许。</p>
+<h3 id="3-1-无预装时许"><a href="#3-1-无预装时许" class="headerlink" title="3.1 无预装时许"></a>3.1 无预装时许</h3><p>无预装时许的意思是，你在某一个时刻修改<code>ARR</code>中的值后，当前计数器比较到当前值后就会立马响应信号，就比如下图：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202407/3083010-20240731114837880-1114930503.png" alt="img"></p>
+<p>原来的计数值是FF，当修改为36后，计数器寄存器达到36后就会发送一个信号出来。</p>
+<h3 id="3-2-有预装时许"><a href="#3-2-有预装时许" class="headerlink" title="3.2 有预装时许"></a>3.2 有预装时许</h3><p>有预装时许和无预装时许的区别在与有预装时许有一个影子寄存器，当你在计时的过程中修改<code>ARR</code>的值，这个<code>ARR</code>的值不会立刻响应，而是要等当前的<code>ARR</code>值响应后下一次计数才可以响应：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202407/3083010-20240731115206151-1655877682.png" alt="img"></p>
+<p>可以看到，当修改值后，影子寄存器中的值是不会改变，只有<code>ARR</code>中的值改变，当当前计时完成后，产生更新事件后，才会使用修改后的值。</p>
+<h2 id="4-开始写代码"><a href="#4-开始写代码" class="headerlink" title="4.开始写代码"></a>4.开始写代码</h2><p>我们已经了解了定时器的内部结构后我们就知道了如何写好这个代码。</p>
+<p>逻辑其实就是，打开TIM的时钟，设置TIM使用内部时钟，配置TIM，打开NVIC中断，书写中断处理函数即可。</p>
+<p>那下面就一步一步的进行实现。</p>
+<h3 id="4-1-打开TIM时钟"><a href="#4-1-打开TIM时钟" class="headerlink" title="4.1 打开TIM时钟"></a>4.1 打开TIM时钟</h3><p>这一步很简单，只需要先确定TIM的编号，然后打开对应的<code>APB</code>总线即可，这里我选择的是通用定时器<code>TIM2</code>，<code>TIM2</code>是在<code>APB1</code>总线上的，所以代码就使用开启<code>APB1</code>的函数即可开启：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RCC_APB1PeriphClockCmd(RCC_APB2Periph_TIM2, ENABLE);</span><br></pre></td></tr></table></figure>
+
+<p>再比如我开启高级定时器<code>TIM1</code>，那高级定时器对应的是<code>APB2</code>总线，那这里的开启时钟代码就是使用<code>APB2</code>的函数即可开启：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);</span><br></pre></td></tr></table></figure>
+
+<p>这样就开启了定时器的时钟。</p>
+<h3 id="4-2-选择定时器的时钟"><a href="#4-2-选择定时器的时钟" class="headerlink" title="4.2 选择定时器的时钟"></a>4.2 选择定时器的时钟</h3><p>这里在之前内部结构可以了解到，我们可以选择外部时钟输入或者是内部时钟，配置内部时钟使用的函数是：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">TIM_InternalClockConfig</span><span class="params">(TIM_TypeDef* TIMx)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>在<code>TIMx</code>这填写对应的定时器编号，比如说这<code>TIM2</code>使用内部时钟作为输入，那就填写为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TIM_InternalClockConfig(TIM2);</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以让<code>TIM2</code>使用内部<code>RCC</code>时钟了。</p>
+<p>配置外部时钟输入的函数是：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">TIM_ETRClockMode2Config</span><span class="params">(TIM_TypeDef* TIMx, <span class="type">uint16_t</span> TIM_ExtTRGPrescaler, <span class="type">uint16_t</span> TIM_ExtTRGPolarity, <span class="type">uint16_t</span> ExtTRGFilter)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这个函数是通过设置ETR外部时钟模式2来作为时钟的输入，这里的传输比较多。</p>
+<p>第一个参数是定时器的编号，第二个参数<code>TIM_ExtTRGPrescaler</code>是外部时钟预分频器，这个参数可以填写下面的这些参数：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TIM_ExtTRGPSC_OFF</td>
+<td>不分频</td>
+</tr>
+<tr>
+<td>TIM_ExtTRGPSC_DIV2</td>
+<td>2分频</td>
+</tr>
+<tr>
+<td>TIM_ExtTRGPSC_DIV4</td>
+<td>4分频</td>
+</tr>
+<tr>
+<td>TIM_ExtTRGPSC_DIV8</td>
+<td>8分频</td>
+</tr>
+</tbody></table>
+<p>第三个参数<code>TIM_ExtTRGPolarity</code>是外部触发极性，可以填写下面这些参数：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TIM_ExtTRGPolarity_Inverted</td>
+<td>低电平有效</td>
+</tr>
+<tr>
+<td>TIM_ExtTRGPolarity_NonInverted</td>
+<td>高电平有效</td>
+</tr>
+</tbody></table>
+<p>第四个参数<code>ExtTRGFilter</code>是外部触发器过滤器，这个东西是设置一个值，这个值要在0x00到0x0F之间才可以。过滤器就是在一个f频率中采样N个点，如果N个点的电平一致，那就代表有效，这个函数就是设置f和N的。</p>
+<p>这里使用的是内部时钟，所以这里使用<code>TIM_InternalClockConfig</code>来进行配置，代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TIM_InternalClockConfig(TIM2);</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以使用内部<code>RCC</code>时钟了。</p>
+<h3 id="4-3-配置定时器"><a href="#4-3-配置定时器" class="headerlink" title="4.3 配置定时器"></a>4.3 配置定时器</h3><p>这个配置方法很简单，和配置GPIO口一样，创建结构体然后配置里面的内容，最后初始化一下即可，这样就配置好TIM定时器了，使用的结构体是：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">  <span class="type">uint16_t</span> TIM_Prescaler;         <span class="comment">/*!&lt; 指定用于除以 TIM 时钟的预分频器值。</span></span><br><span class="line"><span class="comment">  此参数可以是介于 0x0000 和 0xFFFF 之间的数字 */</span></span><br><span class="line"></span><br><span class="line">  <span class="type">uint16_t</span> TIM_CounterMode;       <span class="comment">/*!&lt; 指定计数器模式。</span></span><br><span class="line"><span class="comment">  此参数的值可以是 @ref TIM_Counter_Mode */</span></span><br><span class="line"></span><br><span class="line">  <span class="type">uint16_t</span> TIM_Period;            <span class="comment">/*!&lt; 指定要加载到活动状态的周期值</span></span><br><span class="line"><span class="comment">  在下一次更新事件中自动重新加载寄存器。</span></span><br><span class="line"><span class="comment">  此参数必须是介于 0x0000 和 0xFFFF 之间的数字。  */</span> </span><br><span class="line"></span><br><span class="line">  <span class="type">uint16_t</span> TIM_ClockDivision;     <span class="comment">/*!&lt; 指定时钟划分。</span></span><br><span class="line"><span class="comment">  此参数的值可以是 @ref TIM_Clock_Division_CKD */</span></span><br><span class="line"></span><br><span class="line">  <span class="type">uint8_t</span> TIM_RepetitionCounter;  <span class="comment">/*!&lt; 这个参数是设置重复计数器的值，这个值填写0x00到0xFF之间的值，只有TIM1和TIM8配置该参数才有用 */</span></span><br><span class="line">&#125; TIM_TimeBaseInitTypeDef;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到这个结构体中有一个<code>TIM_RepetitionCounter</code>参数只有高级定时器才能使用，所以我们可以不配置，给个0即可，也可以使用<code>TIM_TimeBaseStructInit</code>函数对结构体一个默认值。</p>
+<p>这里就介绍一下这两种写法，第一种全部配置：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">TIM_TimeBaseInitStruct.TIM_Prescaler = <span class="number">7200</span> - <span class="number">1</span>;   <span class="comment">// 预分频</span></span><br><span class="line">TIM_TimeBaseInitStruct.TIM_Period = <span class="number">1000</span> - <span class="number">1</span>； <span class="comment">// arr自动重装器</span></span><br><span class="line">TIM_TimeBaseInitStruct.TIM_CounterMode = TIM_CounterMode_Up;      <span class="comment">// 向上计数</span></span><br><span class="line">TIM_TimeBaseInitStruct.TIM_ClockDivision = TIM_CKD_DIV1;      <span class="comment">// 分频系数，这里是不分频</span></span><br><span class="line">TIM_TimeBaseInitStruct.TIM_RepetitionCounter = <span class="number">0</span>; <span class="comment">// 这个是重复寄存器，因为只有高级的才有，所以这里填0</span></span><br><span class="line">TIM_BaseInit(TIM2, &amp;TIM_TimeBaseInitStruct);</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以配置TIM了，第二种方法，实现给这个结构体一个初始值，然后再配置需要用到的一些参数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">TIM_TimeBaseStructInit(&amp;TIM_TimeBaseInitStruct);</span><br><span class="line">TIM_TimeBaseInitStruct.TIM_Prescaler = <span class="number">7200</span> - <span class="number">1</span>;   <span class="comment">// 预分频</span></span><br><span class="line">TIM_TimeBaseInitStruct.TIM_Period = <span class="number">1000</span> - <span class="number">1</span>； <span class="comment">// arr自动重装器</span></span><br><span class="line">TIM_TimeBaseInitStruct.TIM_CounterMode = TIM_CounterMode_Up;      <span class="comment">// 向上计数</span></span><br><span class="line">TIM_TimeBaseInitStruct.TIM_ClockDivision = TIM_CKD_DIV1;      <span class="comment">// 分频系数，这里是不分频</span></span><br><span class="line">TIM_BaseInit(&amp;TIM_TimeBaseInitStruct);</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以配置好了，其实还是比较简单的。</p>
+<h3 id="4-4-打开TIM中断"><a href="#4-4-打开TIM中断" class="headerlink" title="4.4 打开TIM中断"></a>4.4 打开TIM中断</h3><p>这个使用<code>TIM_ITConfig()</code>函数进行打开即可，函数原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">TIM_ITConfig</span><span class="params">(TIM_TypeDef* TIMx, <span class="type">uint16_t</span> TIM_IT, FunctionalState NewState)</span>;</span><br></pre></td></tr></table></figure>
+
+<p><code>TIMx</code>是TIM的编号。</p>
+<p><code>TIM_IT</code>是填写触发模式，这里大家可以去标准库中进行查看。</p>
+<p><code>NewState</code>这个是填写使能<code>ENABLE</code>或者失能<code>DISABLE</code>的。</p>
+<p>这里我要配置TIM2定时器，更新事件，那么代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以使能定时器中断了。</p>
+<h3 id="4-5-配置NVIC"><a href="#4-5-配置NVIC" class="headerlink" title="4.5 配置NVIC"></a>4.5 配置NVIC</h3><p>这个就很简单了，直接上代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);</span><br><span class="line">NVIC_InitStruct.NVIC_IRQChannel = TIM2_IRQn;   <span class="comment">// 这里注意是定时器的通道，可以在标准库中查询</span></span><br><span class="line">NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;</span><br><span class="line">NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = <span class="number">2</span>;</span><br><span class="line">NVIC_InitStruct.NVIC_IRQChannelSubPriority = <span class="number">1</span>;</span><br><span class="line">NVIC_Init(&amp;NVIC_InitStruct);</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-6-启动TIM时钟"><a href="#4-6-启动TIM时钟" class="headerlink" title="4.6 启动TIM时钟"></a>4.6 启动TIM时钟</h3><p>这里需要使用<code>TIM_Cmd()</code>进行使能才可以让定时器运行，这里的代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TIM_Cmd(TIM2, ENABLE);</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以启动时钟开始定时了。</p>
+<h3 id="4-7-书写中断服务函数"><a href="#4-7-书写中断服务函数" class="headerlink" title="4.7 书写中断服务函数"></a>4.7 书写中断服务函数</h3><p>这个地方的中断服务函数需要到启动文件中去找，我这使用的是<code>TIM2</code>，所以中断服务函数是：<code>TIM2_IRQHandler</code>，然后写里面的内容即可，这里的话不是清除外部中断标志位和判断外部中断标志位了，而是清除定时器的中断标志位和判断定时器中断的标志位。</p>
+<p>代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">TIM2_IRQHandler</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (TIM_GetITStatus(TIM2, TIM_IT_Update) == SET)  <span class="comment">// 这里类型是更新中断</span></span><br><span class="line">    &#123;</span><br><span class="line">        TIM_ClearITPendingBit(TIM2, TIM_IT_Update);   <span class="comment">// 清除中断标志位</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样内部定时器中断和实现就写完了，接下来来介绍一下如何计算定时的时间。</p>
+<h2 id="5-定时时间的计算"><a href="#5-定时时间的计算" class="headerlink" title="5.定时时间的计算"></a>5.定时时间的计算</h2><p>这个是讲公式了，我们前面了解到一个内部时钟，这个是CLK，预分频器是PSC，重装寄存器是RCC，那定时频率的公式为：P_CLK &#x3D; CLK &#x2F; (PSC + 1) &#x2F; (RCC + 1)。</p>
+<p>根据这个公式就可以计算出来计时时间了，比如说我们要实现1s的定时，那PSC我们可以给7200 - 1，RCC可以给10000 - 1，这样就是1s发生一次中断。</p>
+<p>当然你也可以给PSC 10000 - 1，RCC给7200 - 1。</p>
+<p>这些都是可以的，这个是自己经过计算可以得到的。</p>
+<h1 id="二、外部时钟模式定时器"><a href="#二、外部时钟模式定时器" class="headerlink" title="二、外部时钟模式定时器"></a>二、外部时钟模式定时器</h1><p>上面介绍了使用<code>RCC</code>作为时钟的定时器，这里介绍一下用外部的时钟作为定时器的方式。</p>
+<p>其实内部的思想是一样的，在时钟选择那不用<code>TIM_InternalClockConfig()</code>函数进行设置，而是使用<code>TIM_ETRClockMode2Config()</code>函数进行设置即可，上面详细解释了这个函数的原型和参数，这里就不再介绍了，然后配置个GPIO口，因为需要外部输入，外部输入需要使用到GPIO口，所以要进行配置，手册上对于作为时钟输入的GPIO口配置为浮空输入，这里也用浮空输入，代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">RCC_APB1PeriphClockCmd(RCC_APB2Periph_TIM2, ENABLE);</span><br><span class="line">RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOx, ENABLE);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 配置GPIO口</span></span><br><span class="line">GPIO_InitTypeDef GPIO_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;   <span class="comment">// 浮空输入</span></span><br><span class="line">GPIO_InitStruct.GPIO_Pin = GPIO_Pin_x;</span><br><span class="line">GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">GPIO_Init(GPIOx, &amp;GPIO_InitStruct);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 配置TIM时钟</span></span><br><span class="line">TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">TIM_TimeBaseInitStruct.TIM_Prescaler = <span class="number">7200</span> - <span class="number">1</span>;   <span class="comment">// 预分频</span></span><br><span class="line">TIM_TimeBaseInitStruct.TIM_Period = <span class="number">1000</span> - <span class="number">1</span>； <span class="comment">// arr自动重装器</span></span><br><span class="line">TIM_TimeBaseInitStruct.TIM_CounterMode = TIM_CounterMode_Up;      <span class="comment">// 向上计数</span></span><br><span class="line">TIM_TimeBaseInitStruct.TIM_ClockDivision = TIM_CKD_DIV1;      <span class="comment">// 分频系数，这里是不分频</span></span><br><span class="line">TIM_TimeBaseInitStruct.TIM_RepetitionCounter = <span class="number">0</span>; <span class="comment">// 这个是重复寄存器，因为只有高级的才有，所以这里填0</span></span><br><span class="line">TIM_BaseInit(TIM2, &amp;TIM_TimeBaseInitStruct);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用外部时钟</span></span><br><span class="line">TIM_ETRClockMode2Config(TIM2, TIM_ExtTRGPSC_OFF, TIM_ExtTRGPolarity_Inverted, <span class="number">0x03</span>);   <span class="comment">// 无分频，低电平为有效输入，过滤器为3</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 使能TIM中断</span></span><br><span class="line">TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 配置NVIC</span></span><br><span class="line">NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);</span><br><span class="line">NVIC_InitStruct.NVIC_IRQChannel = TIM2_IRQn;</span><br><span class="line">NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;</span><br><span class="line">NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = <span class="number">2</span>;</span><br><span class="line">NVIC_InitStruct.NVIC_IRQChannelSubPriority = <span class="number">1</span>;</span><br><span class="line">NVIC_Init(&amp;NVIC_InitStruct);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使能TIM</span></span><br><span class="line">TIM_Cmd(TIM2, ENABLE);</span><br></pre></td></tr></table></figure>
+
+<p>然后就是书写中断服务函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">TIM2_IRQHandler</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (TIM_GetITStatus(TIM2, TIM_IT_Update) == SET)  <span class="comment">// 这里类型是更新中断</span></span><br><span class="line">    &#123;</span><br><span class="line">        TIM_ClearITPendingBit(TIM2, TIM_IT_Update);   <span class="comment">// 清除中断标志位</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>中断服务函数的位置不固定。</p>
+<h1 id="三、PWM"><a href="#三、PWM" class="headerlink" title="三、PWM"></a>三、PWM</h1><p>终于到PWM脉冲调制控制了，这个功能的实现其实也是基于定时器的，这个功能用来控制电机的。</p>
+<p>PWM有三个关键参数，一个是占空比，一个是分辨率，另一个是频率。</p>
+<p>占空比是在一个时钟内，高电平的时间和一个时钟时间的比值。</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202407/3083010-20240731145853440-1506660610.png" alt="img"></p>
+<p>Ts是一个时钟的时间，Ton是高电平的时间。这个就是占空比。</p>
+<p>分辨率是占空比的变化步距。</p>
+<p>频率是Ts时钟时间的倒数。</p>
+<h2 id="1-PWM工作过程"><a href="#1-PWM工作过程" class="headerlink" title="1.PWM工作过程"></a>1.PWM工作过程</h2><p>在PWM中有着定时器的重装寄存器ARR，还增加了一个捕获&#x2F;比较寄存器<code>CCR</code>，这个<code>CCR</code>的作用是，当计数器到达这个<code>CCR</code>设定的值后就会发生一个电平的翻转，例如下图：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202407/3083010-20240731150352588-103987578.png" alt="img"></p>
+<p>黄色的线代表着<code>ARR</code>中的值，红色的线代表<code>CCR</code>中的值，可以看到当计数器到<code>CCR</code>那时，电平就发生了变化，当到达<code>ARR</code>后就会变回来，以此工作下去。</p>
+<h2 id="2-PWM内部结构"><a href="#2-PWM内部结构" class="headerlink" title="2.PWM内部结构"></a>2.PWM内部结构</h2><p><img src="https://img2023.cnblogs.com/blog/3083010/202407/3083010-20240731150905333-2121755911.png" alt="img"></p>
+<p>可以看到这个内部结构，<code>CRR</code>就是对计数器中的值进行一个比较，当比较成功就会根据设置好的模式来进行输出，其实还是比较简单的，设置方法也是先设置TIM，然后配置GPIO口，最后配置PWM的模式就可以了，过程比较简单，前面见过的TIM设置这里就不再重复了。</p>
+<p>因为PWM是通用定时器和高级定时器的一个功能，所以不需要额外开启时钟，直接开启对应的定时器的时钟即可。</p>
+<p>主要要注意，基本定时器是没有PWM功能的。</p>
+<h3 id="2-1-配置GPIO口"><a href="#2-1-配置GPIO口" class="headerlink" title="2.1 配置GPIO口"></a>2.1 配置GPIO口</h3><p>这里需要使用到GPIO口来作为一个PWM的输出，翻看手册，可以看到</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202407/3083010-20240731151403977-1619864766.png" alt="img"></p>
+<p>对于输出比较通道，GPIO口的配置是使用推挽复用输出<code>GPIO_Mode_AF_PP</code>，所以这里就明白了，配置方法很简单：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">GPIO_InitTypeDef GPIO_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF_PP;   <span class="comment">// 复用推挽输出</span></span><br><span class="line">GPIO_InitStruct.GPIO_Pin = GPIO_Pin_x;</span><br><span class="line">GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">GPIO_Init(GPIOx, &amp;GPIO_InitStruct);</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-配置PWM"><a href="#2-2-配置PWM" class="headerlink" title="2.2 配置PWM"></a>2.2 配置PWM</h3><p>上面有一步是配置TIM，那个之前就已经说了的，配置的内容一样，所以就直接省略，这里直接上PWM配置，使用到的函数比较多，其实我们这使用的是定时器的输出比较功能，而在输出比较功能中就有一个功能是PWM功能。</p>
+<p>这里的输出比较有这么几个模式，这里还是借用江科大的图：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202407/3083010-20240731152155454-1787089970.png" alt="img"></p>
+<p>这里可以看到有这些功能，解释也比较清楚，所以这里就不介绍了。</p>
+<p>这里配置PWM也是使用一个结构体来进行配置，结构体的类型为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">  <span class="type">uint16_t</span> TIM_OCMode;        <span class="comment">/*!&lt; 指定 TIM 模式。</span></span><br><span class="line"><span class="comment">  此参数可以是 TIM 模式@ref TIM_Output_Compare_and_PWM_modesSpecifies的值。</span></span><br><span class="line"><span class="comment">  此参数的值可以是 @ref TIM_Output_Compare_and_PWM_modes */</span></span><br><span class="line"></span><br><span class="line">  <span class="type">uint16_t</span> TIM_OutputState;   <span class="comment">/*!&lt; 指定 TIM 输出比较状态。</span></span><br><span class="line"><span class="comment">  此参数的值可以是 @ref TIM_Output_Compare_state */</span></span><br><span class="line"></span><br><span class="line">  <span class="type">uint16_t</span> TIM_OutputNState;  <span class="comment">/*!&lt; 指定 TIM 互补输出比较状态。</span></span><br><span class="line"><span class="comment">  此参数的值可以是 @ref TIM_Output_Compare_N_state</span></span><br><span class="line"><span class="comment">  @note 此参数仅对 TIM1 和 TIM8 有效。 */</span></span><br><span class="line"></span><br><span class="line">  <span class="type">uint16_t</span> TIM_Pulse;         <span class="comment">/*!&lt; 指定要加载到捕获比较寄存器中的脉冲值。</span></span><br><span class="line"><span class="comment">  此参数可以是介于 0x0000 和 0xFFFF 之间的数字 */</span></span><br><span class="line"></span><br><span class="line">  <span class="type">uint16_t</span> TIM_OCPolarity;    <span class="comment">/*!&lt; 指定输出极性。</span></span><br><span class="line"><span class="comment">  此参数的值可以是 @ref TIM_Output_Compare_Polarity */</span></span><br><span class="line"></span><br><span class="line">  <span class="type">uint16_t</span> TIM_OCNPolarity;   <span class="comment">/*!&lt; 指定互补输出极性。</span></span><br><span class="line"><span class="comment">  此参数的值可以是 @ref TIM_Output_Compare_N_Polarity</span></span><br><span class="line"><span class="comment">  @note 此参数仅对 TIM1 和 TIM8 有效。 */</span></span><br><span class="line"></span><br><span class="line">  <span class="type">uint16_t</span> TIM_OCIdleState;   <span class="comment">/*!&lt; 指定空闲状态期间的 TIM 输出比较引脚状态。</span></span><br><span class="line"><span class="comment">  此参数的值可以是 @ref TIM_Output_Compare_Idle_State</span></span><br><span class="line"><span class="comment">  @note 此参数仅对 TIM1 和 TIM8 有效。 */</span></span><br><span class="line"></span><br><span class="line">  <span class="type">uint16_t</span> TIM_OCNIdleState;  <span class="comment">/*!&lt; 指定空闲状态期间的 TIM 输出比较引脚状态。</span></span><br><span class="line"><span class="comment">  此参数的值可以是 @ref TIM_Output_Compare_N_Idle_State</span></span><br><span class="line"><span class="comment">  @note 此参数仅对 TIM1 和 TIM8 有效。 */</span></span><br><span class="line">&#125; TIM_OCInitTypeDef;</span><br></pre></td></tr></table></figure>
+
+<p>这里的话有一些可以不用配置，表明着仅对 TIM1 和 TIM8 有效的可以省略，这里可以使用<code>TIM_OCStructInit</code>函数对创建好的结构体进行一个初始化，避免初始化时因为参数没有配置导致出现错误。</p>
+<p>首先创建一个结构体：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TIM_OCInitTypeDef TIM_OCInitStruct = &#123;<span class="number">0</span>&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>然后使用<code>TIM_OCStructInit</code>进行初始化配置:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TIM_OCStructInit(&amp;TIM_OCInitStruct);</span><br></pre></td></tr></table></figure>
+
+<p>初始化完成后就可以开始对结构体中的成员开始配置了：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">TIM_OCInitStruct.TIM_OCMode = TIM_OCMode_PWM1;  <span class="comment">// 这个是配置模式，这里配置的模式是PWM1</span></span><br><span class="line">TIM_OCInitStruct.TIM_OutputState = TIM_OutputState_ENABLE;    <span class="comment">// 这里配置的是输出使能如果不使能就输出不了</span></span><br><span class="line">TIM_OCInitStruct.TIM_Pulse = <span class="number">0x20</span>;  <span class="comment">// 这里是设置脉冲值，这个具体的内容后面再详细讲解</span></span><br><span class="line">TIM_OCInitStruct.TIM_OCPolarity = TIM_OCPolarity_High;         <span class="comment">// 这里是设置输出极性，比如说没达到CCR时，就输出这个电平，当达到后就会翻转</span></span><br></pre></td></tr></table></figure>
+
+<p>这样就配置好了结构体了，下面就需要进行初始化，在初始化的时候需要选择对应的输出比较函数，在c8t6中有4个输出比较通道可以进行设置，并不是每个通道都可以初始化相应的定时器，这个需要在看GPIO引脚的默认复用功能是哪一个通道，然后再选择相应的通道，这四个函数为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">TIM_OC1Init</span><span class="params">(TIM_TypeDef* TIMx, TIM_OCInitTypeDef* TIM_OCInitStruct)</span>;</span><br><span class="line"><span class="type">void</span> <span class="title function_">TIM_OC2Init</span><span class="params">(TIM_TypeDef* TIMx, TIM_OCInitTypeDef* TIM_OCInitStruct)</span>;</span><br><span class="line"><span class="type">void</span> <span class="title function_">TIM_OC3Init</span><span class="params">(TIM_TypeDef* TIMx, TIM_OCInitTypeDef* TIM_OCInitStruct)</span>;</span><br><span class="line"><span class="type">void</span> <span class="title function_">TIM_OC4Init</span><span class="params">(TIM_TypeDef* TIMx, TIM_OCInitTypeDef* TIM_OCInitStruct)</span>;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202407/3083010-20240731160909597-366055006.png" alt="img"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202407/3083010-20240731160922043-862972203.png" alt="img"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202407/3083010-20240731160930913-14232135.png" alt="img"></p>
+<p>比如说上面还是使用的是TIM2定时器，并且是使用PA3作为PWM的输出，那么这里的初始化通道就得选择4通道，初始化代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TIM_OC4Init(TIM2, &amp;TIM_OCInitStruct);</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以配置好TIM2_CH4了。</p>
+<h3 id="2-3-使能输出比较通道"><a href="#2-3-使能输出比较通道" class="headerlink" title="2.3 使能输出比较通道"></a>2.3 使能输出比较通道</h3><p>这个使用一个函数就可以进行使能了：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TIM_OC3PreloadConfig(TIM2, TIM_OCPreload_Enable);</span><br></pre></td></tr></table></figure>
+
+<p>当然这也是有4个函数的，这4的函数要对应对应的通道来选择，不能乱选择。</p>
+<h3 id="2-4-使能定时器"><a href="#2-4-使能定时器" class="headerlink" title="2.4 使能定时器"></a>2.4 使能定时器</h3><p>设置完成后我们就可以加定时器进行设置了，设置的函数和前面的一样：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TIM_Cmd(TIM2, ENABLE);</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-5-计算出占空比"><a href="#2-5-计算出占空比" class="headerlink" title="2.5 计算出占空比"></a>2.5 计算出占空比</h3><p>这样PWM就设置完成了，现在然后我们就可以了解一下占空比的计算方法了，我们之前设置了PSC预分频器和重装寄存器ARR，这个可以算出运行一次需要多少时间，那我们用设置的CCR捕获&#x2F;比较寄存器来除以（ARR+1）了。</p>
+<p>比如说在1s的定时器中输出0.5s的高电平和0.5s的低电平，那PSC设置为7200 - 1，ARR设置为10000 - 1，CCR设置为5000 - 1即可实现。</p>
+<h1 id="四、LED呼吸灯"><a href="#四、LED呼吸灯" class="headerlink" title="四、LED呼吸灯"></a>四、LED呼吸灯</h1><p>这个项目太经典了，每个教程在讲PWM的时候都会讲一个呼吸灯的项目，这里也一样，跟随潮流，我也写一个。</p>
+<p>其实这个项目很简单，就是不断的调整PWM的占空比就可以实现了。</p>
+<p>初始化代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">PWM_Init</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 创建初始化结构体变量</span></span><br><span class="line">    GPIO_InitTypeDef GPIO_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    TIM_OCInitTypeDef TIM_OCInitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 打开时钟</span></span><br><span class="line">    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);</span><br><span class="line">    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 配置GPIO引脚</span></span><br><span class="line">    GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF_PP;</span><br><span class="line">    GPIO_InitStruct.GPIO_Pin = GPIO_Pin_3;</span><br><span class="line">    GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">    GPIO_Init(GPIOA, &amp;GPIO_InitStruct);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 配置TIM定时器</span></span><br><span class="line">    TIM_TimeBaseStructInit(&amp;TIM_TimeBaseInitStruct);</span><br><span class="line">    </span><br><span class="line">    TIM_TimeBaseInitStruct.TIM_ClockDivision = TIM_CKD_DIV1;     <span class="comment">// 时钟分频</span></span><br><span class="line">    TIM_TimeBaseInitStruct.TIM_CounterMode = TIM_CounterMode_Up;       <span class="comment">// 计算模式</span></span><br><span class="line">    TIM_TimeBaseInitStruct.TIM_Period = <span class="number">100</span> - <span class="number">1</span>;           <span class="comment">//自动重装值</span></span><br><span class="line">    TIM_TimeBaseInitStruct.TIM_Prescaler = <span class="number">720</span> - <span class="number">1</span>;        <span class="comment">// 预分频</span></span><br><span class="line">    TIM_TimeBaseInit(TIM2, &amp;TIM_TimeBaseInitStruct);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 配置PWM</span></span><br><span class="line">    TIM_OCStructInit(&amp;TIM_OCInitStruct);</span><br><span class="line">    TIM_OCInitStruct.TIM_OutputState = TIM_OutputState_Enable;     <span class="comment">// 输出使能</span></span><br><span class="line">    TIM_OCInitStruct.TIM_OCMode = TIM_OCMode_PWM1;       <span class="comment">// PWM模式1</span></span><br><span class="line">    TIM_OCInitStruct.TIM_Pulse = <span class="number">0</span>;              <span class="comment">// CCR值</span></span><br><span class="line">    TIM_OCInitStruct.TIM_OCPolarity = TIM_OCPolarity_Low;    <span class="comment">// 有效输出</span></span><br><span class="line">    TIM_OC4Init(TIM2, &amp;TIM_OCInitStruct);</span><br><span class="line">    TIM_OC4PreloadConfig(TIM2, TIM_OCPreload_Enable);</span><br><span class="line">    TIM_Cmd(TIM2, ENABLE);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后主函数的实现代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">int16_t</span> i = <span class="number">0</span>;</span><br><span class="line">    PWM_Init();</span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            TIM_SetCompare4(TIM2, i);</span><br><span class="line">            delay_ms(<span class="number">10</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (i = <span class="number">100</span>; i &gt;= <span class="number">0</span>; i--)</span><br><span class="line">        &#123;</span><br><span class="line">            TIM_SetCompare4(TIM2, i);</span><br><span class="line">            delay_ms(<span class="number">10</span>);</span><br><span class="line">        &#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>TIM定时器中断和PWM的基础功能还是比较简单的，大家可以多使用一下就可以慢慢的熟悉了。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>puill
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://www.puill.xin/2025/01/17/4dff7e1a6b94/" title="06 定时器和PWM（1）">http://www.puill.xin/2025/01/17/4dff7e1a6b94/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" rel="tag"># 单片机</a>
+              <a href="/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" rel="tag"># 环境搭建</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/01/17/67157ff102f4/" rel="prev" title="07 输入捕获和编码器接口">
+                  <i class="fa fa-angle-left"></i> 07 输入捕获和编码器接口
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/01/17/80a02853c189/" rel="next" title="05 详细的中断讲解">
+                  05 详细的中断讲解 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">puill</span>
+  </div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+--><div>
+<!--添加网站运行时间-->
+<span>小破站已经在风雨中度过了</span>
+<span id="timeDate">载入天数...</span>
+<span id="times">载入时分秒...</span>
+<script>
+    function createtime() {
+        const startTime = '01/10/2025 00:00:00',
+            start = new Date(startTime)
+        let mill = new Date() - start,
+            seconds = Math.floor(mill / 1000),
+            mins = Math.floor(seconds / 60),
+            hours = Math.floor(mins / 60),
+            days = Math.floor(hours / 24)
+        const time = {
+            seconds: seconds - mins * 60,
+            mins: mins - hours * 60,
+            hours: hours - days * 24,
+        }
+        for (const k in time) {
+            time[k] = `${time[k]}`.padStart(2, '0')
+        }
+        document.getElementById("timeDate").innerHTML = ` ${days} 天`
+        document.getElementById("times").innerHTML = ` ${time.hours} 小时 ${time.mins} 分 ${time.seconds} 秒`
+    }
+    setInterval(createtime, 500)
+</script>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

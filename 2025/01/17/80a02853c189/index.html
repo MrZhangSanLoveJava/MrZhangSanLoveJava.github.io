@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/aaa.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.puill.xin","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"show_result":true,"style":"default"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="中断系统的操作">
+<meta property="og:type" content="article">
+<meta property="og:title" content="05 详细的中断讲解">
+<meta property="og:url" content="http://www.puill.xin/2025/01/17/80a02853c189/index.html">
+<meta property="og:site_name" content="puill&#39;s Blog">
+<meta property="og:description" content="中断系统的操作">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202407/3083010-20240728210911470-416681044.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202407/3083010-20240728211945019-542550085.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202407/3083010-20240728223052312-2071434475.png">
+<meta property="article:published_time" content="2025-01-17T13:36:38.000Z">
+<meta property="article:modified_time" content="2025-01-18T06:21:00.757Z">
+<meta property="article:author" content="puill">
+<meta property="article:tag" content="单片机">
+<meta property="article:tag" content="环境搭建">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img2023.cnblogs.com/blog/3083010/202407/3083010-20240728210911470-416681044.png">
+
+
+<link rel="canonical" href="http://www.puill.xin/2025/01/17/80a02853c189/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.puill.xin/2025/01/17/80a02853c189/","path":"2025/01/17/80a02853c189/","title":"05 详细的中断讲解"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>05 详细的中断讲解 | puill's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">puill's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-文章"><a href="/articles/" rel="section"><i class="fa fa-file-text fa-fw"></i>文章</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-友链"><a href="/friendchains/" rel="section"><i class="fa fa-paperclip fa-fw"></i>友链</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%AD%E6%96%AD"><span class="nav-number">2.</span> <span class="nav-text">一、什么是中断</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E4%B8%AD%E6%96%AD"><span class="nav-number">3.</span> <span class="nav-text">二、如何使用中断</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-stm32%E4%B8%AD%E6%96%AD%E7%BB%93%E6%9E%84"><span class="nav-number">3.1.</span> <span class="nav-text">1.stm32中断结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-AFIO%E4%B8%AD%E6%96%AD%E5%BC%95%E8%84%9A%E9%80%89%E6%8B%A9"><span class="nav-number">3.1.1.</span> <span class="nav-text">1.1 AFIO中断引脚选择</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-EXTI%E8%BE%B9%E7%BC%98%E6%A3%80%E6%B5%8B"><span class="nav-number">3.1.2.</span> <span class="nav-text">1.2 EXTI边缘检测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-NVIC%E4%BC%98%E5%85%88%E7%BA%A7%E9%85%8D%E7%BD%AE"><span class="nav-number">3.1.3.</span> <span class="nav-text">1.3 NVIC优先级配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E9%85%8D%E7%BD%AEstm32%E7%9A%84%E4%B8%AD%E6%96%AD"><span class="nav-number">3.2.</span> <span class="nav-text">2.配置stm32的中断</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%89%93%E5%BC%80%E6%97%B6%E9%92%9F"><span class="nav-number">3.2.1.</span> <span class="nav-text">1.打开时钟</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E9%85%8D%E7%BD%AEGPIO%E5%8F%A3"><span class="nav-number">3.2.2.</span> <span class="nav-text">2.配置GPIO口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E9%85%8D%E7%BD%AEAFIO%E6%8E%A7%E5%88%B6"><span class="nav-number">3.2.3.</span> <span class="nav-text">3.配置AFIO控制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E9%85%8D%E7%BD%AEEXTI%E5%8A%9F%E8%83%BD"><span class="nav-number">3.2.4.</span> <span class="nav-text">4.配置EXTI功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E9%85%8D%E7%BD%AENVIC"><span class="nav-number">3.2.5.</span> <span class="nav-text">5.配置NVIC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E9%85%8D%E7%BD%AE%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81"><span class="nav-number">3.2.6.</span> <span class="nav-text">6.配置完整代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E4%B9%A6%E5%86%99%E4%B8%AD%E6%96%AD%E6%9C%8D%E5%8A%A1%E5%87%BD%E6%95%B0"><span class="nav-number">3.3.</span> <span class="nav-text">3.书写中断服务函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="puill"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">puill</p>
+  <div class="site-description" itemprop="description">puill的博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="mailto:2256044190@qq.com" title="E-Mail → mailto:2256044190@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.puill.xin/2025/01/17/80a02853c189/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="puill">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="puill's Blog">
+      <meta itemprop="description" content="puill的博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="05 详细的中断讲解 | puill's Blog">
+      <meta itemprop="description" content="中断系统的操作">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          05 详细的中断讲解
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-01-17 21:36:38" itemprop="dateCreated datePublished" datetime="2025-01-17T21:36:38+08:00">2025-01-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-01-18 14:21:00" itemprop="dateModified" datetime="2025-01-18T14:21:00+08:00">2025-01-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/stm32/" itemprop="url" rel="index"><span itemprop="name">stm32</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">中断系统的操作</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>又鸽了几天的文章，最近在做一个手表项目，这个项目用到了很多知识，特别是中断的知识特别的多，所以这一篇文章来讲讲外部中断，等下一章说一下内部中断。</p>
+<h1 id="一、什么是中断"><a href="#一、什么是中断" class="headerlink" title="一、什么是中断"></a>一、什么是中断</h1><p>例如你现在在搞一个项目，然后突然看到你自己写的便条，上面写着今天该写文章了，然后你就会停下手中的项目，转去写文章，当文章写完后又继续的做项目，这个过程就是一个中断。</p>
+<p>也就是说中断就是一个打断当前执行的任务，转去执行另外一个任务，当这个任务执行完成后就会返回执行被打断的任务。</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202407/3083010-20240728210911470-416681044.png" alt="img"></p>
+<p>上面就是中断执行的一个逻辑。</p>
+<h1 id="二、如何使用中断"><a href="#二、如何使用中断" class="headerlink" title="二、如何使用中断"></a>二、如何使用中断</h1><p>上面我们简单的了解了一下中断，大概了解了中断是需要外部信号的，但是光有外部信号进来也不行，我们还需要配置内部，就比如上面举的例子，你看到了便条，但是你忘记这件事了，是不是就会忽略掉那个便条，stm32也是一样，你设置了外部的信号，但是你没设置stm32内部，让它知道这个信号是中断，这样是没用的，所以我们要对stm32进行配置。</p>
+<p>在配置之前首先要了解stm32处理中断的硬件环境，这样我们才知道如何配置。</p>
+<h2 id="1-stm32中断结构"><a href="#1-stm32中断结构" class="headerlink" title="1.stm32中断结构"></a>1.stm32中断结构</h2><p><img src="https://img2023.cnblogs.com/blog/3083010/202407/3083010-20240728211945019-542550085.png" alt="img"></p>
+<p>因为我们这里讲的是外部中断，在stm32中控制外部中断的是EXTI控制器，所以这里有GPIO口，GPIO口经过<code>AFIO</code>引脚选择器后选择出引脚转到<code>EXTI</code>检测器后会到<code>NVIC</code>中进行排队触发，如果前面有正在执行的中断，<code>NVIC</code>会根据这个中断的抢占优先级来进行强占，如果没有正常排队；如果同时有两个中断同时触发，会根据它们之间的响应优先级来进行排队响应。</p>
+<h3 id="1-1-AFIO中断引脚选择"><a href="#1-1-AFIO中断引脚选择" class="headerlink" title="1.1 AFIO中断引脚选择"></a>1.1 AFIO中断引脚选择</h3><p>这个连接这GPIO口的所有引脚，进入了这个器件后，这个器件会将同一个号码的引脚分为一个引脚，比如说PA1、PB1、PC1….分为一个引脚，其他的引脚也是这样的分类，我们配置引脚为中断接受引脚后，AFIO会将这个引脚设置为对应的名字，然后将这个引脚发送给EXTI进行检测和控制，这里可以看到上图有一个16，代表的是只能接受16个引脚。</p>
+<h3 id="1-2-EXTI边缘检测"><a href="#1-2-EXTI边缘检测" class="headerlink" title="1.2 EXTI边缘检测"></a>1.2 EXTI边缘检测</h3><p>当配置好后，就可以将配置的引脚设置进EXTI中进行配置模式，配置好后进入NVIC进行配置抢占优先级和响应优先级。</p>
+<h3 id="1-3-NVIC优先级配置"><a href="#1-3-NVIC优先级配置" class="headerlink" title="1.3 NVIC优先级配置"></a>1.3 NVIC优先级配置</h3><p>到NVIC中就开始配置优先级，当优先级配置好后，NVIC就会让配置好的这个中断进行执行。</p>
+<p>这样就是一个中断的执行过程，下面就是介绍一下配置了。</p>
+<h2 id="2-配置stm32的中断"><a href="#2-配置stm32的中断" class="headerlink" title="2.配置stm32的中断"></a>2.配置stm32的中断</h2><p>了解了上面的那些元器件，接下来就是代码的配置实现了。</p>
+<h3 id="1-打开时钟"><a href="#1-打开时钟" class="headerlink" title="1.打开时钟"></a>1.打开时钟</h3><p>我们在做32的时候要，无论是做什么都需要打开对应的时钟，打开后才能正常的使用。</p>
+<p>在上面的硬件介绍中我们了解到，需要打开GPIO的时钟、AFIO的时钟。</p>
+<p>为什么不打开EXTI和NVIC的时钟呢？因为EXTI是和GPIO在一起的，当打开了GPIO的时钟，EXTI的时钟就打开了，而NVIC是在内核中的，这个时钟是在单片机启动有时钟时就可以直接使用，所以不用再麻烦的打开时钟进行操作。</p>
+<p>AFIO的时钟是属于APB2中的，所以打开时钟的代码也很简单：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">RCC_APB2PriphClockCmd(RCC_APB2Periph_GPIOx, ENABLE);</span><br><span class="line">RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);</span><br></pre></td></tr></table></figure>
+
+<p>其中<code>RCC_APB2Periph_GPIOx</code>是你要开启的GPIO口的时钟，这里就不具体举例子了。</p>
+<h3 id="2-配置GPIO口"><a href="#2-配置GPIO口" class="headerlink" title="2.配置GPIO口"></a>2.配置GPIO口</h3><p>打开时钟后就可以配置GPIO口了，一般我们使用GPIO口来接受中断信号，所以需要配置GPIO口，配置的方法之前在将IO口的操作时已经讲了，主要是GPIO口该是什么模式来进行接受呢？</p>
+<p>其实和输入一样，如果这个按钮是接地，那这个就设置为上拉输入，如果是接电源，那就下拉输入：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">GPIO_InitTypeDef GPIO_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IPU;   <span class="comment">// 这里默认为接地</span></span><br><span class="line">GPIO_InitStruct.GPIO_Pin = GPIO_Pin_x;</span><br><span class="line">GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">GPIO_Init(GPIOx, &amp;GPIO_InitStruct);</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-配置AFIO控制"><a href="#3-配置AFIO控制" class="headerlink" title="3.配置AFIO控制"></a>3.配置AFIO控制</h3><p>配置完成后我们接下来<code>AFIO</code>控制，了解过<code>AFIO</code>的都知道，<code>AFIO</code>是GPIO重映像的一个部件，在32中有一些引脚有一个重映像功能，如果我们需要使用到这个重映像的话就需要使用<code>AFIO</code>进行重映像配置。</p>
+<p>在这也是，其实你可以理解为将接受中断信号的引脚重映像为中断引脚，配置的方法很简单，只需要使用下面的一个语句就可以了：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GPIO_EXTILineConfig(GPIO_PortSourceGPIOx, GPIO_PinSourcex);</span><br></pre></td></tr></table></figure>
+
+<p>其中<code>GPIO_PortSourceGPIOx</code>是GPIO组，如果要设置为GPIOB的，那这里就写<code>GPIO_PortSourceGPIOB</code>。</p>
+<p><code>GPIO_PinSourcex</code>是GPIO口中需要配置的引脚，比如说是12引脚，那这里就填写<code>GPIO_PinSource12</code>。</p>
+<h3 id="4-配置EXTI功能"><a href="#4-配置EXTI功能" class="headerlink" title="4.配置EXTI功能"></a>4.配置EXTI功能</h3><p>配置完成AFIO后现在就要来配置EXTI中断控制器了，配置方法其实和GPIO口的配置一样，首先创建一个结构体，然后配置结构体中的内容，然后交给初始化函数就可以了，配置代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">EXTI_InitTypeDef EXTI_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">EXTI_InitStruct.EXTI_Mode = EXTI_Mode_Interrupt;   <span class="comment">// 设置中断模式</span></span><br><span class="line">EXTI_InitStruct.EXTI_LineCmd = ENABLE;    <span class="comment">// 使能中断通道</span></span><br><span class="line">EXTI_InitStruct.EXTI_Trigger = EXTI_Trigger_Falling;     <span class="comment">// 触发模式</span></span><br><span class="line">EXTI_InitStruct.EXTI_Line = EXTI_Linex;   <span class="comment">// 设置通道</span></span><br><span class="line">EXTI_Init(&amp;EXTI_InitStruct);</span><br></pre></td></tr></table></figure>
+
+<p>其中<code>EXTI_Linex</code>是设置通道，比如上面设置12引脚为中断模式，那这里就填写<code>EXTI_Line12</code>即可。</p>
+<h3 id="5-配置NVIC"><a href="#5-配置NVIC" class="headerlink" title="5.配置NVIC"></a>5.配置NVIC</h3><p>现在需要配置个NVIC就可以将stm32的中断配置完成了，配置NVIC的步骤也是和配置GPIO一样，但是在设置之前需要给NVIC一个分组，这个分组的作用是设置抢占优先级和响应优先级的范围，每个组的抢占和响应可选的值不一样，下面是分组对应的优先级的范围：</p>
+<table>
+<thead>
+<tr>
+<th>组名</th>
+<th>抢占优先级</th>
+<th>响应优先级</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>NVIC_PriorityGroup_0</td>
+<td>0~4</td>
+<td>0</td>
+</tr>
+<tr>
+<td>NVIC_PriorityGroup_1</td>
+<td>0~3</td>
+<td>0~1</td>
+</tr>
+<tr>
+<td>NVIC_PriorityGroup_2</td>
+<td>0~2</td>
+<td>0~2</td>
+</tr>
+<tr>
+<td>NVIC_PriorityGroup_3</td>
+<td>0~1</td>
+<td>0~3</td>
+</tr>
+<tr>
+<td>NVIC_PriorityGroup_4</td>
+<td>0</td>
+<td>0~4</td>
+</tr>
+</tbody></table>
+<p>配置的代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);</span><br></pre></td></tr></table></figure>
+
+<p>这里设置是组二，这个设置NVIC的组只有设置的第一次有用，如果你在其他再次调用了这个函数，组配置的不一样那也不会进行更改，相当于只要执行了一次这个函数就再也修改不了了，设置完成后就可以开始配置NVIC了：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">NVIC_InitStruct.NVIC_IRQChannel = EXTI15_10_IRQn;    <span class="comment">// 选择启用的IRQ通道</span></span><br><span class="line">NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;</span><br><span class="line">NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = <span class="number">2</span>;   <span class="comment">// 设置抢占优先级</span></span><br><span class="line">NVIC_InitStruct.NVIC_IRQChannelSubPriority = <span class="number">2</span>;          <span class="comment">// 设置响应优先级</span></span><br><span class="line">NVIC_Init(&amp;NVIC_InitStruct);</span><br></pre></td></tr></table></figure>
+
+<p>这里需要注意一下，这里的抢占和响应的优先级如果超过了配置的组中的优先级，那会出问题，不要超过即可。</p>
+<p>这里<code>EXTI15_10_IRQn</code>是设置启用的通道，前面配置的通道需要在这变为IRQ通道，这里可以在源码中进行查看对应的通道，比如说我配置的是2引脚，那么这里写<code>EXTI2_IRQn</code>。</p>
+<p>这里就写完配置中断的代码了，全部的代码如下：</p>
+<h3 id="6-配置完整代码"><a href="#6-配置完整代码" class="headerlink" title="6.配置完整代码"></a>6.配置完整代码</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 开启时钟</span></span><br><span class="line">RCC_APB2PriphClockCmd(RCC_APB2Periph_GPIOx, ENABLE);    <span class="comment">// 这里需要对应的GPIO口</span></span><br><span class="line">RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 配置GPIO口</span></span><br><span class="line">GPIO_InitTypeDef GPIO_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IPU;   <span class="comment">// 这里默认为接地</span></span><br><span class="line">GPIO_InitStruct.GPIO_Pin = GPIO_Pin_x;    <span class="comment">// 这里需要写响应的引脚</span></span><br><span class="line">GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">GPIO_Init(GPIOx, &amp;GPIO_InitStruct);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 配置AFIO</span></span><br><span class="line">GPIO_EXTILineConfig(GPIO_PortSourceGPIOx, GPIO_PinSourcex);    <span class="comment">// 这里需要写具体的GPIO口和引脚</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 配置EXTI</span></span><br><span class="line">EXTI_InitTypeDef EXTI_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">EXTI_InitStruct.EXTI_Mode = EXTI_Mode_Interrupt;   <span class="comment">// 设置中断模式</span></span><br><span class="line">EXTI_InitStruct.EXTI_LineCmd = ENABLE;</span><br><span class="line">EXTI_InitStruct.EXTI_Trigger = EXTI_Trigger_Falling;</span><br><span class="line">EXTI_InitStruct.EXTI_Line = EXTI_Linex;   <span class="comment">// 这里需要写具体的通道</span></span><br><span class="line">EXTI_Init(&amp;EXTI_InitStruct);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 配置NVIC组</span></span><br><span class="line">NVIC_PriorityGroupConfig(NVIC_PriorityGroup_x);  <span class="comment">// 这里要写具体的组</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 配置NVIC</span></span><br><span class="line">NVIC_InitStruct.NVIC_IRQChannel = EXTI15_10_IRQn;    <span class="comment">// 选择启用的IRQ通道</span></span><br><span class="line">NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;</span><br><span class="line">NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = <span class="number">2</span>;   <span class="comment">// 设置抢占优先级</span></span><br><span class="line">NVIC_InitStruct.NVIC_IRQChannelSubPriority = <span class="number">2</span>;          <span class="comment">// 设置响应优先级</span></span><br><span class="line">NVIC_Init(&amp;NVIC_InitStruct);</span><br></pre></td></tr></table></figure>
+
+<p>配置完成中断后，stm32知道要执行中断了，但是中断的内容却没有，就比如你现在看到字条了，你知道要写文章了，已经停止做项目的操作了，但是你不知道该写什么文章，所以我们现在要做的就是告诉32，你触发了这个中断后要进行什么操作。</p>
+<p>这一步就叫做写中断服务函数，让它接收到这个中断后能转去执行对应的函数和内容。</p>
+<h2 id="3-书写中断服务函数"><a href="#3-书写中断服务函数" class="headerlink" title="3.书写中断服务函数"></a>3.书写中断服务函数</h2><p>这里中断服务函数的函数名不是想叫什么就可以叫什么的，而是在启动文件中已经标注好了的，我们只需要给它拿下来就可以了</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202407/3083010-20240728223052312-2071434475.png" alt="img"></p>
+<p>这里可以看到很多，我们找在NVIC配置好的那个IRQ通道的名称的就可以了，比如是<code>EXTI2_IRQn</code>，那这里我们要的是<code>EXTI2_IRQHandler</code>，一样的道理，这里就以这个<code>EXTI2_IRQHandler</code>举例子，那我们开始写函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">EXTI2_IRQHandler</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样中断函数就写好了，现在就是需要在里面填写内容了，内容一般是自己来规定的，但是有一些内容需要写好，首先是判断中断标志位，要判断一下是不是这个引脚触发的，函数如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXTI_GetITStatus(EXTI_Linex);</span><br></pre></td></tr></table></figure>
+
+<p><code>EXTI_Linex</code>是设置的通道，然后这个函数的返回值是<code>SET</code>和<code>RESET</code>，当触发时返回<code>SET</code>，没触发时返回<code>RESET</code>。</p>
+<p>然后就是清除中断标志位，要手动进行一次复位，使得下一次能够正常的进行触发，函数如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXTI_ClearITPendingBit(EXTI_Linex);</span><br></pre></td></tr></table></figure>
+
+<p>我们在中断服务函数中就先写好这样的代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">EXTI2_IRQHandler</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (EXTI_GetITStatus(EXTI_Linex) == SET)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 你自己的代码</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// ===========</span></span><br><span class="line">        EXTI_ClearITPendingBit(EXTI_Linex);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>中断服务函数可以写在任意的位置，不需要在main函数中进行调用，这个中断函数的调用又系统来进行。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>在中断函数中尽量不要执行一些耗费大量时间的内容，我一般是使用变量来进行控制，控制变量然后在main函数中判断这个变量的值，然后才执行相应的操作，一般我用中断来进行按键的控制，因为这个效率比较高，但是抖动问题还是比较严重的，可以用做其他的地方。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>puill
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://www.puill.xin/2025/01/17/80a02853c189/" title="05 详细的中断讲解">http://www.puill.xin/2025/01/17/80a02853c189/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" rel="tag"># 单片机</a>
+              <a href="/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" rel="tag"># 环境搭建</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/01/17/4dff7e1a6b94/" rel="prev" title="06 定时器和PWM（1）">
+                  <i class="fa fa-angle-left"></i> 06 定时器和PWM（1）
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/01/17/ebc592be8231/" rel="next" title="03 OLED显示屏实现">
+                  03 OLED显示屏实现 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">puill</span>
+  </div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+--><div>
+<!--添加网站运行时间-->
+<span>小破站已经在风雨中度过了</span>
+<span id="timeDate">载入天数...</span>
+<span id="times">载入时分秒...</span>
+<script>
+    function createtime() {
+        const startTime = '01/10/2025 00:00:00',
+            start = new Date(startTime)
+        let mill = new Date() - start,
+            seconds = Math.floor(mill / 1000),
+            mins = Math.floor(seconds / 60),
+            hours = Math.floor(mins / 60),
+            days = Math.floor(hours / 24)
+        const time = {
+            seconds: seconds - mins * 60,
+            mins: mins - hours * 60,
+            hours: hours - days * 24,
+        }
+        for (const k in time) {
+            time[k] = `${time[k]}`.padStart(2, '0')
+        }
+        document.getElementById("timeDate").innerHTML = ` ${days} 天`
+        document.getElementById("times").innerHTML = ` ${time.hours} 小时 ${time.mins} 分 ${time.seconds} 秒`
+    }
+    setInterval(createtime, 500)
+</script>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/aaa.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.puill.xin","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"show_result":true,"style":"default"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="在Linux系统上面调试写的单片机程序">
+<meta property="og:type" content="article">
+<meta property="og:title" content="01使用调试工具">
+<meta property="og:url" content="http://www.puill.xin/2025/01/17/e5d40c6790d6/index.html">
+<meta property="og:site_name" content="puill&#39;s Blog">
+<meta property="og:description" content="在Linux系统上面调试写的单片机程序">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img2.imgtp.com/2024/03/27/osYtkNHN.png">
+<meta property="og:image" content="https://img2.imgtp.com/2024/03/27/zQjTR421.png">
+<meta property="og:image" content="https://img2.imgtp.com/2024/03/27/eB4ZfOZe.png">
+<meta property="og:image" content="https://img2.imgtp.com/2024/03/27/mDQmasu1.png">
+<meta property="og:image" content="https://img2.imgtp.com/2024/03/27/GaxjdVNd.png">
+<meta property="og:image" content="https://img2.imgtp.com/2024/03/27/6PsBqEmo.png">
+<meta property="og:image" content="https://img2.imgtp.com/2024/03/27/6JhT9Dwy.png">
+<meta property="og:image" content="https://img2.imgtp.com/2024/03/27/STKZ5xfo.png">
+<meta property="og:image" content="https://img2.imgtp.com/2024/03/27/Ku0ebpc6.png">
+<meta property="article:published_time" content="2025-01-17T13:36:38.000Z">
+<meta property="article:modified_time" content="2025-01-18T06:28:53.025Z">
+<meta property="article:author" content="puill">
+<meta property="article:tag" content="单片机">
+<meta property="article:tag" content="环境搭建">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img2.imgtp.com/2024/03/27/osYtkNHN.png">
+
+
+<link rel="canonical" href="http://www.puill.xin/2025/01/17/e5d40c6790d6/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.puill.xin/2025/01/17/e5d40c6790d6/","path":"2025/01/17/e5d40c6790d6/","title":"01使用调试工具"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>01使用调试工具 | puill's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">puill's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-文章"><a href="/articles/" rel="section"><i class="fa fa-file-text fa-fw"></i>文章</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-友链"><a href="/friendchains/" rel="section"><i class="fa fa-paperclip fa-fw"></i>友链</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E7%94%A8openocd%E6%89%93%E5%BC%80%E5%8D%95%E7%89%87%E6%9C%BA"><span class="nav-number">2.</span> <span class="nav-text">一、用openocd打开单片机</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%88%A9%E7%94%A84444%E7%AB%AF%E5%8F%A3%E5%90%91%E5%8D%95%E7%89%87%E6%9C%BA%E5%86%99%E5%85%A5hex%E6%96%87%E4%BB%B6"><span class="nav-number">3.</span> <span class="nav-text">二、利用4444端口向单片机写入hex文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%88%A9%E7%94%A83333%E7%AB%AF%E5%8F%A3%E5%92%8Cgdb%E8%BF%9B%E8%A1%8C%E8%B0%83%E8%AF%95"><span class="nav-number">4.</span> <span class="nav-text">三、利用3333端口和gdb进行调试</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E4%B9%8B%E5%89%8D%E6%88%91%E5%87%BA%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">5.</span> <span class="nav-text">四、之前我出的问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="puill"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">puill</p>
+  <div class="site-description" itemprop="description">puill的博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="mailto:2256044190@qq.com" title="E-Mail → mailto:2256044190@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.puill.xin/2025/01/17/e5d40c6790d6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="puill">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="puill's Blog">
+      <meta itemprop="description" content="puill的博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="01使用调试工具 | puill's Blog">
+      <meta itemprop="description" content="在Linux系统上面调试写的单片机程序">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          01使用调试工具
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-01-17 21:36:38" itemprop="dateCreated datePublished" datetime="2025-01-17T21:36:38+08:00">2025-01-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-01-18 14:28:53" itemprop="dateModified" datetime="2025-01-18T14:28:53+08:00">2025-01-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/stm32/" itemprop="url" rel="index"><span itemprop="name">stm32</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">在Linux系统上面调试写的单片机程序</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>之前写了一篇关于在linux下搭建stm32标准库的文章后，有一些小伙伴们还是出现了一些奇奇怪怪的错误，这一篇文章就是给大家介绍一下如何调试来找到错误。</p>
+<h1 id="一、用openocd打开单片机"><a href="#一、用openocd打开单片机" class="headerlink" title="一、用openocd打开单片机"></a>一、用openocd打开单片机</h1><p>我们上一节说烧录的时候是使用的是一键烧录，其实没有一键烧录还是比较复杂的，首先先执行：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openocd -f /usr/local/share/openocd/scripts/interface/stlink-v2.cfg -f /usr/local/share/openocd/scripts/target/stm32f1x.cfg</span><br></pre></td></tr></table></figure>
+
+<p>然后就会将stlink给打开，这里我们可以修改一下，修改为jlink什么的都可以的，思路都是一样的，然后运行后就会显示下面的界面：</p>
+<p><img src="https://img2.imgtp.com/2024/03/27/osYtkNHN.png" alt="1.png"></p>
+<p>诶？怎么会出现这种情况呢？</p>
+<p>噢，原来我没连接stlink,把它连接后就正常了：</p>
+<p><img src="https://img2.imgtp.com/2024/03/27/zQjTR421.png" alt="2.png"></p>
+<p>把这个内容拿下了看看：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Open On-Chip Debugger 0.12.0</span><br><span class="line">Licensed under GNU GPL v2</span><br><span class="line">For bug reports, <span class="built_in">read</span></span><br><span class="line">        http://openocd.org/doc/doxygen/bugs.html</span><br><span class="line">WARNING: interface/stlink-v2.cfg is deprecated, please switch to interface/stlink.cfg</span><br><span class="line">Info : auto-selecting first available session transport <span class="string">&quot;hla_swd&quot;</span>. To override use <span class="string">&#x27;transport select &lt;transport&gt;&#x27;</span>.</span><br><span class="line">Info : The selected transport took over low-level target control. The results might differ compared to plain JTAG/SWD</span><br><span class="line">Info : Listening on port 6666 <span class="keyword">for</span> tcl connections</span><br><span class="line">Info : Listening on port 4444 <span class="keyword">for</span> telnet connections</span><br><span class="line">Info : clock speed 1000 kHz</span><br><span class="line">Info : STLINK V2J43S7 (API v2) VID:PID 0483:3748</span><br><span class="line">Info : Target voltage: 3.279414</span><br><span class="line">Info : [stm32f1x.cpu] Cortex-M3 r1p1 processor detected</span><br><span class="line">Info : [stm32f1x.cpu] target has 6 breakpoints, 4 watchpoints</span><br><span class="line">Info : starting gdb server <span class="keyword">for</span> stm32f1x.cpu on 3333</span><br><span class="line">Info : Listening on port 3333 <span class="keyword">for</span> gdb connections</span><br></pre></td></tr></table></figure>
+
+<p>可以看到执行后开放了3个端口，分别是<code>4444</code>、<code>6666</code>、<code>3333</code>，4444这个端口我们可以将编译好的<code>.hex</code>文件烧录进单片机中，3333这个端口可以启用gdb调试功能。</p>
+<h1 id="二、利用4444端口向单片机写入hex文件"><a href="#二、利用4444端口向单片机写入hex文件" class="headerlink" title="二、利用4444端口向单片机写入hex文件"></a>二、利用4444端口向单片机写入hex文件</h1><p>当我们打开4444端口后我们需要再打开一个终端，然后在终端中输入：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">telnet localhost 4444</span><br></pre></td></tr></table></figure>
+
+<p>然后就可以连接4444端口了</p>
+<p><img src="https://img2.imgtp.com/2024/03/27/eB4ZfOZe.png" alt="3.png"></p>
+<p>然后输入</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">program test.hex</span><br></pre></td></tr></table></figure>
+
+<p>将test.hex文件烧录进单片机中，烧录完成后还需要执行</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reset</span><br></pre></td></tr></table></figure>
+
+<p>进行重启，这样烧录的hex文件才能运行。</p>
+<h1 id="三、利用3333端口和gdb进行调试"><a href="#三、利用3333端口和gdb进行调试" class="headerlink" title="三、利用3333端口和gdb进行调试"></a>三、利用3333端口和gdb进行调试</h1><p>在学linuxC的小伙伴们应该知道，在<code>gcc</code>中有一个<code>gdb</code>调试工具，但这个工具只能调试linux平台下的程序，不能调试arm平台的程序，所以我们需要使用我们上一篇文章讲过的<code>arm-none-eabi</code>工具包中的<code>arm-none-eabi-gdb</code>调试工具，利用这个工具我们可以调试我们写好的单片机程序。</p>
+<p>首先还是一样的，使用：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openocd -f /usr/local/share/openocd/scripts/interface/stlink-v2.cfg -f /usr/local/share/openocd/scripts/target/stm32f1x.cfg</span><br></pre></td></tr></table></figure>
+
+<p>打开我们的下载器，然后打开一个新的终端，在里面运行<code>arm-none-eabi-gdb</code>，如果出现了和我一样的错误：</p>
+<p><img src="https://img2.imgtp.com/2024/03/27/mDQmasu1.png" alt="4.png"></p>
+<p>可以运行一下下面的两条命令：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt-get install lib32ncurses5-dev</span><br><span class="line"><span class="built_in">sudo</span> apt install libncurses5</span><br></pre></td></tr></table></figure>
+
+<p>如果还是不行，可以去百度一下，因为我这个执行完成后就可以运行了。</p>
+<p>如果你可以运行，那先退出刚才运行的<code>gdb</code>，我们还需要在<code>gdb</code>后跟东西。</p>
+<p>然后我们在刚打开的终端中输入：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openLed arm-none-eabi-gdb test.elf</span><br></pre></td></tr></table></figure>
+
+<p>运行后就会出现下面的界面</p>
+<p><img src="https://img2.imgtp.com/2024/03/27/GaxjdVNd.png" alt="5.png"></p>
+<p>这样就代表着已经进入elf文件的调试页面了，但是这个时候你还不能调试，因为你只是选择了这个文件，还没有平台可以让这个代码去运行，所以我们需要让gdb连接一下我们单片机的调试端口，输入：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">target remote localhost:3333</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以连接到单片机了，如果没有打断点，它会到当前执行的代码，一直执行</p>
+<p><img src="https://img2.imgtp.com/2024/03/27/6PsBqEmo.png" alt="6.png"></p>
+<p>我们可以输入n让它单步执行：</p>
+<p><img src="https://img2.imgtp.com/2024/03/27/6JhT9Dwy.png" alt="7.png"></p>
+<p>也可以用<code>b</code>来打一个断点，<code>b 行号</code>，这样就可以打断点了。</p>
+<h1 id="四、之前我出的问题"><a href="#四、之前我出的问题" class="headerlink" title="四、之前我出的问题"></a>四、之前我出的问题</h1><p>我在使用linux对单片机开发前出过一个问题，后面还是这位大佬给我了一下思路</p>
+<p><img src="https://img2.imgtp.com/2024/03/27/STKZ5xfo.png" alt="8.png"></p>
+<p>然后我就用他们的电脑写了个简单的代码后写入到单片机中，结果发现还是没办法运行，我就知道是因为单片机出问题了，后面我又重新拿了一个再试了一下发现没有任何问题，我在这分享一下我之前的调试过程。</p>
+<p>这用的是之前说的gdb调试，将写好的内容写入进单片机后我发现LED灯没有亮，然后我就启动了一下调试功能，一看</p>
+<p><img src="https://img2.imgtp.com/2024/03/27/Ku0ebpc6.png" alt="9.png"></p>
+<p>一直卡在<code>HardFault_Handler</code>中断中，我就去百度了一下，原来是因为硬件故障，我以为是我的启动文件出问题了，然后去百度了很多文章去找标准库的<code>ld</code>文件，看了许久也没有解决。</p>
+<p>然后我又试了一下cublemx来进行生成一个<code>hal</code>库的程序，然后也不行，我就往各个方面的去考虑，后面还是做了半天也是不行，最后得出结论，这个单片机坏了。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>当然这个文章还是写得不是很完整，因为我只遇到了这种问题，如果你们有什么问题可以问问我，但我不一定能解决，大家可以加一下我们的讨论群：247294351，当然也不一定能解决。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>puill
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://www.puill.xin/2025/01/17/e5d40c6790d6/" title="01使用调试工具">http://www.puill.xin/2025/01/17/e5d40c6790d6/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" rel="tag"># 单片机</a>
+              <a href="/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" rel="tag"># 环境搭建</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/01/17/1889a077401c/" rel="prev" title="02 IO口的操作">
+                  <i class="fa fa-angle-left"></i> 02 IO口的操作
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/01/17/802f7a7d62e1/" rel="next" title="00在linux环境下搭建stm32开发环境">
+                  00在linux环境下搭建stm32开发环境 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">puill</span>
+  </div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+--><div>
+<!--添加网站运行时间-->
+<span>小破站已经在风雨中度过了</span>
+<span id="timeDate">载入天数...</span>
+<span id="times">载入时分秒...</span>
+<script>
+    function createtime() {
+        const startTime = '01/10/2025 00:00:00',
+            start = new Date(startTime)
+        let mill = new Date() - start,
+            seconds = Math.floor(mill / 1000),
+            mins = Math.floor(seconds / 60),
+            hours = Math.floor(mins / 60),
+            days = Math.floor(hours / 24)
+        const time = {
+            seconds: seconds - mins * 60,
+            mins: mins - hours * 60,
+            hours: hours - days * 24,
+        }
+        for (const k in time) {
+            time[k] = `${time[k]}`.padStart(2, '0')
+        }
+        document.getElementById("timeDate").innerHTML = ` ${days} 天`
+        document.getElementById("times").innerHTML = ` ${time.hours} 小时 ${time.mins} 分 ${time.seconds} 秒`
+    }
+    setInterval(createtime, 500)
+</script>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

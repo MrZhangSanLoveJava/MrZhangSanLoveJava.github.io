@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/aaa.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.puill.xin","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"show_result":true,"style":"default"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="stm32单片机的IO口操作">
+<meta property="og:type" content="article">
+<meta property="og:title" content="02 IO口的操作">
+<meta property="og:url" content="http://www.puill.xin/2025/01/17/1889a077401c/index.html">
+<meta property="og:site_name" content="puill&#39;s Blog">
+<meta property="og:description" content="stm32单片机的IO口操作">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img2.imgtp.com/2024/04/22/FVMRHGK6.jpg">
+<meta property="og:image" content="https://img2.imgtp.com/2024/04/23/MeUv2KW4.png">
+<meta property="article:published_time" content="2025-01-17T13:36:38.000Z">
+<meta property="article:modified_time" content="2025-01-18T06:28:57.537Z">
+<meta property="article:author" content="puill">
+<meta property="article:tag" content="单片机">
+<meta property="article:tag" content="环境搭建">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img2.imgtp.com/2024/04/22/FVMRHGK6.jpg">
+
+
+<link rel="canonical" href="http://www.puill.xin/2025/01/17/1889a077401c/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.puill.xin/2025/01/17/1889a077401c/","path":"2025/01/17/1889a077401c/","title":"02 IO口的操作"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>02 IO口的操作 | puill's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">puill's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-文章"><a href="/articles/" rel="section"><i class="fa fa-file-text fa-fw"></i>文章</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-友链"><a href="/friendchains/" rel="section"><i class="fa fa-paperclip fa-fw"></i>友链</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81IO%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-number">2.</span> <span class="nav-text">一、IO的概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-IO%E6%8E%A5%E5%8F%A3"><span class="nav-number">2.1.</span> <span class="nav-text">1.IO接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-IO%E7%AB%AF%E5%8F%A3"><span class="nav-number">2.2.</span> <span class="nav-text">2.IO端口</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81CPU%E5%92%8C%E5%A4%96%E8%AE%BE%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">二、CPU和外设进行数据传输的方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E7%A8%8B%E5%BA%8F%E6%8E%A7%E5%88%B6%E6%96%B9%E5%BC%8F"><span class="nav-number">3.1.</span> <span class="nav-text">1.程序控制方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E6%97%A0%E6%9D%A1%E4%BB%B6"><span class="nav-number">3.1.1.</span> <span class="nav-text">1.1 无条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E6%9F%A5%E8%AF%A2%E6%96%B9%E5%BC%8F"><span class="nav-number">3.1.2.</span> <span class="nav-text">1.2 查询方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E4%B8%AD%E6%96%AD%E6%96%B9%E5%BC%8F"><span class="nav-number">3.2.</span> <span class="nav-text">2.中断方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-DMA%E6%96%B9%E5%BC%8F"><span class="nav-number">3.3.</span> <span class="nav-text">3.DMA方式</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E6%96%B9%E6%B3%95%E4%BB%8B%E7%BB%8D%E5%92%8C%E4%BB%A3%E7%A0%81%E7%BC%96%E5%86%99"><span class="nav-number">4.</span> <span class="nav-text">一、方法介绍和代码编写</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="nav-number">4.1.</span> <span class="nav-text">1.前置知识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E7%A8%8B%E5%BA%8F%E6%96%B9%E5%BC%8F"><span class="nav-number">4.2.</span> <span class="nav-text">2.程序方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E6%97%A0%E6%9D%A1%E4%BB%B6%E6%96%B9%E5%BC%8F"><span class="nav-number">4.2.1.</span> <span class="nav-text">1.1 无条件方式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-1-%E6%89%93%E5%BC%80%E5%AF%B9%E5%BA%94%E7%9A%84GPIO%E5%8F%A3"><span class="nav-number">4.2.1.1.</span> <span class="nav-text">1.1.1 打开对应的GPIO口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-2-%E5%88%9D%E5%A7%8B%E5%8C%96%E5%AF%B9%E5%BA%94%E7%9A%84GPIO%E5%BC%95%E8%84%9A"><span class="nav-number">4.2.1.2.</span> <span class="nav-text">1.1.2 初始化对应的GPIO引脚</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-1-2-1-%E6%8E%A8%E6%8C%BD%E8%BE%93%E5%87%BA"><span class="nav-number">4.2.1.2.1.</span> <span class="nav-text">1.1.2.1 推挽输出</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-1-2-2-%E5%BC%80%E6%BC%8F%E8%BE%93%E5%87%BA"><span class="nav-number">4.2.1.2.2.</span> <span class="nav-text">1.1.2.2 开漏输出</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-1-2-3-%E6%B5%AE%E7%A9%BA%E8%BE%93%E5%85%A5"><span class="nav-number">4.2.1.2.3.</span> <span class="nav-text">1.1.2.3 浮空输入</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-1-2-4-%E4%B8%8A%E6%8B%89%E8%BE%93%E5%85%A5"><span class="nav-number">4.2.1.2.4.</span> <span class="nav-text">1.1.2.4 上拉输入</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-1-2-5-%E4%B8%8B%E6%8B%89%E8%BE%93%E5%85%A5"><span class="nav-number">4.2.1.2.5.</span> <span class="nav-text">1.1.2.5 下拉输入</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-1-2-6-%E6%A8%A1%E6%8B%9F%E8%BE%93%E5%85%A5"><span class="nav-number">4.2.1.2.6.</span> <span class="nav-text">1.1.2.6 模拟输入</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-3-%E5%AF%B9%E5%85%B6%E4%B8%AD%E7%9A%84GPIO%E5%BC%95%E8%84%9A%E8%BF%9B%E8%A1%8C%E6%93%8D%E4%BD%9C"><span class="nav-number">4.2.1.3.</span> <span class="nav-text">1.1.3 对其中的GPIO引脚进行操作</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-1-3-1-GPIO-SetBits"><span class="nav-number">4.2.1.3.1.</span> <span class="nav-text">1.1.3.1 GPIO_SetBits</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-1-3-2-GPIO-ResetBits"><span class="nav-number">4.2.1.3.2.</span> <span class="nav-text">1.1.3.2 GPIO_ResetBits</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-1-3-3-GPIO-Write"><span class="nav-number">4.2.1.3.3.</span> <span class="nav-text">1.1.3.3 GPIO_Write</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-1-3-4-GPIO-WriteBit"><span class="nav-number">4.2.1.3.4.</span> <span class="nav-text">1.1.3.4 GPIO_WriteBit</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%9F%A5%E8%AF%A2%E6%96%B9%E5%BC%8F"><span class="nav-number">4.3.</span> <span class="nav-text">3.查询方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E8%AE%BE%E7%BD%AE%E8%BE%93%E5%85%A5%E6%A8%A1%E5%BC%8F"><span class="nav-number">4.3.1.</span> <span class="nav-text">3.1 设置输入模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E5%88%A4%E6%96%AD%E6%9D%A1%E4%BB%B6"><span class="nav-number">4.3.2.</span> <span class="nav-text">3.2 判断条件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-1-GPIO-ReadInputDataBit"><span class="nav-number">4.3.2.1.</span> <span class="nav-text">3.2.1 GPIO_ReadInputDataBit</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-2-GPIO-ReadInputData"><span class="nav-number">4.3.2.2.</span> <span class="nav-text">3.2.2 GPIO_ReadInputData</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-3-GPIO-ReadOutputDataBit"><span class="nav-number">4.3.2.3.</span> <span class="nav-text">3.2.3 GPIO_ReadOutputDataBit</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-4-GPIO-ReadOutputData"><span class="nav-number">4.3.2.4.</span> <span class="nav-text">3.2.4 GPIO_ReadOutputData</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E6%89%A7%E8%A1%8C%E5%86%85%E5%AE%B9"><span class="nav-number">4.3.3.</span> <span class="nav-text">3.3 执行内容</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E4%B8%AD%E6%96%AD%E6%96%B9%E5%BC%8F"><span class="nav-number">4.4.</span> <span class="nav-text">4.中断方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E5%88%9D%E5%A7%8B%E5%8C%96%E5%BC%95%E8%84%9A"><span class="nav-number">4.4.1.</span> <span class="nav-text">4.1 初始化引脚</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E5%88%9D%E5%A7%8B%E5%8C%96%E5%A4%96%E9%83%A8%E4%B8%AD%E6%96%AD"><span class="nav-number">4.4.2.</span> <span class="nav-text">4.2 初始化外部中断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E8%AE%BE%E7%BD%AENVIC"><span class="nav-number">4.4.3.</span> <span class="nav-text">4.3 设置NVIC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-%E9%87%8D%E5%86%99%E4%B8%AD%E6%96%AD%E6%9C%8D%E5%8A%A1%E5%87%BD%E6%95%B0"><span class="nav-number">4.4.4.</span> <span class="nav-text">4.4 重写中断服务函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-DMA%E6%96%B9%E5%BC%8F"><span class="nav-number">4.5.</span> <span class="nav-text">5.DMA方式</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="puill"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">puill</p>
+  <div class="site-description" itemprop="description">puill的博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="mailto:2256044190@qq.com" title="E-Mail → mailto:2256044190@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.puill.xin/2025/01/17/1889a077401c/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="puill">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="puill's Blog">
+      <meta itemprop="description" content="puill的博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="02 IO口的操作 | puill's Blog">
+      <meta itemprop="description" content="stm32单片机的IO口操作">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          02 IO口的操作
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-01-17 21:36:38" itemprop="dateCreated datePublished" datetime="2025-01-17T21:36:38+08:00">2025-01-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-01-18 14:28:57" itemprop="dateModified" datetime="2025-01-18T14:28:57+08:00">2025-01-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/stm32/" itemprop="url" rel="index"><span itemprop="name">stm32</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">stm32单片机的IO口操作</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>之前已经介绍了环境的搭建和调试的方法，这一篇文章我们就开始介绍一下如何对外设进行操作，这一节我会结合多种外设的操作来将所有方式的操作介绍给大家，并手把手介绍如何使用一个小显示屏OLED,这对我们后面的操作有很大的帮助。</p>
+<h1 id="一、IO的概念"><a href="#一、IO的概念" class="headerlink" title="一、IO的概念"></a>一、IO的概念</h1><h2 id="1-IO接口"><a href="#1-IO接口" class="headerlink" title="1.IO接口"></a>1.IO接口</h2><p>IO接口是能让CPU和外设能够进行信息交换的逻辑电路，在stm32中，IO接口是已经集成进单片机中了，我们不需要自己搭建一个IO接口电路，可以直接就使用其中的IO接口了。</p>
+<h2 id="2-IO端口"><a href="#2-IO端口" class="headerlink" title="2.IO端口"></a>2.IO端口</h2><p>IO端口是CPU可以直接访问的一些寄存器，这些寄存器可以控制外设的状态和传输一些信息。</p>
+<p>我们对IO设备进行操作时其实就是对IO端口进行一些操作，只不过在stm32中，这个设备更加的高级，这个设备被称为GPIO,接下来我们就是对这些GPIO口进行操作，以达到我们控制外设的目的。</p>
+<h1 id="二、CPU和外设进行数据传输的方法"><a href="#二、CPU和外设进行数据传输的方法" class="headerlink" title="二、CPU和外设进行数据传输的方法"></a>二、CPU和外设进行数据传输的方法</h1><p>这里总共有4种方法，在这一节中我都会涉及到，只不过中断和DMA我会简单的介绍，先会用，后面还会详细的介绍一下对应的内部结构。</p>
+<h2 id="1-程序控制方式"><a href="#1-程序控制方式" class="headerlink" title="1.程序控制方式"></a>1.程序控制方式</h2><p>这个是由程序直接进行控制，这里有两种方法，一种是无条件，另一种是查询方式。</p>
+<h3 id="1-1-无条件"><a href="#1-1-无条件" class="headerlink" title="1.1 无条件"></a>1.1 无条件</h3><p>无条件传输方式是默认外设已经是处于就绪状态，就比如我们对LED灯进行操作，就可以直接使用无条件方式，因为它已经处于就绪状态，不会有忙状态，所以可以直接进行数据的传输。</p>
+<p>这种方法的特点就是程序简单，但缺点就是没办法对特别复杂的电路进行操作。</p>
+<h3 id="1-2-查询方式"><a href="#1-2-查询方式" class="headerlink" title="1.2 查询方式"></a>1.2 查询方式</h3><p>查询方式是在我们要进行数据传输之前，先查看一下外设的状态或者是条件是否满足，如果就绪或者是条件满足则开始进行数据的传输，否则就就绪查询。比如我们通过按键对外设进行控制，或者有些外设在给它传递信号后他会返回一个应答信号或者是其他的信号，当它发送后我们才能继续操作就可以使用这种方法。</p>
+<p>这种方法的优点就是可以根据条件来控制外设的状态，缺点就是实时性差。</p>
+<h2 id="2-中断方式"><a href="#2-中断方式" class="headerlink" title="2.中断方式"></a>2.中断方式</h2><p>如果外设准备好时，会主动发送一个信号过来，我们通过程序将这个信号设定为中断出发，当接受到这个信号后，CPU会停止当前执行的代码，转去执行对应设定好的中断服务程序。</p>
+<p>这种方法的优点就是实时性好，速度快，但是代码比较难写。</p>
+<p>我们可以使用中断的方法来代替查询方法，这样可以提高CPU的实时性和速度，但是就是代码比较复杂，但速度是最主要的，不要太在意复杂性。</p>
+<h2 id="3-DMA方式"><a href="#3-DMA方式" class="headerlink" title="3.DMA方式"></a>3.DMA方式</h2><p>这种方法又称为直接数据传送方法，之前外设和内存进行数据交换的时候，需要先经过CPU,然后才可以进行数据交换，但是DMA就是直接跳过这个过程，不经过CPU,直接就让外设和内存进行数据交换，这种方法又一个DMA控制器（DMAC）进行控制。</p>
+<p>这种方法的优点是速度快，适合大量数据的交换，缺点就是需要依赖硬件环境。</p>
+<p>上面介绍了一下传送数据的方式，接下来我们就把每一个的方法详细介绍一下。</p>
+<h1 id="一、方法介绍和代码编写"><a href="#一、方法介绍和代码编写" class="headerlink" title="一、方法介绍和代码编写"></a>一、方法介绍和代码编写</h1><p>这里需要先介绍一下stm32的GPIO口和对应的引脚。</p>
+<h2 id="1-前置知识"><a href="#1-前置知识" class="headerlink" title="1.前置知识"></a>1.前置知识</h2><p>在STM32中将IO端口分为了多个GPIO口，每个GPIO口又有多个引脚，这些我们可以直接通过C语言进行控制。</p>
+<p>我们使用的stm32f103c8t6有GPIOA到GPIOC这总共3个GPIO口，而每个GPIO口中又有16个引脚，我们可以对这每个引脚进行操作。</p>
+<h2 id="2-程序方式"><a href="#2-程序方式" class="headerlink" title="2.程序方式"></a>2.程序方式</h2><h3 id="1-1-无条件方式"><a href="#1-1-无条件方式" class="headerlink" title="1.1 无条件方式"></a>1.1 无条件方式</h3><p>无条件方式是在学单片机操作中首先会给大家介绍的一种方法，这种方法很简单，操作起来也很容易。</p>
+<p>用无条件方法对GPIO操作我们可以简单分为一下这几步：</p>
+<p>1.打开对应的GPIO口</p>
+<p>2.初始化对应的GPIO引脚</p>
+<p>3.对GPIO引脚进行操作</p>
+<h4 id="1-1-1-打开对应的GPIO口"><a href="#1-1-1-打开对应的GPIO口" class="headerlink" title="1.1.1 打开对应的GPIO口"></a>1.1.1 打开对应的GPIO口</h4><p>首先在操作之前我们需要开启对应操作的GPIO引脚的时钟，使用的函数是<code>RCC_APB2PeriphClockCmd()</code>这个函数可以开启你要使用的GPIO口的时钟，当开启时钟后我们可以对其中的引脚进行操作。</p>
+<p>函数原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">RCC_APB2PeriphClockCmd</span><span class="params">(u32 RCC_APB2Periph, FunctionalState NewState)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>第一个成熟是选择对应的APB2，我们可以选择的APB2的值如下：</p>
+<table>
+<thead>
+<tr>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RCC_APB2Periph_AFIO</td>
+<td>功能复用I&#x2F;O时钟</td>
+</tr>
+<tr>
+<td>RCC_APB2Periph_GPIOA</td>
+<td>GPIOA时钟</td>
+</tr>
+<tr>
+<td>RCC_APB2Periph_GPIOB</td>
+<td>GPIOB时钟</td>
+</tr>
+<tr>
+<td>RCC_APB2Periph_GPIOC</td>
+<td>GPIOC时钟</td>
+</tr>
+<tr>
+<td>RCC_APB2Periph_GPIOD</td>
+<td>GPIOD时钟</td>
+</tr>
+<tr>
+<td>RCC_APB2Periph_GPIOE</td>
+<td>GPIOE时钟</td>
+</tr>
+<tr>
+<td>RCC_APB2Periph_ADC1</td>
+<td>ADC1的时钟</td>
+</tr>
+<tr>
+<td>RCC_APB2Periph_ADC2</td>
+<td>ADC2的时钟</td>
+</tr>
+<tr>
+<td>RCC_APB2Periph_TIM1</td>
+<td>TIM1的时钟</td>
+</tr>
+<tr>
+<td>RCC_APB2Periph_SPI1</td>
+<td>SPI1的时钟</td>
+</tr>
+<tr>
+<td>RCC_APB2Periph_USART1</td>
+<td>USART1的时钟</td>
+</tr>
+<tr>
+<td>RCC_APB2Periph_ALL</td>
+<td>开启全部的APB2的时钟</td>
+</tr>
+</tbody></table>
+<p>这里先介绍一下APB2的一些内容，后面会用到APB1还会给大家介绍一下。</p>
+<p>第二个参数就是使能或者失能，可以填写使能<code>ENABLE</code>或者失能<code>DISABLE</code>。</p>
+<p>例如我们在GPIOB口中的PB0引脚上接了一个LED灯，我们的初始化就可以这样写：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);</span><br></pre></td></tr></table></figure>
+
+<p>这样我们就可以打开对应的GPIO口的时钟了，就可以继续对GPIO口中的引脚进行操作了。</p>
+<p>这里需要注意一下，这个打开时钟的操作是必须的，如果你没有对其打开，那会导致引脚没办法使用，时钟这个东西就是CPU的心脏，如果没有心脏，那它就shi了。</p>
+<h4 id="1-1-2-初始化对应的GPIO引脚"><a href="#1-1-2-初始化对应的GPIO引脚" class="headerlink" title="1.1.2 初始化对应的GPIO引脚"></a>1.1.2 初始化对应的GPIO引脚</h4><p>当打开时钟后我们就可以对其中的引脚进行操作了。引脚是在GPIO口中的，必须得上一步初始化后我们对引脚初始化才有用。</p>
+<p>这里对对应的引脚进行初始化需要用到一个结构体，然后将写好的结构体传递到函数中进行初始化，我们使用的结构体类型为：<code>GPIO_InitTypeDef</code>，我们需要先利用它来创建一个结构体变量，然后对这个变量进行初始化即可。</p>
+<p>这个结构体的原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span>&#123;</span></span><br><span class="line">    u16 GPIO_Pin;</span><br><span class="line">    GPIOSpeed_TypeDef GPIO_Speed;</span><br><span class="line">    GPIOMode_TypeDef GPIO_Mode;</span><br><span class="line">&#125;GPIO_InitTypeDef;</span><br></pre></td></tr></table></figure>
+
+<p><code>GPIO_Pin</code>是需要填写的对应GPIO引脚</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GPIO_Pin_None</td>
+<td>没有引脚被选中</td>
+</tr>
+<tr>
+<td>GPIO_Pin_x</td>
+<td>选中GPIOx引脚</td>
+</tr>
+<tr>
+<td>GPIO_Pin_All</td>
+<td>全部选中</td>
+</tr>
+</tbody></table>
+<p><code>GPIO_Speed</code>是设置引脚的速率</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GPIO_Speed_2MHz</td>
+<td>最高输出速率2MHz</td>
+</tr>
+<tr>
+<td>GPIO_Speed_10MHz</td>
+<td>最高输出速率10MHz</td>
+</tr>
+<tr>
+<td>GPIO_Speed_50MHz</td>
+<td>最高输出速率10MHz</td>
+</tr>
+</tbody></table>
+<p><code>GPIO_Mode</code>是设置引脚的工作模式</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GPIO_Mode_Out_PP</td>
+<td>推挽输出</td>
+</tr>
+<tr>
+<td>GPIO_Mode_Out_OD</td>
+<td>开漏输出</td>
+</tr>
+<tr>
+<td>GPIO_Mode_AF_PP</td>
+<td>复用开漏输出</td>
+</tr>
+<tr>
+<td>GPIO_Mode_AF_OD</td>
+<td>复用推挽输出</td>
+</tr>
+<tr>
+<td>GPIO_Mode_AIN</td>
+<td>模拟输入</td>
+</tr>
+<tr>
+<td>GPIO_Mode_IN_FLOATING</td>
+<td>浮空输入</td>
+</tr>
+<tr>
+<td>GPIO_Mode_IPU</td>
+<td>上拉输入</td>
+</tr>
+<tr>
+<td>GPIO_Mode_IPD</td>
+<td>下拉输入</td>
+</tr>
+</tbody></table>
+<p>这个还是比较复杂，所以我这给大家一个一个的介绍一下：</p>
+<h5 id="1-1-2-1-推挽输出"><a href="#1-1-2-1-推挽输出" class="headerlink" title="1.1.2.1 推挽输出"></a>1.1.2.1 推挽输出</h5><p>这个可以理解为输出的就是最大电压和0电压，效率高。高电平就是5V，低电平就是0V。</p>
+<h5 id="1-1-2-2-开漏输出"><a href="#1-1-2-2-开漏输出" class="headerlink" title="1.1.2.2 开漏输出"></a>1.1.2.2 开漏输出</h5><p>这个高电平不是很高，如果要让其输出高电平则需要外接一个上拉电阻，但它对电流的吸收很强，这种模式一般对那种需要复用的引脚使用，用来接收电平信息。</p>
+<h5 id="1-1-2-3-浮空输入"><a href="#1-1-2-3-浮空输入" class="headerlink" title="1.1.2.3 浮空输入"></a>1.1.2.3 浮空输入</h5><p>没有上拉和下拉电阻的输入，默认为一种中间态，一点浮动都会被接收到。</p>
+<h5 id="1-1-2-4-上拉输入"><a href="#1-1-2-4-上拉输入" class="headerlink" title="1.1.2.4 上拉输入"></a>1.1.2.4 上拉输入</h5><p>在输入内部增加了一个上拉电阻，在没有电平来的情况下，这个引脚默认的电平是高电平，一般用这种方式来接受下降沿的电平信息。</p>
+<h5 id="1-1-2-5-下拉输入"><a href="#1-1-2-5-下拉输入" class="headerlink" title="1.1.2.5 下拉输入"></a>1.1.2.5 下拉输入</h5><p>在输入的内部增加了一个下拉电阻，在没有电平进入的情况下，这个引脚默认的电平是低电平，一般用这种方式来接受上升沿的电平信息。</p>
+<h5 id="1-1-2-6-模拟输入"><a href="#1-1-2-6-模拟输入" class="headerlink" title="1.1.2.6 模拟输入"></a>1.1.2.6 模拟输入</h5><p>一般用直接引脚来输入模拟信号后进行数模转换，后面在数模转换的时候会使用到这个引脚。</p>
+<p>其实这些方式慢慢使用都能记得住的，我们知道了初始化结构体后我们就可以创建一个初始化结构体并为其配置</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GPIO_InitTypeDef GPIO_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0;</span><br><span class="line">GPIO_InitStruct.GPIO_Mode = GPIO_Mode_Out_PP;</span><br><span class="line">GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;</span><br></pre></td></tr></table></figure>
+
+<p>如果要对多个引脚进行初始化的话，我们可以使用逻辑与运算符，将多个引脚连接在一起，比如我要初始化0,1,5,7引脚，那么代码可以这样写：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GPIO_InitTypeDef GPIO_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_5 | GPIO_Pin_7;</span><br><span class="line">GPIO_InitStruct.GPIO_Mode = GPIO_Mode_Out_PP;</span><br><span class="line">GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;</span><br></pre></td></tr></table></figure>
+
+<p>当这样配置好后我们需要使用到<code>GPIO_Init()</code>函数将GPIO口和GPIO引脚进行初始化，函数原型：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">GPIO_Init</span><span class="params">(GPIO_TypeDef* GPIOx, GPIO_InitTypeDef* GPIO_InitStruct)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>第一个参数是GPIO口的名称，第二个参数是刚才初始化的GPIO引脚的结构体地址。</p>
+<p>我们将刚才设置好的内容拿来初始化吧：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GPIO_Init(GPIOB, &amp;GPIO_InitStruct);</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以完成对GPIO口和对应的引脚进行初始化了。</p>
+<p>如果要对多个不同模式的引脚初始化，我们可以在写好一个初始化结构体后调用一下初始化函数，例如PA5是推挽输出，PC3是上拉输入，那我们的初始化代码可以这样写：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">GPIO_InitTypeDef GPIO_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"></span><br><span class="line">GPIO_InitStruct.GPIO_Pin = GPIO_Pin_5;</span><br><span class="line">GPIO_InitStruct.GPIO_Mode = GPIO_Mode_Out_PP;</span><br><span class="line">GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">GPIO_Init(GPIOA, &amp;GPIO_InitStruct);</span><br><span class="line"></span><br><span class="line">GPIO_InitStruct.GPIO_Pin = GPIO_Pin_3;</span><br><span class="line">GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IPU;</span><br><span class="line">GPIO_Init(GPIOC, &amp;GPIO_InitStruct);</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="1-1-3-对其中的GPIO引脚进行操作"><a href="#1-1-3-对其中的GPIO引脚进行操作" class="headerlink" title="1.1.3 对其中的GPIO引脚进行操作"></a>1.1.3 对其中的GPIO引脚进行操作</h4><p>这里就可以对其引脚进行操作了，一般操作就是输入或者是输出，这个操作需要看上面初始化的模式是什么，如果是输出，那只能输出，如果是输入，那只能输入。</p>
+<p>这里有一个特殊的，就是开漏输出，这个模式也可以使用输入的函数来读取外部的引脚电平。</p>
+<h5 id="1-1-3-1-GPIO-SetBits"><a href="#1-1-3-1-GPIO-SetBits" class="headerlink" title="1.1.3.1 GPIO_SetBits"></a>1.1.3.1 GPIO_SetBits</h5><p>这个函数可以将对应的引脚置为1。</p>
+<p>函数原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">GPIO_SetBits</span><span class="params">(GPIO_TypeDef* GPIOx, u16 GPIO_Pin)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>第一个参数是对应的GPIO口，第二个是GPIO引脚。例如我要对PB6置1,代码可以这样写：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GPIO_SetBits(GPIOB, GPIO_Pin_6);</span><br></pre></td></tr></table></figure>
+
+<p>这里注明一下，在单片机开发中，有一个类型规范，这个规范是在标准库中是定义好的，我们可以直接拿来使用，比如上面的<code>u16</code>就是对应着<code>unsigned short</code>无符号的短整形，其他的可以类推。</p>
+<h5 id="1-1-3-2-GPIO-ResetBits"><a href="#1-1-3-2-GPIO-ResetBits" class="headerlink" title="1.1.3.2 GPIO_ResetBits"></a>1.1.3.2 GPIO_ResetBits</h5><p>这个函数可以将对应的引脚置为0.</p>
+<p>函数原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">GPIO_ResetBits</span><span class="params">(GPIO_TypeDef* GPIOx, u16 GPIO_Pin)</span>;</span><br></pre></td></tr></table></figure>
+
+<h5 id="1-1-3-3-GPIO-Write"><a href="#1-1-3-3-GPIO-Write" class="headerlink" title="1.1.3.3 GPIO_Write"></a>1.1.3.3 GPIO_Write</h5><p>这个引脚是对GPIO口的所有引脚进行操作。</p>
+<p>函数原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">GPIO_Write</span><span class="params">(GPIO_TypeDef* GPIOx, u16 PortVal)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>第一个参数是GPIO口，第二个参数是这个GPIO口的所有引脚的状态，例如我们要让GPIOA的PA7引脚为高电平，其他引脚为低电平，那么代码可以这样写：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GPIO_Write(GPIOA, <span class="number">0x0080</span>);    <span class="comment">// 0000 0000 1000 0000</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="1-1-3-4-GPIO-WriteBit"><a href="#1-1-3-4-GPIO-WriteBit" class="headerlink" title="1.1.3.4 GPIO_WriteBit"></a>1.1.3.4 GPIO_WriteBit</h5><p>这个函数是对特定位进行操作。</p>
+<p>函数原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">GPIO_WriteBit</span><span class="params">(GPIO_TypeDef* GPIOx, u16 GPIO_Pin, BitAction BitVal)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>第一个参数是GPIO口，第二个参数是对应的引脚，第三个是设置的电平，这有两个参数可以填写，高电平<code>Bit_SET</code>和低电平<code>Bit_RESET</code>，当然，如果你记不住，你也可以直接用0和1来代替。</p>
+<p>比如我们要对PB0变成高电平，那么代码可以这样写：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GPIO_WriteBits(GPIOB, GPIO_Pin_0, Bit_SET);</span><br><span class="line"><span class="comment">// 或者</span></span><br><span class="line">GPIO_WriteBits(GPIOB, GPIO_Pin_0, <span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+
+<p>上面两种都是可以的写法。</p>
+<p>上面的都是输出的函数，现在我们利用这个来做一个LED流水灯，首先先用面包版搭建一个电路</p>
+<p><img src="https://img2.imgtp.com/2024/04/22/FVMRHGK6.jpg" alt="1.jpg"></p>
+<p>流水灯的引脚挨着连着单片机的PA口的0到7引脚，然后对其进行初始化，代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stm32f10x.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 延时函数，使用的是SysTick定时器</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">delay</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> time)</span>&#123;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">int</span> temp;</span><br><span class="line">	SysTick -&gt; LOAD = <span class="number">9000</span> * time;</span><br><span class="line">	SysTick -&gt; CTRL = <span class="number">0x01</span>;</span><br><span class="line">	SysTick -&gt; VAL = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">do</span>&#123;</span><br><span class="line">		temp = SysTick -&gt; CTRL;</span><br><span class="line">	&#125;<span class="keyword">while</span>((temp &amp; <span class="number">0x01</span>) &amp;&amp; (!(temp &amp; (<span class="number">1</span> &lt;&lt; <span class="number">16</span>))));</span><br><span class="line">	SysTick -&gt; CTRL = <span class="number">0</span>;</span><br><span class="line">	SysTick -&gt; VAL = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">	GPIO_InitTypeDef GPIO_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">int</span> value = <span class="number">0x0001</span>;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">char</span> i;</span><br><span class="line"></span><br><span class="line">	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);</span><br><span class="line">	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;</span><br><span class="line">	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_Out_PP;</span><br><span class="line">	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">	GPIO_Init(GPIOA, &amp;GPIO_InitStruct);</span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">		value = <span class="number">0x0001</span>;</span><br><span class="line">		<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">8</span>; i++)&#123;</span><br><span class="line">			GPIO_Write(GPIOA, ~value);</span><br><span class="line">			value &lt;&lt;= <span class="number">1</span>;</span><br><span class="line">			delay(<span class="number">1000</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里是直接使用<code>GPIO_Write()</code>函数对GPIOA口进行操作，这种方式很简单，如果直接用<code>GPIO_WriteBit()</code>，就很麻烦，大家可以试试。</p>
+<h2 id="3-查询方式"><a href="#3-查询方式" class="headerlink" title="3.查询方式"></a>3.查询方式</h2><p>这种方式需要查询外设的状态后才能开始接下来的工作，使用查询方式的大概步骤如下：</p>
+<p>1.设置输入模式</p>
+<p>2.判断是否满足条件</p>
+<p>3.满足条件传输数据</p>
+<p>4.不满足继续查询</p>
+<h3 id="3-1-设置输入模式"><a href="#3-1-设置输入模式" class="headerlink" title="3.1 设置输入模式"></a>3.1 设置输入模式</h3><p>和之前设置输出一样，使用初始化函数即可初始化，这里可以选择上拉输入、输出模式和浮空输入，当然也可以设置成开漏输出。</p>
+<p>这个选择需要根据外设的电路来决定，就拿按键来举例，假如按钮的另一边的接地，当按下按键后，单片机的引脚就会受到地电平，如果设置成下拉输入，那单片机的接口默认是低电平，按下后还是接受到低电平，这样就没有区别，所以就不能设置成下拉输入。</p>
+<p>如果设置成浮空输入，那只要有一点变化就会发生电平变化，不稳定也不确定，所以一般在严格规范下最好不要使用，自己玩可以。</p>
+<p>如果设置成上拉输入，在默认情况下引脚的电平是高电平，当外设输入低电平时就会发生电平的变化，所以就能选择出选择的模式。</p>
+<p>根据外设可以确定好输入的模式后就可以进行初始化。</p>
+<h3 id="3-2-判断条件"><a href="#3-2-判断条件" class="headerlink" title="3.2 判断条件"></a>3.2 判断条件</h3><p>这里使用到判断和输入函数，所以这里给大家介绍一下全部的输入模式。</p>
+<h4 id="3-2-1-GPIO-ReadInputDataBit"><a href="#3-2-1-GPIO-ReadInputDataBit" class="headerlink" title="3.2.1 GPIO_ReadInputDataBit"></a>3.2.1 GPIO_ReadInputDataBit</h4><p>这个函数是读取指定引脚的电平。</p>
+<p>函数原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">u8 <span class="title function_">GPIO_ReadInitputDataBit</span><span class="params">(GPIO_TypeDef* GPIOx, u16 GPIO_Pin)</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-2-2-GPIO-ReadInputData"><a href="#3-2-2-GPIO-ReadInputData" class="headerlink" title="3.2.2 GPIO_ReadInputData"></a>3.2.2 GPIO_ReadInputData</h4><p>读取指定GPIO口的电平值。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">u16 <span class="title function_">GPIO_ReadInputData</span><span class="params">(GPIO_TypeDef* GPIOx)</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-2-3-GPIO-ReadOutputDataBit"><a href="#3-2-3-GPIO-ReadOutputDataBit" class="headerlink" title="3.2.3 GPIO_ReadOutputDataBit"></a>3.2.3 GPIO_ReadOutputDataBit</h4><p>读取指定引脚输出的电平值。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">u8 <span class="title function_">GPIO_ReadOutputDataBit</span><span class="params">(GPIO_TypeDef* GPIOx, u16 GPIO_Pin)</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-2-4-GPIO-ReadOutputData"><a href="#3-2-4-GPIO-ReadOutputData" class="headerlink" title="3.2.4 GPIO_ReadOutputData"></a>3.2.4 GPIO_ReadOutputData</h4><p>读取指定GPIO口的输出的电平值。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">u16 <span class="title function_">GPIO_ReadOutputData</span><span class="params">(GPIO_TypeDef* GPIOx)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>学习完输入函数后我们可以利用一下输入函数来做一个查询方式的流水灯。当按键按下时，流水灯启动，没按下时就停止。</p>
+<p>这里假如只有一个按键接到PB0上，按下按钮后接受到低电平，我们的判断代码就可以这样写：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_0) == <span class="number">0</span>)&#123;&#125;</span><br><span class="line"><span class="comment">// 或者</span></span><br><span class="line"><span class="keyword">if</span> (GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_0) == Bit_RESET)&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-执行内容"><a href="#3-3-执行内容" class="headerlink" title="3.3 执行内容"></a>3.3 执行内容</h3><p>我们在写好的判断语句内部写上我们需要执行的代码即可完成查询方式的数据交换。</p>
+<p>完整代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;stm32f10x.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">delay</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> time)</span>&#123;</span><br><span class="line">        <span class="type">unsigned</span> <span class="type">int</span> temp;</span><br><span class="line">        SysTick -&gt; LOAD = <span class="number">9000</span> * time;</span><br><span class="line">        SysTick -&gt; CTRL = <span class="number">0x01</span>;</span><br><span class="line">        SysTick -&gt; VAL = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">do</span>&#123;</span><br><span class="line">                temp = SysTick -&gt; CTRL;</span><br><span class="line">        &#125;<span class="keyword">while</span>((temp &amp; <span class="number">0x01</span>) &amp;&amp; (!(temp &amp; (<span class="number">1</span> &lt;&lt; <span class="number">16</span>))));</span><br><span class="line">        SysTick -&gt; CTRL = <span class="number">0</span>;</span><br><span class="line">        SysTick -&gt; VAL = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">        GPIO_InitTypeDef GPIO_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">        <span class="type">unsigned</span> <span class="type">short</span> value = <span class="number">0x0001</span>;</span><br><span class="line">        u8 i;</span><br><span class="line"></span><br><span class="line">        RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);</span><br><span class="line">        RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);</span><br><span class="line"></span><br><span class="line">        GPIO_InitStruct.GPIO_Mode = GPIO_Mode_Out_PP;</span><br><span class="line">        GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;</span><br><span class="line">        GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">        GPIO_Init(GPIOA, &amp;GPIO_InitStruct);</span><br><span class="line"></span><br><span class="line">        GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0;</span><br><span class="line">        GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IPU;</span><br><span class="line">        GPIO_Init(GPIOB, &amp;GPIO_InitStruct);</span><br><span class="line">        <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">                <span class="keyword">if</span> (GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_0) == <span class="number">0</span>)&#123;</span><br><span class="line">                        value = <span class="number">0x0001</span>;</span><br><span class="line">                        <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">8</span>; i++)&#123;</span><br><span class="line">                                GPIO_Write(GPIOA, ~value);</span><br><span class="line">                                value &lt;&lt;= <span class="number">1</span>;</span><br><span class="line">                                delay(<span class="number">1000</span>);</span><br><span class="line">                        &#125;</span><br><span class="line">                &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当按键按下后，流水灯会开始启动，执行完一次后就会结束，我们可以感觉这个代码再来改写一下，当按下按钮后流水灯启动直到再次按下按钮后结束流水灯。</p>
+<p>改写后的代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;stm32f10x.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">delay</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> time)</span>&#123;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">int</span> temp;</span><br><span class="line">	SysTick -&gt; LOAD = <span class="number">9000</span> * time;</span><br><span class="line">	SysTick -&gt; CTRL = <span class="number">0x01</span>;</span><br><span class="line">	SysTick -&gt; VAL = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">do</span>&#123;</span><br><span class="line">			temp = SysTick -&gt; CTRL;</span><br><span class="line">	&#125;<span class="keyword">while</span>((temp &amp; <span class="number">0x01</span>) &amp;&amp; (!(temp &amp; (<span class="number">1</span> &lt;&lt; <span class="number">16</span>))));</span><br><span class="line">	SysTick -&gt; CTRL = <span class="number">0</span>;</span><br><span class="line">	SysTick -&gt; VAL = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">	GPIO_InitTypeDef GPIO_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">short</span> value = <span class="number">0x0001</span>;</span><br><span class="line">	u8 i, flag = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);</span><br><span class="line">	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);</span><br><span class="line"></span><br><span class="line">	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_Out_PP;</span><br><span class="line">	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;</span><br><span class="line">	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">	GPIO_Init(GPIOA, &amp;GPIO_InitStruct);</span><br><span class="line"></span><br><span class="line">	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0;</span><br><span class="line">	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IPU;</span><br><span class="line">	GPIO_Init(GPIOB, &amp;GPIO_InitStruct);</span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">		<span class="keyword">if</span> (GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_0) == <span class="number">0</span>)&#123;</span><br><span class="line">			delay(<span class="number">100</span>);    <span class="comment">// 消抖</span></span><br><span class="line">			flag = <span class="number">0</span>;</span><br><span class="line">			<span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">				value = <span class="number">0x0001</span>;</span><br><span class="line">				<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">8</span>; i++)&#123;</span><br><span class="line">					GPIO_Write(GPIOA, ~value);</span><br><span class="line">					value &lt;&lt;= <span class="number">1</span>;</span><br><span class="line">					delay(<span class="number">1000</span>);</span><br><span class="line">					<span class="keyword">if</span> (GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_0) == <span class="number">0</span>)&#123;</span><br><span class="line">						flag = <span class="number">1</span>;</span><br><span class="line">						<span class="keyword">break</span>;</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">if</span> (flag)&#123;</span><br><span class="line">					delay(<span class="number">100</span>);</span><br><span class="line">					<span class="keyword">break</span>;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以实现改功能了。</p>
+<p>在上面的代码中出现了个消抖，因为按键在按下的过程中是会有抖动的，我们需要消除这个抖动让接受的数据唯一，并且要错过按下后电平还是原来的电平时又进入到循环中的问题。</p>
+<p>上面的只是用延时函数简单的消除了一下，可以在延时完成后加上一个循环来保证该电平又恢复到原来的状态。</p>
+<h2 id="4-中断方式"><a href="#4-中断方式" class="headerlink" title="4.中断方式"></a>4.中断方式</h2><p>这种方式的原理不会在这一篇文章中说明，等后面会专门出一篇文章来介绍一下原理和复杂应用后面再说，先简单的介绍一下。</p>
+<p>中断设置方式很简单</p>
+<p>1.初始化引脚</p>
+<p>2.初始化中断EXTI</p>
+<p>3.设置NVIC的参数</p>
+<p>4.重写中断服务程序</p>
+<h3 id="4-1-初始化引脚"><a href="#4-1-初始化引脚" class="headerlink" title="4.1 初始化引脚"></a>4.1 初始化引脚</h3><p>这里初始化引脚和前面的一样，也是设置为输入模式，但设置完成后需要将初始化的引脚绑定到EXTI外部中断上，这里使用的函数是<code>GPIO_EXTILineConfig()</code>。</p>
+<p>函数的原型是</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">GPIO_EXTILineConfig</span><span class="params">(u8 GPIO_PortSource, u8 GPIO_PinSource)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>将指定引脚映射到EXTI上，然后我们就可以初始化EXTI外部中断了。</p>
+<p>第二个参数并不是直接填写引脚号，这个是需要填写通道值，总共有0到15可以选择，这0到15需要感觉选择的引脚号了决定，因为32单片机的中断是将GPIO的引脚号一致的接入到一个通道中，比如通道0接的是PA0到PE0中的所有0号引脚，然后以此类推。</p>
+<p>比如我们要将GPIOB口的PB4引脚打开EXTI中断，那么映射函数如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GPIO_EXTILineConfig(GPIOB, GPIO_PinSource4);</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-2-初始化外部中断"><a href="#4-2-初始化外部中断" class="headerlink" title="4.2 初始化外部中断"></a>4.2 初始化外部中断</h3><p>这里需要使用到EXTI的结构体进行初始化，该结构体类型为:<code>EXTI_InitTypeDef</code>，原型为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span>&#123;</span></span><br><span class="line">	u32 EXTI_Line;</span><br><span class="line">	EXTIMode_TypeDef EXTI_Mode;</span><br><span class="line">	EXTIrigger_TypeDef EXTI_Trigger;</span><br><span class="line">	FunctionalState EXTI_LineCmd;</span><br><span class="line">&#125;GPIO_InitTypeDef;</span><br></pre></td></tr></table></figure>
+
+<p>第一个参数<code>EXTI_Line</code>是选择中断线路，总共有18根外部中断线，这个可以根据自己的安排来安排对应的线路，对应的中断服务入口地址是不同的。</p>
+<p>第二个参数<code>EXTI_Mode</code>是选择上面选择的线路模式。有两个选项可以填写：</p>
+<p><code>EXTI_Mode_Event</code>：设置EXTI线路为事件请求。</p>
+<p><code>EXTI_Mode_Interrupt</code>：设置EXTI线路为中断请求。</p>
+<p>第三个参数是设置线路的触发边沿，有三个可选的参数：</p>
+<p><code>EXTI_Trigger_Falling</code>：设置输入线路为下降沿触发。</p>
+<p><code>EXTI_Trigger_Rising</code>：设置输入线路为上升沿触发。</p>
+<p><code>EXTI_Trigger_Rising_Falling</code>：设置输入线路为上升沿和下降沿触发。</p>
+<p>第四个参数是选中的线路是否开启，有两个参数，一个是使能<code>ENABLE</code>另一个是失能<code>DISABLE</code>。</p>
+<p>当设置完成后我们可以用<code>EXTI_Init()</code>函数将刚才初始化的结构体传入进去进行初始化。</p>
+<h3 id="4-3-设置NVIC"><a href="#4-3-设置NVIC" class="headerlink" title="4.3 设置NVIC"></a>4.3 设置NVIC</h3><p>NVIC是一个中断优先级判断的一个逻辑电路，我们可以为我们前面设置的中断设置一下中断的优先级，优先级后面会详细的说明，这里只简单的介绍一下如何初始化。</p>
+<p>设置NVIC也是需要使用到一个结构体来进行初始化，这个结构体类型为：<code>NVIC_InitTypeDef</code>，结构体原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span>&#123;</span></span><br><span class="line">	u8 NVIC_IRQChannel;</span><br><span class="line">	u8 NVIC_IRQChannelPreemptionPrior;</span><br><span class="line">	u8 NviC_IRQChannelSubPriority;</span><br><span class="line">	FunctionalState NVIC_IRQChannelCmd;</span><br><span class="line">&#125;NVIC_InitTypeDef;</span><br></pre></td></tr></table></figure>
+
+<p>第一个参数是选择指定的IRQ通道，这里简单介绍一下我们要用的外部中断线的中断通道：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>EXTI0_IRQn</td>
+<td>外部中断线0中断</td>
+</tr>
+<tr>
+<td>EXTI1_IRQn</td>
+<td>外部中断线1中断</td>
+</tr>
+<tr>
+<td>EXTI2_IRQn</td>
+<td>外部中断线2中断</td>
+</tr>
+<tr>
+<td>EXTI3_IRQn</td>
+<td>外部中断线3中断</td>
+</tr>
+<tr>
+<td>EXTI4_IRQn</td>
+<td>外部中断线4中断</td>
+</tr>
+<tr>
+<td>EXTI9_5_IRQn</td>
+<td>外部中断线5～9中断</td>
+</tr>
+<tr>
+<td>EXTI15_10_IRQn</td>
+<td>外部中断线10～15中断</td>
+</tr>
+</tbody></table>
+<p>第二个参数是设置IRQ通道的抢占优先级，抢占优先级就是当在执行这个中断的时候，由来了一个中断，那这个新来的中断是否会干扰当前执行的中断就得看这个抢占优先级，指定的优先级数值越低，优先级越高，这里填写数值就可以了。</p>
+<p>第三个参数是优先级，也是填写数值即可，优先级是确定当同一时刻都接受到中断源时，谁先执行就按照这个优先级来确定。</p>
+<p>第四个参数是使能或者失能，也就是<code>ENABLE</code>和<code>DISABLE</code>。</p>
+<p>当填写好这个初始化结构体后我们调用<code>NVIC_Init()</code>函数将填写好的结构体传入进去即可。</p>
+<h3 id="4-4-重写中断服务函数"><a href="#4-4-重写中断服务函数" class="headerlink" title="4.4 重写中断服务函数"></a>4.4 重写中断服务函数</h3><p>这个中断服务函数可以在<code>startup_stm32f10x_hd.s</code>文件中查看，其中这个就是中断服务函数的列表：</p>
+<p><img src="https://img2.imgtp.com/2024/04/23/MeUv2KW4.png" alt="2.png"></p>
+<p>比如说我们这设置好外部中断通道0中断，那么我们要重写<code>EXTI0_IRQHandler</code>函数，重写方法很简单，我们先定义一下这个函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">EXTI0_IRQHandler</span><span class="params">()</span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后在内部先判断一下是不是该通道的线路触发，因为我们可以让一个通道选择多条线，所以需要有一个判断，当确实是这个线路后我们清除一下该通道的标志位然后就可以开始我们的工作了。</p>
+<p>判断和清理的代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">EXTI0_IRQHandler</span><span class="params">()</span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (EXTI_GetITStatus(EXTI_Line0) == SET)&#123;    <span class="comment">// 判断线路0是否触发</span></span><br><span class="line">		EXTI_ClearFlag(EXTI_Line0);     <span class="comment">// 清理线路0的标志位</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当然，如果只有一个线路，那就可以不用判断，如果你嫌麻烦。</p>
+<p>知道了中断的设置后我们可以写出对应的代码了，完整代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;stm32f10x.h&quot;</span></span></span><br><span class="line"></span><br><span class="line">u8 flag = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">MX_EXTI_Init</span><span class="params">()</span>&#123;</span><br><span class="line">	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOA, ENABLE);</span><br><span class="line">	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);    <span class="comment">// 开启中断的时钟</span></span><br><span class="line">	<span class="comment">// 中断初始化函数</span></span><br><span class="line">	EXTI_InitTypeDef EXTI_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">	NVIC_InitTypeDef NVIC_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">	GPIO_InitTypeDef GPIO_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"></span><br><span class="line">	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IPU;</span><br><span class="line">	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0;</span><br><span class="line">	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">	GPIO_Init(GPIOB, &amp;GPIO_InitStruct);</span><br><span class="line"></span><br><span class="line">	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;</span><br><span class="line">	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_Out_PP;</span><br><span class="line">	GPIO_Init(GPIOA, &amp;GPIO_InitStruct);</span><br><span class="line"></span><br><span class="line">	GPIO_EXTILineConfig(GPIO_PortSourceGPIOB, GPIO_PinSource0);     <span class="comment">// 设置外部线路</span></span><br><span class="line">	</span><br><span class="line">	EXTI_InitStruct.EXTI_Line = EXTI_Line0;</span><br><span class="line">	EXTI_InitStruct.EXTI_Mode = EXTI_Mode_Interrupt;</span><br><span class="line">	EXTI_InitStruct.EXTI_Trigger = EXTI_Trigger_Falling;    <span class="comment">// 下降沿触发</span></span><br><span class="line">	EXTI_InitStruct.EXTI_LineCmd = ENABLE;</span><br><span class="line">	EXTI_Init(&amp;EXTI_InitStruct);</span><br><span class="line"></span><br><span class="line">	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);      <span class="comment">// NVIC优先级分组</span></span><br><span class="line">	</span><br><span class="line">	NVIC_InitStruct.NVIC_IRQChannel = EXTI0_IRQn;</span><br><span class="line">	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = <span class="number">2</span>;</span><br><span class="line">	NVIC_InitStruct.NVIC_IRQChannelSubPriority = <span class="number">2</span>;</span><br><span class="line">	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;</span><br><span class="line">	NVIC_Init(&amp;NVIC_InitStruct);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">delay</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> time)</span>&#123;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">int</span> temp;</span><br><span class="line">	SysTick -&gt; LOAD = <span class="number">9000</span> * time;</span><br><span class="line">	SysTick -&gt; CTRL = <span class="number">0x01</span>;</span><br><span class="line">	SysTick -&gt; VAL = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">do</span>&#123;</span><br><span class="line">			temp = SysTick -&gt; CTRL;</span><br><span class="line">	&#125;<span class="keyword">while</span>((temp &amp; <span class="number">0x01</span>) &amp;&amp; (!(temp &amp; (<span class="number">1</span> &lt;&lt; <span class="number">16</span>))));</span><br><span class="line">	SysTick -&gt; CTRL = <span class="number">0</span>;</span><br><span class="line">	SysTick -&gt; VAL = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">EXTI0_IRQHandler</span><span class="params">(<span class="type">void</span>)</span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (EXTI_GetITStatus(EXTI_Line0) == SET)&#123;</span><br><span class="line">		EXTI_ClearFlag(EXTI_Line0);</span><br><span class="line">		flag = <span class="number">1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">	u32 value;</span><br><span class="line">	u8 i;</span><br><span class="line"></span><br><span class="line">	MX_EXTI_Init();</span><br><span class="line"></span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">		<span class="keyword">if</span> (flag)&#123;</span><br><span class="line">			flag = <span class="number">0</span>;</span><br><span class="line">			value = <span class="number">0x0001</span>;</span><br><span class="line">			<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">8</span>; i++)&#123;</span><br><span class="line">				<span class="comment">// GPIO_WriteBit(GPIOA, GPIO_Pin_0, 1);</span></span><br><span class="line">				GPIO_Write(GPIOA, ~value);</span><br><span class="line">				value &lt;&lt;= <span class="number">1</span>;</span><br><span class="line">				delay(<span class="number">1000</span>);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="5-DMA方式"><a href="#5-DMA方式" class="headerlink" title="5.DMA方式"></a>5.DMA方式</h2><p>DMA方式只适合大量数据的交换，这里不给大家介绍，等后面介绍一下存储芯片会使用到这种方式的。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>这一章是学会单片机的起始，后面的内容都会围绕着这些东西来进行操作，像什么点灯、控制OLED屏幕或者大屏幕、操作传感器、控制通讯模块等等等等都是和IO口的操作脱离不了关系的，学完这个后后面会很容易的掌握单片机的很多操作，我们只要勤加练习就可以学会单片机，单片机其实很简单。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>puill
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://www.puill.xin/2025/01/17/1889a077401c/" title="02 IO口的操作">http://www.puill.xin/2025/01/17/1889a077401c/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" rel="tag"># 单片机</a>
+              <a href="/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" rel="tag"># 环境搭建</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/01/17/ebc592be8231/" rel="prev" title="03 OLED显示屏实现">
+                  <i class="fa fa-angle-left"></i> 03 OLED显示屏实现
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/01/17/e5d40c6790d6/" rel="next" title="01使用调试工具">
+                  01使用调试工具 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">puill</span>
+  </div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+--><div>
+<!--添加网站运行时间-->
+<span>小破站已经在风雨中度过了</span>
+<span id="timeDate">载入天数...</span>
+<span id="times">载入时分秒...</span>
+<script>
+    function createtime() {
+        const startTime = '01/10/2025 00:00:00',
+            start = new Date(startTime)
+        let mill = new Date() - start,
+            seconds = Math.floor(mill / 1000),
+            mins = Math.floor(seconds / 60),
+            hours = Math.floor(mins / 60),
+            days = Math.floor(hours / 24)
+        const time = {
+            seconds: seconds - mins * 60,
+            mins: mins - hours * 60,
+            hours: hours - days * 24,
+        }
+        for (const k in time) {
+            time[k] = `${time[k]}`.padStart(2, '0')
+        }
+        document.getElementById("timeDate").innerHTML = ` ${days} 天`
+        document.getElementById("times").innerHTML = ` ${time.hours} 小时 ${time.mins} 分 ${time.seconds} 秒`
+    }
+    setInterval(createtime, 500)
+</script>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

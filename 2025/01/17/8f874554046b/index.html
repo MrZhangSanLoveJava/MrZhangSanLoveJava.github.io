@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/aaa.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.puill.xin","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"show_result":true,"style":"default"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="最后一章，BKP内部寄存器保存数据和RTC内部时钟">
+<meta property="og:type" content="article">
+<meta property="og:title" content="13 BKP和RTC">
+<meta property="og:url" content="http://www.puill.xin/2025/01/17/8f874554046b/index.html">
+<meta property="og:site_name" content="puill&#39;s Blog">
+<meta property="og:description" content="最后一章，BKP内部寄存器保存数据和RTC内部时钟">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240822201116654-1130494609.png">
+<meta property="article:published_time" content="2025-01-17T13:36:38.000Z">
+<meta property="article:modified_time" content="2025-01-18T06:27:04.923Z">
+<meta property="article:author" content="puill">
+<meta property="article:tag" content="单片机">
+<meta property="article:tag" content="环境搭建">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240822201116654-1130494609.png">
+
+
+<link rel="canonical" href="http://www.puill.xin/2025/01/17/8f874554046b/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.puill.xin/2025/01/17/8f874554046b/","path":"2025/01/17/8f874554046b/","title":"13 BKP和RTC"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>13 BKP和RTC | puill's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">puill's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-文章"><a href="/articles/" rel="section"><i class="fa fa-file-text fa-fw"></i>文章</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-友链"><a href="/friendchains/" rel="section"><i class="fa fa-paperclip fa-fw"></i>友链</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81BKP%E5%A4%87%E4%BB%BD%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-number">2.</span> <span class="nav-text">一、BKP备份寄存器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-BKP%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.1.</span> <span class="nav-text">1.BKP介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-BKP%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">2.2.</span> <span class="nav-text">2.BKP的使用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81RTC%E5%AE%9E%E6%97%B6%E6%97%B6%E9%92%9F"><span class="nav-number">3.</span> <span class="nav-text">二、RTC实时时钟</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-RTC%E6%97%B6%E9%92%9F%E7%9A%84%E4%BB%8B%E7%BB%8D"><span class="nav-number">3.1.</span> <span class="nav-text">1.RTC时钟的介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-RTC%E5%86%85%E9%83%A8%E7%BB%93%E6%9E%84"><span class="nav-number">3.2.</span> <span class="nav-text">2.RTC内部结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-RTC%E4%BB%A3%E7%A0%81%E7%BC%96%E5%86%99%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">3.3.</span> <span class="nav-text">3.RTC代码编写的注意事项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E4%BB%A3%E7%A0%81%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.4.</span> <span class="nav-text">4.代码的实现</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="puill"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">puill</p>
+  <div class="site-description" itemprop="description">puill的博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="mailto:2256044190@qq.com" title="E-Mail → mailto:2256044190@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.puill.xin/2025/01/17/8f874554046b/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="puill">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="puill's Blog">
+      <meta itemprop="description" content="puill的博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="13 BKP和RTC | puill's Blog">
+      <meta itemprop="description" content="最后一章，BKP内部寄存器保存数据和RTC内部时钟">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          13 BKP和RTC
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-01-17 21:36:38" itemprop="dateCreated datePublished" datetime="2025-01-17T21:36:38+08:00">2025-01-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-01-18 14:27:04" itemprop="dateModified" datetime="2025-01-18T14:27:04+08:00">2025-01-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/stm32/" itemprop="url" rel="index"><span itemprop="name">stm32</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">最后一章，BKP内部寄存器保存数据和RTC内部时钟</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>这一节主要是讲解RTC时钟和BKP内部寄存器的，代表着单片机裸机开发就快结束了，后面可能会出RTOS的教程。</p>
+<h1 id="一、BKP备份寄存器"><a href="#一、BKP备份寄存器" class="headerlink" title="一、BKP备份寄存器"></a>一、BKP备份寄存器</h1><h2 id="1-BKP介绍"><a href="#1-BKP介绍" class="headerlink" title="1.BKP介绍"></a>1.BKP介绍</h2><p>该寄存器是在stm32内部的一个RAM寄存器，需要在外部为单片机的<code>VBT</code>引脚接一个电池，保证内部的BKP寄存器中的数据不丢失。</p>
+<p>当系统在待机模式下被唤醒，或系统复位或电源复位时，BKP也不会被复位。</p>
+<p><code>TAMPER</code>引脚产生的侵入事件将所有备份寄存器内容清除，保障重要的内容在被入侵时清空。</p>
+<p>在小容量或者中等容量的单片机中该寄存器中用户可以存放20字节的数据，在大容量和互联型设备中可以存放84字节的数据。</p>
+<h2 id="2-BKP的使用"><a href="#2-BKP的使用" class="headerlink" title="2.BKP的使用"></a>2.BKP的使用</h2><p>BKP是挂载到APB1总线上的设备，所以需要使用<code>RCC_APB1PeriphClockCmd()</code>来对BKP进行时钟的打开。</p>
+<p>BKP需要PWR电源管理设备的配合使用，所以还需要打开一下PWR的时钟，PWR的时钟也是挂载到APB1总线上的，所以这里就知道了，先打开BKP的时钟，然后再打开PWR的时钟。</p>
+<p>最后使能一下PWR，这样就可以对BPK进行使用了。</p>
+<p>这里直接上代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*开启时钟*/</span></span><br><span class="line">RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);		<span class="comment">//开启PWR的时钟</span></span><br><span class="line">RCC_APB1PeriphClockCmd(RCC_APB1Periph_BKP, ENABLE);		<span class="comment">//开启BKP的时钟</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*备份寄存器访问使能*/</span></span><br><span class="line">PWR_BackupAccessCmd(ENABLE);							<span class="comment">//使用PWR开启对备份寄存器的访问</span></span><br></pre></td></tr></table></figure>
+
+<p>这样就可以对BKP进行使用了，对于寄存器的使用其实就是读取和写入，我们可以使用<code>BKP_WriteBackupRegister()</code>函数对对应的BKP位置写入数据。</p>
+<p>然后使用<code>BKP_ReadBackupRegister()</code>函数读取对应BKP寄存器中的位置的数据。</p>
+<h1 id="二、RTC实时时钟"><a href="#二、RTC实时时钟" class="headerlink" title="二、RTC实时时钟"></a>二、RTC实时时钟</h1><p>这个是这一节的重点，前面的BKP是和RTC连在一起的，因为都是由VBT引脚进行独立供电的设备。</p>
+<h2 id="1-RTC时钟的介绍"><a href="#1-RTC时钟的介绍" class="headerlink" title="1.RTC时钟的介绍"></a>1.RTC时钟的介绍</h2><p>RTC是一个独立的定时器，可为系统提供时钟和日历的功能，断电不丢失，由VBT引脚提供电源来进行运行。</p>
+<p>32位的可编程计数器，可对应Unix时间戳的秒计数器。20位的可编程预分频器，可适配不同频率的输入时钟</p>
+<p>可选择三种RTC时钟源：</p>
+<ul>
+<li>HSE时钟除以128（通常为8MHz&#x2F;128）</li>
+<li>LSE振荡器时钟（通常为32.768KHz）</li>
+<li>LSI振荡器时钟（40KHz）</li>
+</ul>
+<h2 id="2-RTC内部结构"><a href="#2-RTC内部结构" class="headerlink" title="2.RTC内部结构"></a>2.RTC内部结构</h2><p><img src="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240822201116654-1130494609.png" alt="img"></p>
+<p>这个是RTC的内部框图，可以看到RTC是挂载到APB1总线上的，由RTCCLK输入频率后开始计时，对Unix时钟戳继续计数值。</p>
+<p>我们可以通过RTC来让STM32从待机模式中退出。</p>
+<p>外部时钟通过RTCCLK进行选择后输入到RTC预分频器中进行分频。</p>
+<h2 id="3-RTC代码编写的注意事项"><a href="#3-RTC代码编写的注意事项" class="headerlink" title="3.RTC代码编写的注意事项"></a>3.RTC代码编写的注意事项</h2><p>对RTC时钟的开启也是需要通过打开PWR和BKP的时钟的，打开后还需要使能PWR，使得BPK和RTC都能使用。</p>
+<p>在写入RTC的寄存器前需要使RTC进入配置模式后才能写入RTC的RTC_PRL、RTC_CNT、RTC_ALR寄存器，当写完后还需要退出RTC的配置模式。</p>
+<p>在写完寄存器后还需要查询RTC_CR寄存器中的RTOFF状态位对RTC任何寄存器的写操作，都必须在前一次写操作结束后进行。可以通过查询RTC_CR寄存器中的RTOFF状态位，判断RTC寄存器是否处于更新中。仅当RTOFF状态位是1时，才可以写入RTC寄存器。</p>
+<p>若在读取RTC寄存器时，RTC的APB1接口曾经处于禁止状态，则软件首先必须等待RTC_CRL寄存器中的RSF位（寄存器同步标志）被硬件置1。</p>
+<h2 id="4-代码的实现"><a href="#4-代码的实现" class="headerlink" title="4.代码的实现"></a>4.代码的实现</h2><p>这里直接就上代码吧，本质上来说RTC的操作还是比较的简单的，这里就不细说了，注意等待同步和等待上一次操作完成即可：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);		<span class="comment">//开启PWR的时钟</span></span><br><span class="line">RCC_APB1PeriphClockCmd(RCC_APB1Periph_BKP, ENABLE);		<span class="comment">//开启BKP的时钟RCC_LSEConfig(RCC_LSE_ON);							//开启LSE时钟</span></span><br><span class="line"><span class="keyword">while</span> (RCC_GetFlagStatus(RCC_FLAG_LSERDY) != SET);	<span class="comment">//等待LSE准备就绪</span></span><br><span class="line"></span><br><span class="line">RCC_RTCCLKConfig(RCC_RTCCLKSource_LSE);				<span class="comment">//选择RTCCLK来源为LSE</span></span><br><span class="line">RCC_RTCCLKCmd(ENABLE);								<span class="comment">//RTCCLK使能</span></span><br><span class="line"></span><br><span class="line">RTC_WaitForSynchro();								<span class="comment">//等待同步</span></span><br><span class="line">RTC_WaitForLastTask();								<span class="comment">//等待上一次操作完成</span></span><br><span class="line"></span><br><span class="line">RTC_SetPrescaler(<span class="number">32768</span> - <span class="number">1</span>);						<span class="comment">//设置RTC预分频器，预分频后的计数频率为1Hz</span></span><br><span class="line">RTC_WaitForLastTask();								<span class="comment">//等待上一次操作完成RTC_WaitForSynchro();								//等待同步</span></span><br><span class="line">RTC_WaitForLastTask();								<span class="comment">//等待上一次操作完成</span></span><br></pre></td></tr></table></figure>
+
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>puill
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://www.puill.xin/2025/01/17/8f874554046b/" title="13 BKP和RTC">http://www.puill.xin/2025/01/17/8f874554046b/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" rel="tag"># 单片机</a>
+              <a href="/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" rel="tag"># 环境搭建</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/01/17/3011135ba729/" rel="prev" title="Linux系统编程">
+                  <i class="fa fa-angle-left"></i> Linux系统编程
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/01/17/fec2c343dcd4/" rel="next" title="12 spi通讯协议">
+                  12 spi通讯协议 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">puill</span>
+  </div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+--><div>
+<!--添加网站运行时间-->
+<span>小破站已经在风雨中度过了</span>
+<span id="timeDate">载入天数...</span>
+<span id="times">载入时分秒...</span>
+<script>
+    function createtime() {
+        const startTime = '01/10/2025 00:00:00',
+            start = new Date(startTime)
+        let mill = new Date() - start,
+            seconds = Math.floor(mill / 1000),
+            mins = Math.floor(seconds / 60),
+            hours = Math.floor(mins / 60),
+            days = Math.floor(hours / 24)
+        const time = {
+            seconds: seconds - mins * 60,
+            mins: mins - hours * 60,
+            hours: hours - days * 24,
+        }
+        for (const k in time) {
+            time[k] = `${time[k]}`.padStart(2, '0')
+        }
+        document.getElementById("timeDate").innerHTML = ` ${days} 天`
+        document.getElementById("times").innerHTML = ` ${time.hours} 小时 ${time.mins} 分 ${time.seconds} 秒`
+    }
+    setInterval(createtime, 500)
+</script>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

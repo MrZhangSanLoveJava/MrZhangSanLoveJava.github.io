@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/aaa.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.puill.xin","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"show_result":true,"style":"default"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="定时器和PWM的控制操作2">
+<meta property="og:type" content="article">
+<meta property="og:title" content="07 输入捕获和编码器接口">
+<meta property="og:url" content="http://www.puill.xin/2025/01/17/67157ff102f4/index.html">
+<meta property="og:site_name" content="puill&#39;s Blog">
+<meta property="og:description" content="定时器和PWM的控制操作2">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240802102446874-1786397910.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240802103502500-1392002671.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240802110117493-1469706630.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240802110137440-1592808447.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240802110144469-1344710896.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240802111017688-560210779.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240802112328175-731723048.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240802114916183-1439848519.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240802115650098-1214663844.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240802142621636-481778235.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240802142853582-1255617354.png">
+<meta property="article:published_time" content="2025-01-17T13:36:38.000Z">
+<meta property="article:modified_time" content="2025-01-18T06:22:14.631Z">
+<meta property="article:author" content="puill">
+<meta property="article:tag" content="单片机">
+<meta property="article:tag" content="环境搭建">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240802102446874-1786397910.png">
+
+
+<link rel="canonical" href="http://www.puill.xin/2025/01/17/67157ff102f4/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.puill.xin/2025/01/17/67157ff102f4/","path":"2025/01/17/67157ff102f4/","title":"07 输入捕获和编码器接口"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>07 输入捕获和编码器接口 | puill's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">puill's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-文章"><a href="/articles/" rel="section"><i class="fa fa-file-text fa-fw"></i>文章</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-友链"><a href="/friendchains/" rel="section"><i class="fa fa-paperclip fa-fw"></i>友链</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E8%BE%93%E5%85%A5%E6%8D%95%E8%8E%B7"><span class="nav-number">2.</span> <span class="nav-text">一、输入捕获</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF%E8%BE%93%E5%85%A5%E6%8D%95%E8%8E%B7"><span class="nav-number">2.1.</span> <span class="nav-text">1.什么是输入捕获</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E8%BE%93%E5%85%A5%E6%8D%95%E8%8E%B7%E6%B5%8B%E9%A2%91%E7%8E%87"><span class="nav-number">2.2.</span> <span class="nav-text">2.输入捕获测频率</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E6%B5%8B%E9%A2%91%E6%B3%95"><span class="nav-number">2.2.1.</span> <span class="nav-text">2.1 测频法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E6%B5%8B%E5%91%A8%E6%B3%95"><span class="nav-number">2.2.2.</span> <span class="nav-text">2.2 测周法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E8%BE%93%E5%85%A5%E6%8D%95%E8%8E%B7%E7%9A%84%E5%86%85%E9%83%A8%E7%BB%93%E6%9E%84"><span class="nav-number">2.3.</span> <span class="nav-text">3.输入捕获的内部结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E8%BD%AF%E4%BB%B6%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.4.</span> <span class="nav-text">4.软件实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E6%89%93%E5%BC%80%E6%97%B6%E9%92%9F"><span class="nav-number">2.4.1.</span> <span class="nav-text">4.1 打开时钟</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E9%85%8D%E7%BD%AEGPIO%E5%8F%A3"><span class="nav-number">2.4.2.</span> <span class="nav-text">4.2 配置GPIO口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E9%85%8D%E7%BD%AETIM"><span class="nav-number">2.4.3.</span> <span class="nav-text">4.3 配置TIM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-%E9%85%8D%E7%BD%AE%E8%BE%93%E5%85%A5%E6%8D%95%E8%8E%B7"><span class="nav-number">2.4.4.</span> <span class="nav-text">4.4 配置输入捕获</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-%E9%85%8D%E7%BD%AE%E4%BB%8E%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.4.5.</span> <span class="nav-text">4.5 配置从模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-6-%E4%BD%BF%E8%83%BD%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="nav-number">2.4.6.</span> <span class="nav-text">4.6 使能定时器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E8%BE%93%E5%85%A5%E6%8D%95%E8%8E%B7%E6%B5%8B%E9%A2%91%E7%8E%87%E5%92%8C%E5%8D%A0%E7%A9%BA%E6%AF%94"><span class="nav-number">2.5.</span> <span class="nav-text">5.输入捕获测频率和占空比</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E7%BC%96%E7%A0%81%E5%99%A8%E6%8E%A5%E5%8F%A3"><span class="nav-number">3.</span> <span class="nav-text">二、编码器接口</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF%E7%BC%96%E7%A0%81%E5%99%A8%E6%8E%A5%E5%8F%A3"><span class="nav-number">3.1.</span> <span class="nav-text">1.什么是编码器接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E7%BC%96%E7%A0%81%E5%99%A8%E6%8E%A5%E5%8F%A3%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%93%E6%9E%84"><span class="nav-number">3.2.</span> <span class="nav-text">2.编码器接口的硬件结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E8%BD%AF%E4%BB%B6%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.3.</span> <span class="nav-text">3.软件实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E6%97%B6%E9%92%9F%E5%BC%80%E5%90%AF"><span class="nav-number">3.3.1.</span> <span class="nav-text">3.1 时钟开启</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-GPIO%E5%8F%A3%E9%85%8D%E7%BD%AE"><span class="nav-number">3.3.2.</span> <span class="nav-text">3.2 GPIO口配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E9%85%8D%E7%BD%AE%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="nav-number">3.3.3.</span> <span class="nav-text">3.3 配置定时器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E9%85%8D%E7%BD%AE%E8%BE%93%E5%85%A5%E6%8D%95%E8%8E%B7"><span class="nav-number">3.3.4.</span> <span class="nav-text">3.4 配置输入捕获</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5%E9%85%8D%E7%BD%AE%E7%BC%96%E7%A0%81%E5%99%A8%E6%8E%A5%E5%8F%A3"><span class="nav-number">3.3.5.</span> <span class="nav-text">3.5配置编码器接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-6-%E4%BD%BF%E8%83%BD%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="nav-number">3.3.6.</span> <span class="nav-text">3.6 使能定时器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-7-%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81"><span class="nav-number">3.3.7.</span> <span class="nav-text">3.7 完整代码</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="puill"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">puill</p>
+  <div class="site-description" itemprop="description">puill的博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="mailto:2256044190@qq.com" title="E-Mail → mailto:2256044190@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.puill.xin/2025/01/17/67157ff102f4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="puill">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="puill's Blog">
+      <meta itemprop="description" content="puill的博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="07 输入捕获和编码器接口 | puill's Blog">
+      <meta itemprop="description" content="定时器和PWM的控制操作2">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          07 输入捕获和编码器接口
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-01-17 21:36:38" itemprop="dateCreated datePublished" datetime="2025-01-17T21:36:38+08:00">2025-01-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-01-18 14:22:14" itemprop="dateModified" datetime="2025-01-18T14:22:14+08:00">2025-01-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/stm32/" itemprop="url" rel="index"><span itemprop="name">stm32</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">定时器和PWM的控制操作2</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>前面介绍了定时器和输出比较，这一节主要介绍一下输入捕获测量输入频率和PWM占空比，然后介绍一下编码器接口。</p>
+<h1 id="一、输入捕获"><a href="#一、输入捕获" class="headerlink" title="一、输入捕获"></a>一、输入捕获</h1><h2 id="1-什么是输入捕获"><a href="#1-什么是输入捕获" class="headerlink" title="1.什么是输入捕获"></a>1.什么是输入捕获</h2><p>当输入的引脚有指定电平跳变时，会将计数器CNT中的值保存在CCR中，这个就称为输入捕获。</p>
+<h2 id="2-输入捕获测频率"><a href="#2-输入捕获测频率" class="headerlink" title="2.输入捕获测频率"></a>2.输入捕获测频率</h2><p>我们可以通过获取输入的值来测量频率，这里有两个计算的方法：</p>
+<h3 id="2-1-测频法"><a href="#2-1-测频法" class="headerlink" title="2.1 测频法"></a>2.1 测频法</h3><p>在一个闸门时间T内，对上升沿进行计数，得到计数值N，频率就为&#x3D;N&#x2F;T。</p>
+<h3 id="2-2-测周法"><a href="#2-2-测周法" class="headerlink" title="2.2 测周法"></a>2.2 测周法</h3><p>在一个标准的频率fc下，对上升沿进行计数，得到计数值N，频率就为：fc &#x2F; N。</p>
+<h2 id="3-输入捕获的内部结构"><a href="#3-输入捕获的内部结构" class="headerlink" title="3.输入捕获的内部结构"></a>3.输入捕获的内部结构</h2><p>接下来了解一下输入捕获的内部结构，只有了解了内部结构，我们写代码才会很轻松，下图就是输入捕获的内部结构：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240802102446874-1786397910.png" alt="img"></p>
+<p>可以看到，从GPIO口输入电平，然后通过输入捕获单元，检测到触发电平，如果是设定的电平就会将CNT中的值保存到CCR中，然后通过配置从模式来将CNT中的值清0。</p>
+<p>了解了这个结构后我们大概就知道如何配置输入捕获了。</p>
+<p>首先配置外部输入，即GPIO口，然后配置定时器，因为输入捕获是定时器的一个工作模式，然后配置从模式，使用从模式的Reset来清空计数器CNT，这样就是配置好输入捕获了。</p>
+<p>我们可以通过读取CCR中的值来计算频率。</p>
+<h2 id="4-软件实现"><a href="#4-软件实现" class="headerlink" title="4.软件实现"></a>4.软件实现</h2><p>前面了解了硬件结构后，我们就可以使用软件来一一实现了，首先要打开时钟，时钟是stm32中最重要的一个部件，如果不打开时钟，就算配置了也没办法运行。</p>
+<h3 id="4-1-打开时钟"><a href="#4-1-打开时钟" class="headerlink" title="4.1 打开时钟"></a>4.1 打开时钟</h3><p>这里我们从上面的硬件分析可以得到，其实就是只用开启两个时钟，一个是GPIO的时钟，另一个就是TIM的时钟，输入捕获这个功能是在TIM中的，所以打开了TIM的时钟，输入捕获和输出比较也就打开了。</p>
+<p>所以这里的代码就比较简单，我这里使用TIM3作为输入捕获的定时器，那么打开的代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);</span><br><span class="line">RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-2-配置GPIO口"><a href="#4-2-配置GPIO口" class="headerlink" title="4.2 配置GPIO口"></a>4.2 配置GPIO口</h3><p>GPIO口做为一个外部信号的输入口，所以要为其设置输入模式，那选择什么模式最好呢？这里可以翻看一下手册：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240802103502500-1392002671.png" alt="img"></p>
+<p>可以看到GPIO配置为浮空输入，但是其实这里也可以配置为上拉输入，浮空输入就是能很好的捕捉电平的变化，但是没有上拉或者下拉导致不是很稳定，这里因为都是一个电平的跳变，就算是使用上拉，当输入的是高电平后会跳变为低电平，然后再变成高电平，所以这里可以选上拉或者下拉。</p>
+<p>如果你不清楚这个跳变到底是什么，你可以选择浮空输入，这样获得的要好一点。</p>
+<p>这里就是正常的配置GPIO口即可：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">GPIO_InitTypeDef GPIO_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IPU;   <span class="comment">// 这里使用上拉输入</span></span><br><span class="line">GPIO_InitStruct.GPIO_Pin = GPIO_Pin_6;</span><br><span class="line">GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">GPIO_Init(GPIOA, &amp;GPIO_InitStruct);</span><br></pre></td></tr></table></figure>
+
+<p>这里是使用的是TIM3的通道1。</p>
+<h3 id="4-3-配置TIM"><a href="#4-3-配置TIM" class="headerlink" title="4.3 配置TIM"></a>4.3 配置TIM</h3><p>现在需要配置一下TIM了，在配置GPIO那配置的是TIM3的通道1，所以这要配置一下TIM3。</p>
+<p>如果你选择的是TIM2，那上面要配置TIM2对应的引脚。</p>
+<p>这里的配置方法和之前配置定时器那一样：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"></span><br><span class="line">TIM_InternalClockConfig(TIM3);    <span class="comment">// 使用内部时钟</span></span><br><span class="line">    </span><br><span class="line">TIM_TimeBaseInitStruct.TIM_ClockDivision = TIM_CKD_DIV1;       <span class="comment">// 不分频</span></span><br><span class="line">TIM_TimeBaseInitStruct.TIM_CounterMode = TIM_CounterMode_Up;     <span class="comment">// 向上计数</span></span><br><span class="line">TIM_TimeBaseInitStruct.TIM_Period = <span class="number">65536</span> - <span class="number">1</span>;     <span class="comment">// 这里需要注意</span></span><br><span class="line">TIM_TimeBaseInitStruct.TIM_Prescaler = <span class="number">72</span> - <span class="number">1</span>;      <span class="comment">// 频率</span></span><br><span class="line">TIM_TimeBaseInitStruct.TIM_RepetitionCounter = <span class="number">0</span>;       <span class="comment">// 重复计数器，高级定时器才有的功能</span></span><br><span class="line">TIM_TimeBaseInit(TIM3, &amp;TIM_TimeBaseInitStruct);</span><br></pre></td></tr></table></figure>
+
+<p>这里的自动重装寄存器是填了一个最大值，是因为这里的输入捕获是用CNT对变化电平进行计数，而CNT中的值和自动重装寄存器ARR中的值一致时，就会使得计数器清0然后发送一个信号，如果这里到了ARR中的值后，还有变化的电平，是不是就会被舍弃。</p>
+<p>所以这里为了防止这个问题，我们将ARR中的值设置成最大值，防止出现到了自动重装值时还有变化，所以用个最大的值，防止溢出。</p>
+<h3 id="4-4-配置输入捕获"><a href="#4-4-配置输入捕获" class="headerlink" title="4.4 配置输入捕获"></a>4.4 配置输入捕获</h3><p>这个也是使用一个结构体来进行配置的，结构体类型为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"></span><br><span class="line">  <span class="type">uint16_t</span> TIM_Channel;      <span class="comment">/*!&lt; 指定 TIM 通道。</span></span><br><span class="line"><span class="comment">  此参数的值可以是 @ref TIM_Channel */</span></span><br><span class="line"></span><br><span class="line">  <span class="type">uint16_t</span> TIM_ICPolarity;   <span class="comment">/*!&lt; 指定输入信号的有效边沿。</span></span><br><span class="line"><span class="comment">  此参数的值可以是 @ref TIM_Input_Capture_Polarity */</span></span><br><span class="line"></span><br><span class="line">  <span class="type">uint16_t</span> TIM_ICSelection;  <span class="comment">/*!&lt; 指定输入。</span></span><br><span class="line"><span class="comment">  此参数的值可以是 @ref TIM_Input_Capture_Selection */</span></span><br><span class="line"></span><br><span class="line">  <span class="type">uint16_t</span> TIM_ICPrescaler;  <span class="comment">/*!&lt; 指定输入捕获预分频器。</span></span><br><span class="line"><span class="comment">  此参数的值可以是 @ref TIM_Input_Capture_Prescaler */</span></span><br><span class="line"></span><br><span class="line">  <span class="type">uint16_t</span> TIM_ICFilter;     <span class="comment">/*!&lt; 指定输入捕获筛选器。</span></span><br><span class="line"><span class="comment">  此参数可以是介于 0x0 和 0xF 之间的数字 */</span></span><br><span class="line">&#125; TIM_ICInitTypeDef;</span><br></pre></td></tr></table></figure>
+
+<p>第一个参数<code>TIM_Channel</code>是选择通道，这个是通过之前说的引脚来进行设定的：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240802110117493-1469706630.png" alt="img"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240802110137440-1592808447.png" alt="img"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240802110144469-1344710896.png" alt="img"></p>
+<p>前面比如是设置了TIM3_CH1，那这里就填写<code>TIM_Channel_1</code>。</p>
+<p>第二个参数<code>TIM_ICPolarity</code>，这个参数是选择有效信号的，可以选择<code>TIM_ICPolarity_Rising</code>高电平触发，<code>TIM_ICPolarity_Falling</code>低电平触发。</p>
+<p>第三个参数<code>TIM_ICSelection</code>，指定输入，有信号直连<code>TIM_ICSelection_DirectTI</code>和交叉<code>TIM_ICSelection_IndirectTI</code>。这个需要拿个图来看看：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240802111017688-560210779.png" alt="img"></p>
+<p>从这可以看到，我们通过选择<code>TI1FP1</code>它可以连到两个输入通道，一个是连到输入通道1，另一个连到通道2，直接配置到输入通道1的就叫做直连模式，如果连到输入通道2就叫做交叉模式。</p>
+<p>第四个参数<code>TIM_ICPrescaler</code>就是分配器。</p>
+<p>第五个参数<code>TIM_ICFilter</code>这个参数是选择过滤器的分辨率。</p>
+<p>了解了结构体后我们就可以配置一下结构体中的内容了，这里我直接使用定时器通道1和输入通道1，所以模式就是直连：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">TIM_ICInitStruct.TIM_Channel = TIM_Channel_1;</span><br><span class="line">TIM_ICInitStruct.TIM_ICFilter = <span class="number">0xF</span>;</span><br><span class="line">TIM_ICInitStruct.TIM_ICPolarity = TIM_ICPolarity_Rising;      <span class="comment">// 有效电平高电平</span></span><br><span class="line">TIM_ICInitStruct.TIM_ICPrescaler = TIM_ICPSC_DIV1;</span><br><span class="line">TIM_ICInitStruct.TIM_ICSelection = TIM_ICSelection_DirectTI;     <span class="comment">// 直连</span></span><br><span class="line">TIM_ICInit(TIM3, &amp;TIM_ICInitStruct);</span><br></pre></td></tr></table></figure>
+
+<p>这里再举一个例子，我这还是定时器通道1，输入通道变成了通道2，那这就选择交叉模式，代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">TIM_ICInitStruct.TIM_Channel = TIM_Channel_1;</span><br><span class="line">TIM_ICInitStruct.TIM_ICFilter = <span class="number">0xF</span>;</span><br><span class="line">TIM_ICInitStruct.TIM_ICPolarity = TIM_ICPolarity_Rising;      <span class="comment">// 有效电平高电平</span></span><br><span class="line">TIM_ICInitStruct.TIM_ICPrescaler = TIM_ICPSC_DIV1;</span><br><span class="line">TIM_ICInitStruct.TIM_ICSelection = TIM_ICSelection_IndirectTI;     <span class="comment">// 交叉</span></span><br><span class="line">TIM_ICInit(TIM3, &amp;TIM_ICInitStruct);</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以通过读取输入通道2中的CCR值来获取有效电平的次数了。</p>
+<p>我们可以通过这个来计算PWM的频率和PWM的占空比，一个输入通道来获取PWM频率，另一个通道获取PWM的占空比。</p>
+<p>一个通道两个设置的方法如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">TIM_ICInitStruct.TIM_Channel = TIM_Channel_1;</span><br><span class="line">TIM_ICInitStruct.TIM_ICFilter = <span class="number">0xF</span>;</span><br><span class="line">TIM_ICInitStruct.TIM_ICPolarity = TIM_ICPolarity_Rising;      <span class="comment">// 有效电平高电平</span></span><br><span class="line">TIM_ICInitStruct.TIM_ICPrescaler = TIM_ICPSC_DIV1;</span><br><span class="line">TIM_ICInitStruct.TIM_ICSelection = TIM_ICSelection_DirectTI;     <span class="comment">// 直连</span></span><br><span class="line">TIM_ICInit(TIM3, &amp;TIM_ICInitStruct);</span><br><span class="line"></span><br><span class="line">TIM_ICInitStruct.TIM_Channel = TIM_Channel_1;</span><br><span class="line">TIM_ICInitStruct.TIM_ICFilter = <span class="number">0xF</span>;</span><br><span class="line">TIM_ICInitStruct.TIM_ICPolarity = TIM_ICPolarity_Falling;      <span class="comment">// 有效电平低电平</span></span><br><span class="line">TIM_ICInitStruct.TIM_ICPrescaler = TIM_ICPSC_DIV1;</span><br><span class="line">TIM_ICInitStruct.TIM_ICSelection = TIM_ICSelection_IndirectTI;     <span class="comment">// 交叉</span></span><br><span class="line">TIM_ICInit(TIM3, &amp;TIM_ICInitStruct);</span><br></pre></td></tr></table></figure>
+
+<p>一个通道分别有直连和交叉，然后一个是高电平有效，一个是低电平有效。</p>
+<h3 id="4-5-配置从模式"><a href="#4-5-配置从模式" class="headerlink" title="4.5 配置从模式"></a>4.5 配置从模式</h3><p>我们在前面知道，需要配置个从模式让从模式去执行<code>Reset</code>操作来讲CNT中的值清0，这里只需要使用俩个函数就可以实现，首先是第一个<code>TIM_SelectInputTrigger</code>，这个函数是选择触发器源，在这个图中：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240802112328175-731723048.png" alt="img"></p>
+<p>可以看到在边缘检测电路后有四个信号，分别是是<code>TI1FP1</code>、<code>TI2FP2</code>、<code>TI3FP3</code>、<code>TI4FP4</code>，这几个信号可以触发从模式，我们先用这个定时器的输入通道后，然后通过<code>TIM_SelectSlaveMode</code>函数来设置从模式。</p>
+<p>比如说我们上面设置的是TIM3定时器，而且是使用的是TIM3_CH1，那这的设置函数就为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">TIM_SelectInputTrigger(TIM3, TIM_TS_TI1FP1);</span><br><span class="line">TIM_SelectSlaveMode(TIM3, TIM_SlaveMode_Reset);</span><br></pre></td></tr></table></figure>
+
+<p>再比如说，这里是TIM2的CH2，那设置函数为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">TIM_SelectInputTrigger(TIM2, TIM_TS_TI2FP2);</span><br><span class="line">TIM_SelectSlaveMode(TIM2, TIM_SlaveMode_Reset);</span><br></pre></td></tr></table></figure>
+
+<p>这里的信号<code>TIxFPx</code>和定时器是什么无关，只和通道有关。stm32f103c8t6只能配置4个输入捕获，所以这里的x是从1到4。</p>
+<h3 id="4-6-使能定时器"><a href="#4-6-使能定时器" class="headerlink" title="4.6 使能定时器"></a>4.6 使能定时器</h3><p>这个就不详细说了，就是使用<code>TIM_Cmd()</code>函数就可以使能了，代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TIM_Cmd(TIMx, ENABLE);</span><br></pre></td></tr></table></figure>
+
+<h2 id="5-输入捕获测频率和占空比"><a href="#5-输入捕获测频率和占空比" class="headerlink" title="5.输入捕获测频率和占空比"></a>5.输入捕获测频率和占空比</h2><p>上面介绍了代码的实现，这里来介绍一下，如果使用输入捕获来获取PWM频率和PWM占空比。</p>
+<p>这个的代码实现比较简单，就是设置为输入捕获模式，然后写两个转换函数即可：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;ic.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">IC_Init</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    GPIO_InitTypeDef GPIO_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    TIM_ICInitTypeDef TIM_ICInitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    </span><br><span class="line">    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);</span><br><span class="line">    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);</span><br><span class="line">    </span><br><span class="line">    GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IPU;</span><br><span class="line">    GPIO_InitStruct.GPIO_Pin = GPIO_Pin_7;  <span class="comment">// 这里使用的是TIM3_CH2</span></span><br><span class="line">    GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">    GPIO_Init(GPIOA, &amp;GPIO_InitStruct);</span><br><span class="line">    </span><br><span class="line">    TIM_InternalClockConfig(TIM3);</span><br><span class="line">    </span><br><span class="line">    TIM_TimeBaseInitStruct.TIM_ClockDivision = TIM_CKD_DIV1;</span><br><span class="line">    TIM_TimeBaseInitStruct.TIM_CounterMode = TIM_CounterMode_Up;</span><br><span class="line">    TIM_TimeBaseInitStruct.TIM_Period = <span class="number">65536</span> - <span class="number">1</span>;</span><br><span class="line">    TIM_TimeBaseInitStruct.TIM_Prescaler = <span class="number">72</span> - <span class="number">1</span>;</span><br><span class="line">    TIM_TimeBaseInitStruct.TIM_RepetitionCounter = <span class="number">0</span>;</span><br><span class="line">    TIM_TimeBaseInit(TIM3, &amp;TIM_TimeBaseInitStruct);</span><br><span class="line">    </span><br><span class="line">    TIM_ICInitStruct.TIM_Channel = TIM_Channel_2;       <span class="comment">// 直连模式要选择通道2</span></span><br><span class="line">    TIM_ICInitStruct.TIM_ICFilter = <span class="number">0xF</span>;</span><br><span class="line">    TIM_ICInitStruct.TIM_ICPolarity = TIM_ICPolarity_Rising;</span><br><span class="line">    TIM_ICInitStruct.TIM_ICPrescaler = TIM_ICPSC_DIV1;</span><br><span class="line">    TIM_ICInitStruct.TIM_ICSelection = TIM_ICSelection_DirectTI;        <span class="comment">// 直连模式</span></span><br><span class="line">    TIM_ICInit(TIM3, &amp;TIM_ICInitStruct);</span><br><span class="line">    </span><br><span class="line">    TIM_ICInitStruct.TIM_Channel = TIM_Channel_1;          <span class="comment">// 交叉模式要选择通道1</span></span><br><span class="line">    TIM_ICInitStruct.TIM_ICFilter = <span class="number">0xF</span>;</span><br><span class="line">    TIM_ICInitStruct.TIM_ICPolarity = TIM_ICPolarity_Falling;   <span class="comment">// 这里需要和上面设置的有效电平分割开，要不然会出现运行不了的问题，我试过，必须要分开，要不然测试不了。</span></span><br><span class="line">    TIM_ICInitStruct.TIM_ICPrescaler = TIM_ICPSC_DIV1;</span><br><span class="line">    TIM_ICInitStruct.TIM_ICSelection = TIM_ICSelection_IndirectTI;      <span class="comment">// 交叉模式</span></span><br><span class="line">    TIM_ICInit(TIM3, &amp;TIM_ICInitStruct);</span><br><span class="line">    </span><br><span class="line">    TIM_SelectInputTrigger(TIM3, TIM_TS_TI2FP2);</span><br><span class="line">    TIM_SelectSlaveMode(TIM3, TIM_SlaveMode_Reset);</span><br><span class="line">    </span><br><span class="line">    TIM_Cmd(TIM3, ENABLE);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">uint32_t</span> <span class="title function_">IC_Get_Freq</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 转换为频率</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">1000000</span> / (TIM_GetCapture2(TIM3) + <span class="number">1</span>);      <span class="comment">// 用输入捕获设置的频率除以标准时钟72MHz后得到1000000，然后用这个频率除以获取的N即可得到频率。</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">uint32_t</span> <span class="title function_">IC_Get_Pulse</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 转换为占空比</span></span><br><span class="line">    <span class="keyword">return</span> ((TIM_GetCapture1(TIM3) + <span class="number">1</span>) * <span class="number">100</span>) / IC_Get_Freq();      <span class="comment">// 这个算法是在PWM占空比那说过的。这里不重复</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这样就可以获取得到PWM的频率和占空比了。</p>
+<h1 id="二、编码器接口"><a href="#二、编码器接口" class="headerlink" title="二、编码器接口"></a>二、编码器接口</h1><h2 id="1-什么是编码器接口"><a href="#1-什么是编码器接口" class="headerlink" title="1.什么是编码器接口"></a>1.什么是编码器接口</h2><p>编码器接口可接收增量（正交）编码器的信号，根据编码器旋转产生的正交信号脉冲，自动控制CNT自增或自减。</p>
+<p>下图是一个正交编码器的图：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240802114916183-1439848519.png" alt="img"></p>
+<p>可以看到，编码器的这个波形，A项和B项的波形是相差90度的，所以这两个波形在一起就可以分正和反了。</p>
+<h2 id="2-编码器接口的硬件结构"><a href="#2-编码器接口的硬件结构" class="headerlink" title="2.编码器接口的硬件结构"></a>2.编码器接口的硬件结构</h2><p>我们可以用前面学过的输入捕获或者是中断来实现编码器的实现，但是，在stm32f103c8t6中设置了一个编码器接口，我们可以直接使用硬件来实现编码器的测试。</p>
+<p>硬件结构如下：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240802115650098-1214663844.png" alt="img"></p>
+<p>可以看到非常的简单，只需要在前面的基础上增加个编译器接口的配置即可。</p>
+<p>使用的函数是：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">TIM_EncoderInterfaceConfig</span><span class="params">(TIM_TypeDef* TIMx, <span class="type">uint16_t</span> TIM_EncoderMode,<span class="type">uint16_t</span> TIM_IC1Polarity, <span class="type">uint16_t</span> TIM_IC2Polarity)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这个函数就可以设置编码器接口了，首先设置GPIO口，因为我们的这个编码器是需要两个输入的，所以需要设置两个引脚作为输入引脚，然后配置定时器，配置为定时器后需要配置输入捕获，之后就使用上面的函数进行配置编码器接口。</p>
+<p>第一个参数<code>TIMx</code>是定时器的编号。</p>
+<p>第二个参数<code>TIM_EncoderMode</code>是使用模式，可以选下面这几个模式：</p>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TIM_EncoderMode_TI1</td>
+<td>使用TI1FP1作为编码器设置</td>
+</tr>
+<tr>
+<td>TIM_EncoderMode_TI2</td>
+<td>使用TI2FP2作为编码器设置</td>
+</tr>
+<tr>
+<td>TIM_EncoderMode_TI12</td>
+<td>使用TI1FP1和TI2FP2作为编码器设置</td>
+</tr>
+</tbody></table>
+<p>第三个参数<code>TIM_IC1Polarity</code>是选择TI1FP1是正项还是反向，第四个参数<code>TIM_IC2Polarity</code>和第三个参数一样，是选择TI2FP2。</p>
+<p>当两个都选择正向或者是反向时，就如下图的时许一样：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240802142621636-481778235.png" alt="img"></p>
+<p>当TI1有上升电平，TI2还是低电平时，计数器就会自增，当TI2有上升电平，TI1是高电平时，计数器也会自增。</p>
+<p>当TI1FP1或者TI2FP2有一个是反项时就会变成下面的时许：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240802142853582-1255617354.png" alt="img"></p>
+<p>在正向时TI1有上升电平，TI2还是低电平时，计数器就会自增，但反向后就是变成自减了。</p>
+<p>也就是说当正向的自增转到反向后就会变成自减。</p>
+<h2 id="3-软件实现"><a href="#3-软件实现" class="headerlink" title="3.软件实现"></a>3.软件实现</h2><p>硬件结构讲完成后，就可以用代码来对其中的功能进行一个实现了。</p>
+<h3 id="3-1-时钟开启"><a href="#3-1-时钟开启" class="headerlink" title="3.1 时钟开启"></a>3.1 时钟开启</h3><p>这里的开启时钟也就只需要开启GPIO的时钟和定时器的时钟，因为编码器接口也是定时器的一个附加功能，所以只用开启GPIO和定时器的时钟即可，不需要额外的时钟开启。</p>
+<h3 id="3-2-GPIO口配置"><a href="#3-2-GPIO口配置" class="headerlink" title="3.2 GPIO口配置"></a>3.2 GPIO口配置</h3><p>这里还是需要配置GPIO口，因为需要外部的编码器的输入，这里选择的引脚和定时器的输入捕获和输出比较一样，需要查看引脚的复用功能是不是在TIM定时器的通道上，如果不在那就不能使用。</p>
+<p>这里选择的是定时器3的通道1和通道2，对应的引脚是PA6和PA7。</p>
+<p>配置代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GPIO_InitTypeDef GPIO_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">GPIO_InitStruct.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7;</span><br><span class="line">GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">GPIO_Init(GPIOA, &amp;GPIO_InitStruct);</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-配置定时器"><a href="#3-3-配置定时器" class="headerlink" title="3.3 配置定时器"></a>3.3 配置定时器</h3><p>配置的方法也是和上面一样，打开TIM3定时器，然后配置一系列操作，但这里需要改变一下，预分频器PSC这里就不需要分频，只需要填写1-1即可，1就是不分频，这里是又编码器接口硬件来进行操作即可，然后自动重装寄存器ARR只需要配置最大即可，也不需要TIM指定使用内部时钟，这个时钟也是由编码器接口来提供的。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">TIM_TimeBaseTypeDef TIM_TimeBaseStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">TIM_TimeBaseStruct.TIM_ClockDivision = TIM_CKD_DIV1;</span><br><span class="line">TIM_TimeBaseStruct.TIM_CounterMode = TIM_CounterMode_Up;</span><br><span class="line">TIM_TimeBaseStruct.TIM_Period = <span class="number">65536</span> - <span class="number">1</span>;</span><br><span class="line">TIM_TimeBaseStruct.TIM_Prescaler = <span class="number">1</span> - <span class="number">1</span>;</span><br><span class="line">TIM_TimeBaseStruct.TIM_RepetitionCounter = <span class="number">0</span>;</span><br><span class="line">TIM_TimeBaseInit(TIM3, &amp;TIM_TimeBaseStruct);</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-4-配置输入捕获"><a href="#3-4-配置输入捕获" class="headerlink" title="3.4 配置输入捕获"></a>3.4 配置输入捕获</h3><p>这里需要注意一下，有些东西在这配置时不需要配置，只需要配置两个参数即可，需要配置的有通道<code>TIM_Channel</code>和过滤器的分辨率<code>TIM_ICFilter</code>然后其他的不需要配置。</p>
+<p>所以这里需要使用一个函数来为结构体赋一个默认值：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">TIM_ICInitTypeDef TIM_ICInitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">TIM_ICStructInit(&amp;TIM_ICInitStruct);</span><br><span class="line"></span><br><span class="line">TIM_ICInitStruct.TIM_Channel = TIM_Channel_1;</span><br><span class="line">TIM_ICInitStruct.TIM_ICFilter = <span class="number">0x0F</span>;</span><br><span class="line">TIM_Init(TIM3, &amp;TIM_ICInitStruct);</span><br><span class="line"></span><br><span class="line">TIM_ICInitStruct.TIM_Channel = TIM_Channel_2;</span><br><span class="line">TIM_ICInitStruct.TIM_ICFilter = <span class="number">0x0F</span>;</span><br><span class="line">TIM_Init(TIM3, &amp;TIM_ICInitStruct);</span><br></pre></td></tr></table></figure>
+
+<p>这里可能会比较好奇为什么那些都不配置，比如说预分频器和有效电平和反向，这是因为在配置编码器接口那就已经配置好了的，不需要我们再进行配置，编码器接口会为这个输入捕获一个时钟，所以就不需要分频了，然后反向也是，也是那一个函数就可以配置好了的。</p>
+<h3 id="3-5配置编码器接口"><a href="#3-5配置编码器接口" class="headerlink" title="3.5配置编码器接口"></a>3.5配置编码器接口</h3><p>这里就使用上面介绍的那个函数即可配置：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TIM_EncoderInterfaceConfig(TIM3, TIM_EncoderMode_TI12, TIM_ICPolarity_Rising, TIM_ICPolarity_Rising);</span><br></pre></td></tr></table></figure>
+
+<p>这里我都设置的是不反向，是为了方便。</p>
+<h3 id="3-6-使能定时器"><a href="#3-6-使能定时器" class="headerlink" title="3.6 使能定时器"></a>3.6 使能定时器</h3><p>最后使能一下定时器就可以了，使能方法之前介绍了很多遍，这里就不再拉出代码了，下面完整代码中有。</p>
+<h3 id="3-7-完整代码"><a href="#3-7-完整代码" class="headerlink" title="3.7 完整代码"></a>3.7 完整代码</h3><p>这里为了方便，我把完整代码贴出来：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">Encoder_Init</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    GPIO_InitTypeDef GPIO_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    TIM_TimeBaseInitTypeDef TIM_TimeBaseStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    TIM_ICInitTypeDef TIM_ICInitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    </span><br><span class="line">    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);</span><br><span class="line">    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);</span><br><span class="line">    </span><br><span class="line">    GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IPU;</span><br><span class="line">    GPIO_InitStruct.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7;</span><br><span class="line">    GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">    GPIO_Init(GPIOA, &amp;GPIO_InitStruct);</span><br><span class="line">    </span><br><span class="line">    TIM_TimeBaseStruct.TIM_ClockDivision = TIM_CKD_DIV1;</span><br><span class="line">    TIM_TimeBaseStruct.TIM_CounterMode = TIM_CounterMode_Up;</span><br><span class="line">    TIM_TimeBaseStruct.TIM_Period = <span class="number">65536</span> - <span class="number">1</span>;</span><br><span class="line">    TIM_TimeBaseStruct.TIM_Prescaler = <span class="number">1</span> - <span class="number">1</span>;</span><br><span class="line">    TIM_TimeBaseStruct.TIM_RepetitionCounter = <span class="number">0</span>;</span><br><span class="line">    TIM_TimeBaseInit(TIM3, &amp;TIM_TimeBaseStruct);</span><br><span class="line">    </span><br><span class="line">    TIM_ICInitStruct.TIM_Channel = TIM_Channel_1;</span><br><span class="line">    TIM_ICInitStruct.TIM_ICFilter = <span class="number">0x0F</span>;</span><br><span class="line">    TIM_ICInit(TIM3, &amp;TIM_ICInitStruct);</span><br><span class="line">    </span><br><span class="line">    TIM_ICInitStruct.TIM_Channel = TIM_Channel_2;</span><br><span class="line">    TIM_ICInitStruct.TIM_ICFilter = <span class="number">0x0F</span>;</span><br><span class="line">    TIM_ICInit(TIM3, &amp;TIM_ICInitStruct);</span><br><span class="line">    </span><br><span class="line">    TIM_EncoderInterfaceConfig(TIM3, TIM_EncoderMode_TI12, TIM_ICPolarity_Rising, TIM_ICPolarity_Rising);</span><br><span class="line">    </span><br><span class="line">    TIM_Cmd(TIM3, ENABLE);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>通用定时器的相关操作就介绍完成了，后面有机会的话给大家介绍一下高级定时器，高级定时器可以操作三项无刷电机，等后面有时间我做一个无人机会使用到高级定时器。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>puill
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://www.puill.xin/2025/01/17/67157ff102f4/" title="07 输入捕获和编码器接口">http://www.puill.xin/2025/01/17/67157ff102f4/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" rel="tag"># 单片机</a>
+              <a href="/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" rel="tag"># 环境搭建</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/01/17/769e4c55fdc1/" rel="prev" title="08 ADC模数转换">
+                  <i class="fa fa-angle-left"></i> 08 ADC模数转换
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/01/17/4dff7e1a6b94/" rel="next" title="06 定时器和PWM（1）">
+                  06 定时器和PWM（1） <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">puill</span>
+  </div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+--><div>
+<!--添加网站运行时间-->
+<span>小破站已经在风雨中度过了</span>
+<span id="timeDate">载入天数...</span>
+<span id="times">载入时分秒...</span>
+<script>
+    function createtime() {
+        const startTime = '01/10/2025 00:00:00',
+            start = new Date(startTime)
+        let mill = new Date() - start,
+            seconds = Math.floor(mill / 1000),
+            mins = Math.floor(seconds / 60),
+            hours = Math.floor(mins / 60),
+            days = Math.floor(hours / 24)
+        const time = {
+            seconds: seconds - mins * 60,
+            mins: mins - hours * 60,
+            hours: hours - days * 24,
+        }
+        for (const k in time) {
+            time[k] = `${time[k]}`.padStart(2, '0')
+        }
+        document.getElementById("timeDate").innerHTML = ` ${days} 天`
+        document.getElementById("times").innerHTML = ` ${time.hours} 小时 ${time.mins} 分 ${time.seconds} 秒`
+    }
+    setInterval(createtime, 500)
+</script>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

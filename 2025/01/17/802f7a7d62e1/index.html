@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/aaa.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.puill.xin","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"show_result":true,"style":"default"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="在Linux系统上面搭建单片机的开发环境，包教包会">
+<meta property="og:type" content="article">
+<meta property="og:title" content="00在linux环境下搭建stm32开发环境">
+<meta property="og:url" content="http://www.puill.xin/2025/01/17/802f7a7d62e1/index.html">
+<meta property="og:site_name" content="puill&#39;s Blog">
+<meta property="og:description" content="在Linux系统上面搭建单片机的开发环境，包教包会">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/ed715bb624b7f119ec6020fb8798850d.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/810b51fa659f38271ca717cc015c2920.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/91fa3df7291b9357f402a392b0b7429a.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/f69050b82bf26308f01a5d7f73111530.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/f1aecb460834c1106482580eb80f1c1e.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/9a156608555b2f36a9132ab1ed40efc1.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/671e44e4ab09609cc182ebf8c14e905e.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/31373852073d248757270016e8e60ccd.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/0c9e77061891cfc8d333591dcdaa4cd1.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/e5dbdf3f6486d31062ad6852ec26d136.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/e5dd68430bcb2fb9413e466b00133b48.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/2e2bd9c7d119aa3604f3dc1ad23a5ebe.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/1e16ea086129f2863d3bf355ac8f2d02.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/70581ca48f30e5cfe2a443b4968277d5.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/2ab4960f54e28e718bf115800666197b.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/8c2e79d2845ce7a3c0089756cf8bcd6b.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/b962a1b5800e787eafce6448a3738653.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/1c467dbe84138240dc6484b290ffe399.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/525906bd485c1f96c068a3b3863c7170.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/739ef1beeb0091e410cc10dd8b8c9920.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/f940dc3cc006d247ba784d32ad08c5ea.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/7bf6549a8c53b32c78367f4ed00f8ab4.jpeg">
+<meta property="article:published_time" content="2025-01-17T13:36:38.000Z">
+<meta property="article:modified_time" content="2025-01-18T06:18:43.596Z">
+<meta property="article:author" content="puill">
+<meta property="article:tag" content="单片机">
+<meta property="article:tag" content="环境搭建">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/img_convert/ed715bb624b7f119ec6020fb8798850d.png">
+
+
+<link rel="canonical" href="http://www.puill.xin/2025/01/17/802f7a7d62e1/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.puill.xin/2025/01/17/802f7a7d62e1/","path":"2025/01/17/802f7a7d62e1/","title":"00在linux环境下搭建stm32开发环境"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>00在linux环境下搭建stm32开发环境 | puill's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">puill's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-文章"><a href="/articles/" rel="section"><i class="fa fa-file-text fa-fw"></i>文章</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-友链"><a href="/friendchains/" rel="section"><i class="fa fa-paperclip fa-fw"></i>友链</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-number">2.</span> <span class="nav-text">一、环境搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-arm-none-eabi-gcc"><span class="nav-number">2.1.</span> <span class="nav-text">1.arm-none-eabi-gcc</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-openocd"><span class="nav-number">2.2.</span> <span class="nav-text">2.openocd</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%88%9B%E5%BB%BAstm32%E6%A0%87%E5%87%86%E5%BA%93%E5%B7%A5%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">三、创建stm32标准库工程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BA%E5%B7%A5%E7%A8%8B%E7%9B%AE%E5%BD%95"><span class="nav-number">3.1.</span> <span class="nav-text">1.创建工程目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E4%BF%AE%E6%94%B9stm32-flash-ld%E6%96%87%E4%BB%B6"><span class="nav-number">3.2.</span> <span class="nav-text">2.修改stm32_flash.ld文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%86%99makefile%E6%96%87%E4%BB%B6"><span class="nav-number">3.3.</span> <span class="nav-text">3.写makefile文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E4%BF%AE%E6%94%B9core-cm3-c"><span class="nav-number">3.4.</span> <span class="nav-text">4.修改core_cm3.c</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E5%86%99main%E5%87%BD%E6%95%B0%E5%B9%B6%E4%B8%8B%E8%BD%BD%E5%88%B0%E6%9D%BF%E5%AD%90%E4%B8%8A"><span class="nav-number">3.5.</span> <span class="nav-text">5.写main函数并下载到板子上</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%80%E5%90%8E"><span class="nav-number">4.</span> <span class="nav-text">最后</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="puill"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">puill</p>
+  <div class="site-description" itemprop="description">puill的博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="mailto:2256044190@qq.com" title="E-Mail → mailto:2256044190@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.puill.xin/2025/01/17/802f7a7d62e1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="puill">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="puill's Blog">
+      <meta itemprop="description" content="puill的博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="00在linux环境下搭建stm32开发环境 | puill's Blog">
+      <meta itemprop="description" content="在Linux系统上面搭建单片机的开发环境，包教包会">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          00在linux环境下搭建stm32开发环境
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-01-17 21:36:38" itemprop="dateCreated datePublished" datetime="2025-01-17T21:36:38+08:00">2025-01-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-01-18 14:18:43" itemprop="dateModified" datetime="2025-01-18T14:18:43+08:00">2025-01-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/stm32/" itemprop="url" rel="index"><span itemprop="name">stm32</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">在Linux系统上面搭建单片机的开发环境，包教包会</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>我在那天终于说服自己将系统换成了linux系统了，当换成了linux系统后我发现，keil5这个软件实在是太香了，在linux系统下面没有keil5软件，当然我可以选择使用cubeIDE,但是我写stm32都是使用的是标准库进行编写的，要我再去学HAL库实在是太麻烦了。</p>
+<p>然后我研究了一个星期后终于搞定这个环境了，所以我准备写一片文章来从头开始搭建stm32的环境，因为我又把ubuntu换成了kubuntu了，所以可以重头开始搭建了。</p>
+<h1 id="一、环境搭建"><a href="#一、环境搭建" class="headerlink" title="一、环境搭建"></a>一、环境搭建</h1><h2 id="1-arm-none-eabi-gcc"><a href="#1-arm-none-eabi-gcc" class="headerlink" title="1.arm-none-eabi-gcc"></a>1.arm-none-eabi-gcc</h2><p>这个工具是我们需要使用的编译工具，就和我们在linux中编译C语言程序一样，需要使用一个编译工具，这个工具可以编译arm芯片对应的机器码并生成<code>hex</code>文件，所以我们首先要安装一下这个工具。</p>
+<p>在官网中下载适合系统的压缩包：<a target="_blank" rel="noopener" href="https://developer.arm.com/downloads/-/gnu-rm">arm-none-eabi-gcc</a></p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/ed715bb624b7f119ec6020fb8798850d.png" alt="1.png"></p>
+<p>我这选择的是这个安装包，然后等待下载。</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/810b51fa659f38271ca717cc015c2920.png" alt="2.png"></p>
+<p>下载完成后就看到有这个压缩包，我们先解压一下这个压缩包：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -jxvf gcc-arm-none-eabi-10.3-2021.10-x86_64-linux.tar.bz2</span><br></pre></td></tr></table></figure>
+
+<p>解压出来的文件名字太长了，我们需要给它改个名字并且放在根目录下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mv</span> gcc-arm-none-eabi-10.3-2021.10 ~/gcc-arm-none-eabi</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/img_convert/91fa3df7291b9357f402a392b0b7429a.png" alt="3.png"></p>
+<p>然后将这个文件中的<code>bin</code>目录添加到环境变量中</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim ~/.zshrc</span><br></pre></td></tr></table></figure>
+
+<p>在最后一行添加：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:/home/lavender_edgar/gcc-arm-none-eabi/bin</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/img_convert/f69050b82bf26308f01a5d7f73111530.png" alt="4.png"></p>
+<p>我这用的是zsh终端，你们如果用bash终端的话是使用：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim ~/.bashrc</span><br></pre></td></tr></table></figure>
+
+<p>然后使用下面的命令重启一下即可：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.zshrc</span><br></pre></td></tr></table></figure>
+
+<p>如果是bash的就使用：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br></pre></td></tr></table></figure>
+
+<p>在终端中敲入<code>arm</code>后按下tab键就可以看到有很多的补全，这就代表着安装成功了</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/f1aecb460834c1106482580eb80f1c1e.png" alt="5.png"></p>
+<h2 id="2-openocd"><a href="#2-openocd" class="headerlink" title="2.openocd"></a>2.openocd</h2><p>这个工具可以将hex文件通过下载器下载到单片机中，这个工具支持很多的下载工具。</p>
+<p>首先先在官网上下载这个工具：<a target="_blank" rel="noopener" href="https://sourceforge.net/projects/openocd/">openocd</a></p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/9a156608555b2f36a9132ab1ed40efc1.png" alt="6.png"></p>
+<p>下载完成后进行解压：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -jxvf openocd-0.12.0.tar.bz2</span><br></pre></td></tr></table></figure>
+
+<p>然后还是一样的移动改名</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mv</span> openocd-0.12.0 ~/openocd</span><br></pre></td></tr></table></figure>
+
+<p>在开始之前我们需要做几个步骤，首先安装<code>libtool</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install libtool-bin</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/img_convert/671e44e4ab09609cc182ebf8c14e905e.png" alt="7.png"></p>
+<p>然后安装一下<code>HIDAPI</code>库，这个是<code>CMSIS</code>需要的库</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt-get install libhidapi-dev</span><br></pre></td></tr></table></figure>
+
+<p>将<code>openocd/contrib</code>中的<code>60-openocd.rules</code>复制一份到<code>/etc/udev/rules.d/</code>中，如果不进行这个操作可能下载不进去，在复制时记得加上<code>sudo</code>。</p>
+<p>之后安装一下<code>libusb++-dev</code>即可：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt-get install libusb++-dev</span><br></pre></td></tr></table></figure>
+
+<p>然后我们进入到刚才解压的目录中，执行下面的命令生成<code>makefile</code>文件</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> ./configure </span><br></pre></td></tr></table></figure>
+
+<p>如果出现下面的错误代表着你没有安装make</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/31373852073d248757270016e8e60ccd.png" alt="8.png"></p>
+<p>执行<code>sudo apt install make</code>就可以了，安装完成后继续执行</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> ./configure </span><br></pre></td></tr></table></figure>
+
+<p>然后就能生成<code>makefile</code>文件</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/0c9e77061891cfc8d333591dcdaa4cd1.png" alt="10.png"></p>
+<p>然后我们使用下面命令进行编译</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> make</span><br></pre></td></tr></table></figure>
+
+<p>然后再执行</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> make install</span><br></pre></td></tr></table></figure>
+
+<p>这样我们就安装好了<code>openocd</code>了，我们可以在<code>/usr/local/share/openocd/scripts/target</code>看到芯片配置文件</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/e5dbdf3f6486d31062ad6852ec26d136.png" alt="11.png"></p>
+<p>在<code>/usr/local/share/openocd/scripts/interface</code>可以看到下载器配置文件</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/e5dd68430bcb2fb9413e466b00133b48.png" alt="12.png"></p>
+<p>但还没有结束，因为刚才我们执行<code>sudo ./configure</code>时出现了一个表</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/2e2bd9c7d119aa3604f3dc1ad23a5ebe.png" alt="13.png"></p>
+<p>可以看到只有两个适合的，我们需要添加一下<code>stlink</code>，这样才能支持，所以我们需要执行一下</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> ./configure --enable-stlink</span><br></pre></td></tr></table></figure>
+
+<p>我在执行的时候出现了这样一个问题</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/1e16ea086129f2863d3bf355ac8f2d02.png" alt="14.png"></p>
+<p>这是因为少了一个<code>pkg-config</code>，如果你也没有就需要使用下面的代码进行下载</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install pkg-config</span><br></pre></td></tr></table></figure>
+
+<p>然后在进行生成就会发现在<code>stlink</code>后是ok了</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/70581ca48f30e5cfe2a443b4968277d5.png" alt="15.png"></p>
+<p>然后再进行<code>make</code>和<code>make install</code>就可以了。</p>
+<h1 id="三、创建stm32标准库工程"><a href="#三、创建stm32标准库工程" class="headerlink" title="三、创建stm32标准库工程"></a>三、创建stm32标准库工程</h1><h2 id="1-创建工程目录"><a href="#1-创建工程目录" class="headerlink" title="1.创建工程目录"></a>1.创建工程目录</h2><p>当环境安装完成后我们就可以创建stm32标准库的工程文件了，其实创建和在keil5中是一样的，只不过有些文件需要进行一下改变。</p>
+<p>首先到官网下载标准库文件：<a target="_blank" rel="noopener" href="https://www.st.com/zh/embedded-software/stm32-standard-peripheral-libraries.html">标准库</a></p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/2ab4960f54e28e718bf115800666197b.png" alt="16.png"></p>
+<p>然后创建一个文件夹用来存放项目文件，然后就可以开始移动了，这里可以直接使用图形化界面来进行移动要简单一点，这里我的项目格式如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line">├── doc</span><br><span class="line">├── lib</span><br><span class="line">│   ├── CMSIS</span><br><span class="line">│   │   ├── core_cm3.c</span><br><span class="line">│   │   ├── core_cm3.h</span><br><span class="line">│   │   ├── startup</span><br><span class="line">│   │   │   ├── startup_stm32f10x_cl.s</span><br><span class="line">│   │   │   ├── startup_stm32f10x_hd.s</span><br><span class="line">│   │   │   ├── startup_stm32f10x_hd_vl.s</span><br><span class="line">│   │   │   ├── startup_stm32f10x_ld.s</span><br><span class="line">│   │   │   ├── startup_stm32f10x_ld_vl.s</span><br><span class="line">│   │   │   ├── startup_stm32f10x_md.s</span><br><span class="line">│   │   │   ├── startup_stm32f10x_md_vl.s</span><br><span class="line">│   │   │   └── startup_stm32f10x_xl.s</span><br><span class="line">│   │   ├── stm32f10x.h</span><br><span class="line">│   │   ├── system_stm32f10x.c</span><br><span class="line">│   │   └── system_stm32f10x.h</span><br><span class="line">│   └── FWlib</span><br><span class="line">│       ├── inc</span><br><span class="line">│       │   ├── misc.h</span><br><span class="line">│       │   ├── stm32f10x_adc.h</span><br><span class="line">│       │   ├── stm32f10x_bkp.h</span><br><span class="line">│       │   ├── stm32f10x_can.h</span><br><span class="line">│       │   ├── stm32f10x_cec.h</span><br><span class="line">│       │   ├── stm32f10x_crc.h</span><br><span class="line">│       │   ├── stm32f10x_dac.h</span><br><span class="line">│       │   ├── stm32f10x_dbgmcu.h</span><br><span class="line">│       │   ├── stm32f10x_dma.h</span><br><span class="line">│       │   ├── stm32f10x_exti.h</span><br><span class="line">│       │   ├── stm32f10x_flash.h</span><br><span class="line">│       │   ├── stm32f10x_fsmc.h</span><br><span class="line">│       │   ├── stm32f10x_gpio.h</span><br><span class="line">│       │   ├── stm32f10x_i2c.h</span><br><span class="line">│       │   ├── stm32f10x_iwdg.h</span><br><span class="line">│       │   ├── stm32f10x_pwr.h</span><br><span class="line">│       │   ├── stm32f10x_rcc.h</span><br><span class="line">│       │   ├── stm32f10x_rtc.h</span><br><span class="line">│       │   ├── stm32f10x_sdio.h</span><br><span class="line">│       │   ├── stm32f10x_spi.h</span><br><span class="line">│       │   ├── stm32f10x_tim.h</span><br><span class="line">│       │   ├── stm32f10x_usart.h</span><br><span class="line">│       │   └── stm32f10x_wwdg.h</span><br><span class="line">│       └── src</span><br><span class="line">│           ├── misc.c</span><br><span class="line">│           ├── stm32f10x_adc.c</span><br><span class="line">│           ├── stm32f10x_bkp.c</span><br><span class="line">│           ├── stm32f10x_can.c</span><br><span class="line">│           ├── stm32f10x_cec.c</span><br><span class="line">│           ├── stm32f10x_crc.c</span><br><span class="line">│           ├── stm32f10x_dac.c</span><br><span class="line">│           ├── stm32f10x_dbgmcu.c</span><br><span class="line">│           ├── stm32f10x_dma.c</span><br><span class="line">│           ├── stm32f10x_exti.c</span><br><span class="line">│           ├── stm32f10x_flash.c</span><br><span class="line">│           ├── stm32f10x_fsmc.c</span><br><span class="line">│           ├── stm32f10x_gpio.c</span><br><span class="line">│           ├── stm32f10x_i2c.c</span><br><span class="line">│           ├── stm32f10x_iwdg.c</span><br><span class="line">│           ├── stm32f10x_pwr.c</span><br><span class="line">│           ├── stm32f10x_rcc.c</span><br><span class="line">│           ├── stm32f10x_rtc.c</span><br><span class="line">│           ├── stm32f10x_sdio.c</span><br><span class="line">│           ├── stm32f10x_spi.c</span><br><span class="line">│           ├── stm32f10x_tim.c</span><br><span class="line">│           ├── stm32f10x_usart.c</span><br><span class="line">│           └── stm32f10x_wwdg.c</span><br><span class="line">├── makefile</span><br><span class="line">├── stm32_flash.ld</span><br><span class="line">└── user</span><br><span class="line">    ├── main.c</span><br><span class="line">    ├── stm32f10x_conf.h</span><br><span class="line">    ├── stm32f10x_it.c</span><br><span class="line">    └── stm32f10x_it.h</span><br></pre></td></tr></table></figure>
+
+<p>其中最主要的文件是启动文件，这个启动文件是在这个路径中进行查找：<code>STM32F10x_StdPeriph_Lib_V3.6.0/Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/startup/TrueSTUDIO</code>，你可以把他们全部拷贝，也可以只用一个。</p>
+<p>当然一个一个的移动实在是太麻烦了，所以我写了一个sh脚本，大家可以一键移动：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/zsh</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果你是使用bash可以在上面改为!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">local</span>=$(<span class="built_in">sudo</span> find /home/ -name <span class="string">&#x27;STM32F10x_StdPeriph_Lib_V3.6.0&#x27;</span>)</span><br><span class="line">name=test1         <span class="comment"># 这个修改为你的工程名字</span></span><br><span class="line">start_name=startup_stm32f10x_hd.s    <span class="comment"># 修改这个移动对应的启动文件，如果要移动全部文件可以写为*.s</span></span><br><span class="line"></span><br><span class="line">file_lib=(./<span class="variable">$name</span>/lib ./<span class="variable">$name</span>/lib/CMSIS ./<span class="variable">$name</span>/lib/FWlib ./<span class="variable">$name</span>/lib/CMSIS/startup)</span><br><span class="line"></span><br><span class="line">file_user=(./<span class="variable">$name</span>/user)</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$local</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$name</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建目录</span></span><br><span class="line"><span class="built_in">mkdir</span> ./<span class="variable">$name</span> ./<span class="variable">$name</span>/doc</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="variable">$&#123;file_lib&#125;</span></span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    <span class="built_in">mkdir</span> <span class="variable">$i</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="variable">$&#123;file_user&#125;</span></span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    <span class="built_in">mkdir</span> <span class="variable">$i</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建文件</span></span><br><span class="line"><span class="built_in">touch</span> ./<span class="variable">$name</span>/makefile</span><br><span class="line"><span class="built_in">touch</span> ./<span class="variable">$name</span>/user/main.c</span><br><span class="line"></span><br><span class="line"><span class="comment"># 移动文件</span></span><br><span class="line"><span class="built_in">cp</span> <span class="variable">$local</span>/Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/startup/TrueSTUDIO/<span class="variable">$start_name</span> ./<span class="variable">$name</span>/lib/CMSIS/startup</span><br><span class="line"><span class="built_in">cp</span> <span class="variable">$local</span>/Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/*.(c|h) ./<span class="variable">$name</span>/lib/CMSIS/</span><br><span class="line"><span class="built_in">cp</span> <span class="variable">$local</span>/Libraries/CMSIS/CM3/CoreSupport/* ./<span class="variable">$name</span>/lib/CMSIS/</span><br><span class="line"><span class="built_in">cp</span> -r <span class="variable">$local</span>/Libraries/STM32F10x_StdPeriph_Driver/inc ./<span class="variable">$name</span>/lib/FWlib</span><br><span class="line"><span class="built_in">cp</span> -r <span class="variable">$local</span>/Libraries/STM32F10x_StdPeriph_Driver/src ./<span class="variable">$name</span>/lib/FWlib</span><br><span class="line"><span class="built_in">cp</span> <span class="variable">$local</span>/Project/STM32F10x_StdPeriph_Template/stm32f10x_conf.h ./<span class="variable">$name</span>/user</span><br><span class="line"><span class="built_in">cp</span> <span class="variable">$local</span>/Project/STM32F10x_StdPeriph_Template/stm32f10x_it.h ./<span class="variable">$name</span>/user</span><br><span class="line"><span class="built_in">cp</span> <span class="variable">$local</span>/Project/STM32F10x_StdPeriph_Template/stm32f10x_it.c ./<span class="variable">$name</span>/user</span><br><span class="line"><span class="built_in">cp</span> <span class="variable">$local</span>/Project/STM32F10x_StdPeriph_Template/TrueSTUDIO/STM3210E-EVAL_XL/stm32_flash.ld ./<span class="variable">$name</span>/</span><br></pre></td></tr></table></figure>
+
+<p>我很久没有写shell了，这个脚本不是很完美，大家可以感根据自己的想法进行改写。</p>
+<h2 id="2-修改stm32-flash-ld文件"><a href="#2-修改stm32-flash-ld文件" class="headerlink" title="2.修改stm32_flash.ld文件"></a>2.修改stm32_flash.ld文件</h2><p>我之前在这踩了很多次坑，所以这里需要非常的注意，我们这使用的<code>stm32_flash.ld</code>文件是移植<code>STM32F103ZG</code>芯片的，因为这个<code>ld</code>文件和<code>c8t6</code>的文件差不多，所以我们选择这个作为我们的链接脚本，但并不是移植完就可以使用的，我们还需要给它修改一下。</p>
+<p>这个是原始的链接文件：</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/8c2e79d2845ce7a3c0089756cf8bcd6b.png" alt="17.png"></p>
+<p>我们需要修改的内容其实就是在最前面就可以了。</p>
+<p>首先我们要将<code>_estack = 0x20018000;</code>修改为<code>_estack = ORIGIN(RAM) + LENGTH(RAM);</code>，然后将</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">FLASH (rx)      : ORIGIN = 0x08000000, LENGTH = 1M</span><br><span class="line">RAM (xrw)       : ORIGIN = 0x20000000, LENGTH = 96K</span><br></pre></td></tr></table></figure>
+
+<p>修改为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">FLASH (rx)      : ORIGIN = 0x08000000, LENGTH = 64K</span><br><span class="line">RAM (xrw)       : ORIGIN = 0x20000000, LENGTH = 20K</span><br></pre></td></tr></table></figure>
+
+<p>然后就可以了，修改完成的内容如下：</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/b962a1b5800e787eafce6448a3738653.png" alt="18.png"></p>
+<p>修改完成后我们就可以开始写makefile文件了。</p>
+<h2 id="3-写makefile文件"><a href="#3-写makefile文件" class="headerlink" title="3.写makefile文件"></a>3.写makefile文件</h2><p>上面的脚本执行完后会生成一个makefile文件，我们直接用<code>vim</code>进行写入就可以了，脚本我是参考了很多文章写出来的，这里就不讲解了，直接用我写好的就可以了：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">TARGET=test	<span class="comment"># 这里是项目名，改就可以</span></span><br><span class="line">CC=arm-none-eabi-gcc</span><br><span class="line">OBJCOPY=arm-none-eabi-objcopy</span><br><span class="line">RM=rm -f</span><br><span class="line">CORE=3</span><br><span class="line">CPUFLAGS=-mthumb -mcpu=cortex-m<span class="variable">$(CORE)</span></span><br><span class="line">INCFLAGS=-I <span class="variable">$(<span class="built_in">shell</span> pwd)</span>/lib/CMSIS -I <span class="variable">$(<span class="built_in">shell</span> pwd)</span>/lib/FWlib/inc -I <span class="variable">$(<span class="built_in">shell</span> pwd)</span>/user</span><br><span class="line">LDFLAGS = -T stm32_flash.ld -Wl,-cref,-u,Reset_Handler -Wl,-Map=<span class="variable">$(TARGET)</span>.map -Wl,--gc-sections -Wl,--defsym=malloc_getpagesize_P=0x80 -Wl,--start-group -lc -lm -Wl,--end-group</span><br><span class="line">CFLAGS=<span class="variable">$(INCFLAGS)</span> -D STM32F10X_HD -D USE_STDPERIPH_DRIVER -Wall -g</span><br><span class="line">START_SRC=<span class="variable">$(<span class="built_in">shell</span> find ./ -name &#x27;startup_stm32f10x_hd.s&#x27;)</span></span><br><span class="line">START_OBJ=$(START_SRC:%.s=%.o)</span><br><span class="line">C_SRC=<span class="variable">$(<span class="built_in">shell</span> find ./ -name &#x27;*.c&#x27;)</span></span><br><span class="line">C_OBJ=$(C_SRC:%.c=%.o)</span><br><span class="line">INTERRFACE_CFG=/usr/local/share/openocd/scripts/interface/stlink-v2.cfg      <span class="comment"># 这里就是下载器的配置文件，可以在前面提到的文件夹中找到对应下载器的配置文件</span></span><br><span class="line">TARGET_CFG=/usr/local/share/openocd/scripts/target/stm32f1x.cfg </span><br><span class="line"><span class="variable">$(TARGET)</span>:<span class="variable">$(START_OBJ)</span> <span class="variable">$(C_SRC)</span></span><br><span class="line">	<span class="variable">$(CC)</span> <span class="variable">$^</span> <span class="variable">$(CPUFLAGS)</span> <span class="variable">$(LDFLAGS)</span> <span class="variable">$(CFLAGS)</span> -o <span class="variable">$(TARGET)</span>.elf</span><br><span class="line">	<span class="variable">$(OBJCOPY)</span> <span class="variable">$(TARGET)</span>.elf <span class="variable">$(TARGET)</span>.bin</span><br><span class="line">	<span class="variable">$(OBJCOPY)</span> <span class="variable">$(TARGET)</span>.elf -Oihex <span class="variable">$(TARGET)</span>.hex</span><br><span class="line"><span class="variable">$(START_OBJ)</span>:<span class="variable">$(START_SRC)</span></span><br><span class="line">	<span class="variable">$(CC)</span> -c <span class="variable">$^</span> <span class="variable">$(CPUFLAGS)</span> <span class="variable">$(CFLAGS)</span> -o <span class="variable">$@</span></span><br><span class="line"><span class="variable">$(C_OBJ)</span>:%.o:%.c</span><br><span class="line">	<span class="variable">$(CC)</span> -c <span class="variable">$^</span> <span class="variable">$(CPUFLAGS)</span> <span class="variable">$(CFLAGS)</span> -o <span class="variable">$@</span></span><br><span class="line"><span class="section">clear:</span></span><br><span class="line">	<span class="variable">$(RM)</span> <span class="variable">$(<span class="built_in">shell</span> find ./ -name &#x27;*.o&#x27;)</span> <span class="variable">$(TARGET)</span>.*</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这个是一键下载，如果不是stlink下载器可以改对应的变量</span></span><br><span class="line"><span class="section">download:</span></span><br><span class="line">	openocd -f <span class="variable">$(INTERRFACE_CFG)</span> -f <span class="variable">$(TARGET_CFG)</span> -c init -c halt -c <span class="string">&quot;flash write_image erase <span class="variable">$(PWD)</span>/<span class="variable">$(TARGET)</span>.bin&quot;</span> -c reset -c shutdown</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-修改core-cm3-c"><a href="#4-修改core-cm3-c" class="headerlink" title="4.修改core_cm3.c"></a>4.修改core_cm3.c</h2><p>这个文件是需要进行修改一下的，如果你不进行修改就会报错</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/1c467dbe84138240dc6484b290ffe399.png" alt="19.png"></p>
+<p>这个错误需要你打开<code>core_cm3.c</code>文件，然后在第736行和753行的<code>=r</code>中添加一个<code>&amp;</code>，这样就不会报错了</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/525906bd485c1f96c068a3b3863c7170.png" alt="20.png"></p>
+<h2 id="5-写main函数并下载到板子上"><a href="#5-写main函数并下载到板子上" class="headerlink" title="5.写main函数并下载到板子上"></a>5.写main函数并下载到板子上</h2><p>这一步大家应该都会吧，这里我写的main函数是点亮PB0的LED灯来进行测试</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;stm32f10x.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">	GPIO_InitTypeDef GPIO_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);</span><br><span class="line">	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0;</span><br><span class="line">	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_Out_PP;</span><br><span class="line">	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">	GPIO_Init(GPIOB, &amp;GPIO_InitStruct);</span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">		GPIO_WriteBit(GPIOB, GPIO_Pin_0, <span class="number">0</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后执行<code>make</code>，当编译完成后就可以执行<code>make downlocal</code>进行下载了。</p>
+<p>编译的效果图：</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/739ef1beeb0091e410cc10dd8b8c9920.png" alt="21.png"></p>
+<p>下载的效果图：</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/f940dc3cc006d247ba784d32ad08c5ea.png" alt="22.png"></p>
+<p>实物的效果：</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/7bf6549a8c53b32c78367f4ed00f8ab4.jpeg" alt="23.jpg"></p>
+<h1 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h1><p>使用linux对stm32的开发的环境搭建就讲完了，如果大家有其他错误出现可以发在评论区，我这随时可以回答的，大家也可以关注一下我的csdn、博客园和我自己的论坛，链接放在下面了</p>
+<p><a target="_blank" rel="noopener" href="https://blog.lavenderedgar.asia/">Lavender Edgar的博客</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/Lavender-edgar">博客园</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/zagzag001?type=blog">CSDN</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>puill
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://www.puill.xin/2025/01/17/802f7a7d62e1/" title="00在linux环境下搭建stm32开发环境">http://www.puill.xin/2025/01/17/802f7a7d62e1/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" rel="tag"># 单片机</a>
+              <a href="/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" rel="tag"># 环境搭建</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/01/17/e5d40c6790d6/" rel="prev" title="01使用调试工具">
+                  <i class="fa fa-angle-left"></i> 01使用调试工具
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/01/17/5f463418ae32/" rel="next" title="Linux网络编程">
+                  Linux网络编程 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">puill</span>
+  </div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+--><div>
+<!--添加网站运行时间-->
+<span>小破站已经在风雨中度过了</span>
+<span id="timeDate">载入天数...</span>
+<span id="times">载入时分秒...</span>
+<script>
+    function createtime() {
+        const startTime = '01/10/2025 00:00:00',
+            start = new Date(startTime)
+        let mill = new Date() - start,
+            seconds = Math.floor(mill / 1000),
+            mins = Math.floor(seconds / 60),
+            hours = Math.floor(mins / 60),
+            days = Math.floor(hours / 24)
+        const time = {
+            seconds: seconds - mins * 60,
+            mins: mins - hours * 60,
+            hours: hours - days * 24,
+        }
+        for (const k in time) {
+            time[k] = `${time[k]}`.padStart(2, '0')
+        }
+        document.getElementById("timeDate").innerHTML = ` ${days} 天`
+        document.getElementById("times").innerHTML = ` ${time.hours} 小时 ${time.mins} 分 ${time.seconds} 秒`
+    }
+    setInterval(createtime, 500)
+</script>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
