@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.puill.xin","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"show_result":true,"style":"default"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="移植一下freeRTOS到标准库工程中，这样就可以开始下一步的开发了。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FreeRTOS系统移植">
+<meta property="og:url" content="http://www.puill.xin/2025/01/20/7aa762eacec7/index.html">
+<meta property="og:site_name" content="puill&#39;s Blog">
+<meta property="og:description" content="移植一下freeRTOS到标准库工程中，这样就可以开始下一步的开发了。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%AE%98%E7%BD%91%E4%B8%8B%E8%BD%BD.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E4%B8%8B%E8%BD%BD%E5%90%8E%E7%BB%AD.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%8E%BBgithub.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E6%89%BE%E5%88%B0V9.0.0.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/releases%E5%8C%85.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E4%B8%8B%E8%BD%BD%E8%BF%99%E4%B8%AA%E5%8C%85.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E8%A7%A3%E5%8E%8B.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E6%BA%90%E6%96%87%E4%BB%B6.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%86%85%E6%A0%B8%E6%96%87%E4%BB%B6.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%A4%B4%E6%96%87%E4%BB%B6.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%AE%9E%E4%BE%8B%E5%B7%A5%E7%A8%8B.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%B7%A5%E7%A8%8B%E7%AE%A1%E7%90%86.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E6%8A%8A%E6%96%87%E4%BB%B6%E5%8A%A0%E8%BD%BD%E8%BF%9B%E5%8E%BB.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E8%AE%BE%E7%BD%AE%E7%BC%96%E8%AF%91%E8%B7%AF%E5%BE%84.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%8A%A0%E8%BD%BD%E5%90%8E.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%BC%95%E5%85%A5%E5%A4%B4%E6%96%87%E4%BB%B6.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/LED%E6%8E%A7%E5%88%B6%E5%87%BD%E6%95%B0.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/LED%E4%BB%BB%E5%8A%A1%E5%87%BD%E6%95%B0.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E4%B8%BB%E5%87%BD%E6%95%B0%E4%B8%AD%E7%9A%84%E5%86%85%E5%AE%B9.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%9C%A8freertosConfig%E4%B8%AD%E6%B7%BB%E5%8A%A0%E8%AF%AD%E5%8F%A5.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/it%E4%B8%AD%E6%B3%A8%E9%87%8A1.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/it%E4%B8%AD%E6%B3%A8%E9%87%8A2.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/it%E4%B8%AD%E6%B3%A8%E9%87%8A3.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/GCC.png">
+<meta property="article:published_time" content="2025-01-20T15:33:01.804Z">
+<meta property="article:modified_time" content="2025-01-20T15:56:09.300Z">
+<meta property="article:author" content="puill">
+<meta property="article:tag" content="单片机">
+<meta property="article:tag" content="系统">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%AE%98%E7%BD%91%E4%B8%8B%E8%BD%BD.png">
+
+
+<link rel="canonical" href="http://www.puill.xin/2025/01/20/7aa762eacec7/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.puill.xin/2025/01/20/7aa762eacec7/","path":"2025/01/20/7aa762eacec7/","title":"FreeRTOS系统移植"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>FreeRTOS系统移植 | puill's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">puill's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-文章"><a href="/articles/" rel="section"><i class="fa fa-file-text fa-fw"></i>文章</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-友链"><a href="/friendchains/" rel="section"><i class="fa fa-paperclip fa-fw"></i>友链</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E4%B8%8B%E8%BD%BD%E7%B3%BB%E7%BB%9F%E4%BB%A3%E7%A0%81"><span class="nav-number">2.</span> <span class="nav-text">一、下载系统代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E7%A7%BB%E6%A4%8D%E5%B7%A5%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">二、移植工程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81"><span class="nav-number">4.</span> <span class="nav-text">三、完整代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9B%E3%80%81Linux%E4%B8%8B%E7%9A%84MarkDown%E6%96%87%E4%BB%B6"><span class="nav-number">5.</span> <span class="nav-text">四、Linux下的MarkDown文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="puill"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">puill</p>
+  <div class="site-description" itemprop="description">puill的博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="mailto:2256044190@qq.com" title="E-Mail → mailto:2256044190@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.puill.xin/2025/01/20/7aa762eacec7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="puill">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="puill's Blog">
+      <meta itemprop="description" content="puill的博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="FreeRTOS系统移植 | puill's Blog">
+      <meta itemprop="description" content="移植一下freeRTOS到标准库工程中，这样就可以开始下一步的开发了。">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          FreeRTOS系统移植
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-01-20 23:33:01 / 修改时间：23:56:09" itemprop="dateCreated datePublished" datetime="2025-01-20T23:33:01+08:00">2025-01-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/freeRTOS/" itemprop="url" rel="index"><span itemprop="name">freeRTOS</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">移植一下freeRTOS到标准库工程中，这样就可以开始下一步的开发了。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>学习RTOS之前最重要的就是要学会将系统移植到单片机中，这里可以直接使用cubemx生成移植好的工程，也可以下载库来进行自己移植，这里我选择下载库来自己移植，因为这样可以配合Linux开发stm32单片机程序。</p>
+<h1 id="一、下载系统代码"><a href="#一、下载系统代码" class="headerlink" title="一、下载系统代码"></a>一、下载系统代码</h1><p>首先打开FreeRTOS的<a target="_blank" rel="noopener" href="https://www.freertos.org/zh-cn-cmn-s">官网</a>这个是中文站点，所以速度很快，然后点击下载：</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%AE%98%E7%BD%91%E4%B8%8B%E8%BD%BD.png"></p>
+<p>在下载里面不要最新的系统，这里我需要V9.0.0就可以了，因为高版本的增加了很多物联网相关的内容，对于我们现在的系统开发不太需要，所以这里点击更多下载</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E4%B8%8B%E8%BD%BD%E5%90%8E%E7%BB%AD.png"></p>
+<p>然后选择下面不带LTS的，LTS没有示例项目，有一些文件我们需要在示例工程中拿，然后需要转到github中去下载</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%8E%BBgithub.png"></p>
+<p>来到GitHub中是最新版本，我们要找老版本需要点击<code>Code</code>转去代码那里，然后找到V9.0.0的代码</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E6%89%BE%E5%88%B0V9.0.0.png"></p>
+<p>来到了后在标签这找到V9.0.0</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/releases%E5%8C%85.png"></p>
+<p>然后点击下载zip格式的文件</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E4%B8%8B%E8%BD%BD%E8%BF%99%E4%B8%AA%E5%8C%85.png"></p>
+<p>下载完成后就可以解压，解压完成就是下面这几个软件</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E8%A7%A3%E5%8E%8B.png"></p>
+<p>可以看到有两个文件夹，一个是<code>FreeRTOS</code>，另一个是<code>FreeRTOS-Plus</code>，这两个是有区别的，第一个是内核，是我们需要的，第二个Plus的是在内核的基础上增加了一系列扩展组件和工具，提供了更丰富的功能和更高层次的抽象，例如，包含文件系统、TCP&#x2F;IP 协议栈、USB 主机 &#x2F; 设备栈、安全功能（如加密库）、图形用户界面（GUI）库等。如果做一些高级的东西可以用这个，但我们现在只是学习，选择第一个基础的就可以了。</p>
+<p>打开第一个文件夹后会有三个文件夹，我们先看<code>Source</code>文件夹，在<code>Source</code>文件夹中存放的是内核源代码和对应的头文件</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E6%BA%90%E6%96%87%E4%BB%B6.png"></p>
+<p>在<code>Source</code>文件夹中有一个<code>portable</code>这个是内核文件，其中内核文件是分平台的，这个平台是编译器的平台，比如我们用Keil，那就在这个文件夹中找到Keil进行移植就可以了，但是这里不能直接把Keil文件夹直接拿过去用，原因在移植的时候会说</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%86%85%E6%A0%B8%E6%96%87%E4%BB%B6.png"></p>
+<p>然后在<code>include</code>文件夹中存放的是对应的头文件</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%A4%B4%E6%96%87%E4%BB%B6.png"></p>
+<p>回到上一层，有一个<code>Demo</code>文件夹，这个文件夹就是每个芯片所对应的示例工程，有一些文件我们需要在这个示例文件中</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%AE%9E%E4%BE%8B%E5%B7%A5%E7%A8%8B.png"></p>
+<p>然后我们就可以开始工程的移植了。</p>
+<h1 id="二、移植工程"><a href="#二、移植工程" class="headerlink" title="二、移植工程"></a>二、移植工程</h1><p>这里需要拿之前做好的标准库工程来进行改，只需要在做好的工程来新增文件就可以了，打开工程后点击这个三个正方形设置文件</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%B7%A5%E7%A8%8B%E7%AE%A1%E7%90%86.png"></p>
+<p>在这里面新建一个<code>freeRTOS</code>文件夹，在里面添加一下的<code>.c</code>文件，我这为了工程的干净，不增加<code>.h</code>文件了</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E6%8A%8A%E6%96%87%E4%BB%B6%E5%8A%A0%E8%BD%BD%E8%BF%9B%E5%8E%BB.png"></p>
+<p>然后点击<code>Options</code>中点击<code>C/C++</code>点击<code>Include Paths</code>中的三个点，增加一下编译文件目录</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E8%AE%BE%E7%BD%AE%E7%BC%96%E8%AF%91%E8%B7%AF%E5%BE%84.png"></p>
+<p>需要添加的文件目录如下：</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%8A%A0%E8%BD%BD%E5%90%8E.png"></p>
+<p>然后在<code>main.c</code>中增加两个头文件，并且添加一个测试的内容，这里使用的是最小系统上的测试灯，所以需要进行一下初始化</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%BC%95%E5%85%A5%E5%A4%B4%E6%96%87%E4%BB%B6.png"></p>
+<p>然后编写一下控制函数</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/LED%E6%8E%A7%E5%88%B6%E5%87%BD%E6%95%B0.png"></p>
+<p>编写一下任务函数，记得这个任务函数的格式是<code>void TaskName(void*)</code></p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/LED%E4%BB%BB%E5%8A%A1%E5%87%BD%E6%95%B0.png"></p>
+<p>然后在<code>main.c</code>中创建任务并且进行任务的调度：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    NVIC_SetPriorityGrouping(NVIC_PriorityGroup_4); <span class="comment">// 设置中断优先级分组为第四组 这个是为了后面的定时器需要增加的</span></span><br><span class="line">    Init_Led();</span><br><span class="line">    xTaskCreate(LED_Test, <span class="string">&quot;LED_Test&quot;</span>, <span class="number">128</span>, <span class="literal">NULL</span>, <span class="number">1</span>, <span class="literal">NULL</span>); <span class="comment">// 创建任务</span></span><br><span class="line">    vTaskStartScheduler();                          <span class="comment">// 调度任务</span></span><br><span class="line">    </span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E4%B8%BB%E5%87%BD%E6%95%B0%E4%B8%AD%E7%9A%84%E5%86%85%E5%AE%B9.png"></p>
+<p>作为上面的操作后还不能进行测试，如果这样测试的话会导致在<code>vTaskStartScheduler()</code>函数的位置卡死，因为还没有移植成功，需要先在<code>freeRTOSConfig.h</code>文件中的最后面添加这三个宏定义：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> xPortPendSVHandler PendSV_Handler</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> xPortSysTickHandler SysTick_Handler</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> vPortSVCHandler SVC_Handler</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%9C%A8freertosConfig%E4%B8%AD%E6%B7%BB%E5%8A%A0%E8%AF%AD%E5%8F%A5.png"></p>
+<p>然后在<code>stm32f10x_it.c</code>中需要注释一下这三个回调函数，因为这三个回调函数在系统中是进行了一下实现的，如果还没有，那会重复定义：</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/it%E4%B8%AD%E6%B3%A8%E9%87%8A1.png"></p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/it%E4%B8%AD%E6%B3%A8%E9%87%8A2.png"></p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/it%E4%B8%AD%E6%B3%A8%E9%87%8A3.png"></p>
+<p>这样就可以编译并且运行测试了，可以看到LED灯在闪烁。</p>
+<h1 id="三、完整代码"><a href="#三、完整代码" class="headerlink" title="三、完整代码"></a>三、完整代码</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;stm32f10x.h&quot;</span>                  <span class="comment">// Device header</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;freertos.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;task.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">Init_Led</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    GPIO_InitTypeDef GPIO_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    </span><br><span class="line">    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);</span><br><span class="line">    </span><br><span class="line">    GPIO_InitStruct.GPIO_Mode = GPIO_Mode_Out_PP;</span><br><span class="line">    GPIO_InitStruct.GPIO_Pin = GPIO_Pin_5;</span><br><span class="line">    GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">    GPIO_Init(GPIOA, &amp;GPIO_InitStruct);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">LED_Cmd</span><span class="params">(<span class="type">uint8_t</span> bit)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (bit == <span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        GPIO_ResetBits(GPIOA, GPIO_Pin_5);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (bit == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        GPIO_SetBits(GPIOA, GPIO_Pin_5);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">LED_Test</span><span class="params">(<span class="type">void</span>* param)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        LED_Cmd(<span class="number">1</span>);</span><br><span class="line">        vTaskDelay(<span class="number">500</span>);</span><br><span class="line">        LED_Cmd(<span class="number">0</span>);</span><br><span class="line">        vTaskDelay(<span class="number">500</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    NVIC_SetPriorityGrouping(NVIC_PriorityGroup_4); <span class="comment">// 设置中断优先级分组为第四组</span></span><br><span class="line">    Init_Led();</span><br><span class="line">    xTaskCreate(LED_Test, <span class="string">&quot;LED_Test&quot;</span>, <span class="number">128</span>, <span class="literal">NULL</span>, <span class="number">1</span>, <span class="literal">NULL</span>); <span class="comment">// 创建任务</span></span><br><span class="line">    vTaskStartScheduler();                          <span class="comment">// 调度任务</span></span><br><span class="line">    </span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="四、Linux下的MarkDown文件"><a href="#四、Linux下的MarkDown文件" class="headerlink" title="四、Linux下的MarkDown文件"></a>四、Linux下的MarkDown文件</h1><p>这里上面的工程一模一样，只不过就是需要在那个编译器工程那选择<code>GCC</code>的文件，因为使用的是<code>arm-gcc</code>进行编译，所以这里要选择的是<code>GCC</code>的文件夹</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/GCC.png"></p>
+<p>然后其它的内容不改变，然后开始编辑makefile文件：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">TARGET=test	<span class="comment"># 这里是项目名，改就可以</span></span><br><span class="line">CC=arm-none-eabi-gcc</span><br><span class="line">OBJCOPY=arm-none-eabi-objcopy</span><br><span class="line">RM=rm -f</span><br><span class="line">CORE=3</span><br><span class="line">CPUFLAGS=-mthumb -mcpu=cortex-m<span class="variable">$(CORE)</span></span><br><span class="line">INCFLAGS=-I <span class="variable">$(<span class="built_in">shell</span> pwd)</span>/lib/CMSIS -I <span class="variable">$(<span class="built_in">shell</span> pwd)</span>/lib/ -I <span class="variable">$(<span class="built_in">shell</span> pwd)</span>/freeRTOS/<span class="keyword">include</span> -I <span class="variable">$(<span class="built_in">shell</span> pwd)</span>/freeRTOS/portable/GCC -I <span class="variable">$(<span class="built_in">shell</span> pwd)</span>/freeRTOS/portable/GCC/MemMang FWlib/inc -I <span class="variable">$(<span class="built_in">shell</span> pwd)</span>/freeRTOS/portable/GCC/ARM_CM3 -I <span class="variable">$(<span class="built_in">shell</span> pwd)</span>/user</span><br><span class="line">LDFLAGS = -T stm32_flash.ld -Wl,-cref,-u,Reset_Handler -Wl,-Map=<span class="variable">$(TARGET)</span>.map -Wl,--gc-sections -Wl,--defsym=malloc_getpagesize_P=0x80 -Wl,--start-group -lc -lm -Wl,--end-group</span><br><span class="line">CFLAGS=<span class="variable">$(INCFLAGS)</span> -D STM32F10X_HD -D USE_STDPERIPH_DRIVER -Wall -g</span><br><span class="line">START_SRC=<span class="variable">$(<span class="built_in">shell</span> find ./ -name &#x27;startup_stm32f10x_hd.s&#x27;)</span></span><br><span class="line">START_OBJ=$(START_SRC:%.s=%.o)</span><br><span class="line">C_SRC=<span class="variable">$(<span class="built_in">shell</span> find ./ -name &#x27;*.c&#x27;)</span></span><br><span class="line">C_OBJ=$(C_SRC:%.c=%.o)</span><br><span class="line">INTERRFACE_CFG=/usr/local/share/openocd/scripts/interface/stlink-v2.cfg      <span class="comment"># 这里就是下载器的配置文件，可以在前面提到的文件夹中找到对应下载器的配置文件</span></span><br><span class="line">TARGET_CFG=/usr/local/share/openocd/scripts/target/stm32f1x.cfg </span><br><span class="line"><span class="variable">$(TARGET)</span>:<span class="variable">$(START_OBJ)</span> <span class="variable">$(C_SRC)</span></span><br><span class="line">	<span class="variable">$(CC)</span> <span class="variable">$^</span> <span class="variable">$(CPUFLAGS)</span> <span class="variable">$(LDFLAGS)</span> <span class="variable">$(CFLAGS)</span> -o <span class="variable">$(TARGET)</span>.elf</span><br><span class="line">	<span class="variable">$(OBJCOPY)</span> <span class="variable">$(TARGET)</span>.elf <span class="variable">$(TARGET)</span>.bin</span><br><span class="line">	<span class="variable">$(OBJCOPY)</span> <span class="variable">$(TARGET)</span>.elf -Oihex <span class="variable">$(TARGET)</span>.hex</span><br><span class="line"><span class="variable">$(START_OBJ)</span>:<span class="variable">$(START_SRC)</span></span><br><span class="line">	<span class="variable">$(CC)</span> -c <span class="variable">$^</span> <span class="variable">$(CPUFLAGS)</span> <span class="variable">$(CFLAGS)</span> -o <span class="variable">$@</span></span><br><span class="line"><span class="variable">$(C_OBJ)</span>:%.o:%.c</span><br><span class="line">	<span class="variable">$(CC)</span> -c <span class="variable">$^</span> <span class="variable">$(CPUFLAGS)</span> <span class="variable">$(CFLAGS)</span> -o <span class="variable">$@</span></span><br><span class="line"><span class="section">clear:</span></span><br><span class="line">	<span class="variable">$(RM)</span> <span class="variable">$(<span class="built_in">shell</span> find ./ -name &#x27;*.o&#x27;)</span> <span class="variable">$(TARGET)</span>.*</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这个是一键下载，如果不是stlink下载器可以改对应的变量</span></span><br><span class="line"><span class="section">download:</span></span><br><span class="line">	openocd -f <span class="variable">$(INTERRFACE_CFG)</span> -f <span class="variable">$(TARGET_CFG)</span> -c init -c halt -c <span class="string">&quot;flash write_image erase <span class="variable">$(PWD)</span>/<span class="variable">$(TARGET)</span>.bin&quot;</span> -c reset -c shutdown</span><br></pre></td></tr></table></figure>
+<p>其实最主要的是增加编译的头文件，然后剩下的一样。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>这是一小步，但是系统学习和高级功能实现的一大步，好好搞一下就ok了。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>puill
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://www.puill.xin/2025/01/20/7aa762eacec7/" title="FreeRTOS系统移植">http://www.puill.xin/2025/01/20/7aa762eacec7/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" rel="tag"># 单片机</a>
+              <a href="/tags/%E7%B3%BB%E7%BB%9F/" rel="tag"># 系统</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/01/17/d57535b42630/" rel="prev" title="香橙派开发系列-中断？不！中断！">
+                  <i class="fa fa-angle-left"></i> 香橙派开发系列-中断？不！中断！
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">puill</span>
+  </div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+--><div>
+<!--添加网站运行时间-->
+<span>小破站已经在风雨中度过了</span>
+<span id="timeDate">载入天数...</span>
+<span id="times">载入时分秒...</span>
+<script>
+    function createtime() {
+        const startTime = '01/10/2025 00:00:00',
+            start = new Date(startTime)
+        let mill = new Date() - start,
+            seconds = Math.floor(mill / 1000),
+            mins = Math.floor(seconds / 60),
+            hours = Math.floor(mins / 60),
+            days = Math.floor(hours / 24)
+        const time = {
+            seconds: seconds - mins * 60,
+            mins: mins - hours * 60,
+            hours: hours - days * 24,
+        }
+        for (const k in time) {
+            time[k] = `${time[k]}`.padStart(2, '0')
+        }
+        document.getElementById("timeDate").innerHTML = ` ${days} 天`
+        document.getElementById("times").innerHTML = ` ${time.hours} 小时 ${time.mins} 分 ${time.seconds} 秒`
+    }
+    setInterval(createtime, 500)
+</script>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
