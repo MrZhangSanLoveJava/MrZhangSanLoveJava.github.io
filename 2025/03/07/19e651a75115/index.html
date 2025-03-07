@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.puill.xin","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"show_result":true,"style":"default"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="第一个简单的线性结构">
+<meta property="og:type" content="article">
+<meta property="og:title" content="线性表">
+<meta property="og:url" content="http://www.puill.xin/2025/03/07/19e651a75115/index.html">
+<meta property="og:site_name" content="puill&#39;s Blog">
+<meta property="og:description" content="第一个简单的线性结构">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E7%BA%BF%E6%80%A7%E8%A1%A8%E6%8F%92%E5%85%A5%E6%95%B0%E6%8D%AE1.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E7%BA%BF%E6%80%A7%E8%A1%A8%E6%8F%92%E5%85%A5%E6%95%B0%E6%8D%AE2.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E7%BA%BF%E6%80%A7%E8%A1%A8%E6%8F%92%E5%85%A5%E6%95%B0%E6%8D%AE3.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E7%BA%BF%E6%80%A7%E8%A1%A8%E6%8F%92%E5%85%A5%E6%95%B0%E6%8D%AE4.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E9%93%BE%E8%A1%A8%E6%8F%92%E5%85%A5%E6%95%B0%E6%8D%AE.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E9%93%BE%E8%A1%A8%E6%8F%92%E5%85%A5%E6%95%B0%E6%8D%AE2.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E9%93%BE%E8%A1%A8%E6%8F%92%E5%85%A5%E6%95%B0%E6%8D%AE3.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%88%A0%E9%99%A4%E7%BB%93%E7%82%B9.png">
+<meta property="article:published_time" content="2025-03-07T09:02:57.423Z">
+<meta property="article:modified_time" content="2025-03-07T12:33:24.138Z">
+<meta property="article:author" content="puill">
+<meta property="article:tag" content="数据结构">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E7%BA%BF%E6%80%A7%E8%A1%A8%E6%8F%92%E5%85%A5%E6%95%B0%E6%8D%AE1.png">
+
+
+<link rel="canonical" href="http://www.puill.xin/2025/03/07/19e651a75115/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.puill.xin/2025/03/07/19e651a75115/","path":"2025/03/07/19e651a75115/","title":"线性表"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>线性表 | puill's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">puill's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-文章"><a href="/articles/" rel="section"><i class="fa fa-file-text fa-fw"></i>文章</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-友链"><a href="/friendchains/" rel="section"><i class="fa fa-paperclip fa-fw"></i>友链</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E9%80%BB%E8%BE%91%E7%BB%93%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text">一、逻辑结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84"><span class="nav-number">3.</span> <span class="nav-text">二、存储结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">3.1.</span> <span class="nav-text">1.数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E9%A1%BA%E5%BA%8F%E5%AD%98%E5%82%A8"><span class="nav-number">3.2.</span> <span class="nav-text">2.顺序存储</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%88%9D%E5%A7%8B%E5%8C%96%E7%BA%BF%E6%80%A7%E8%A1%A8"><span class="nav-number">3.2.1.</span> <span class="nav-text">2.1 初始化线性表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E9%94%80%E6%AF%81%E7%BA%BF%E6%80%A7%E8%A1%A8"><span class="nav-number">3.2.2.</span> <span class="nav-text">2.2 销毁线性表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E6%B8%85%E7%A9%BA%E7%BA%BF%E6%80%A7%E8%A1%A8"><span class="nav-number">3.2.3.</span> <span class="nav-text">2.3 清空线性表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%E5%88%A4%E6%96%AD%E7%BA%BF%E6%80%A7%E8%A1%A8%E6%98%AF%E5%90%A6%E4%B8%BA%E7%A9%BA"><span class="nav-number">3.2.4.</span> <span class="nav-text">2.4 判断线性表是否为空</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-%E8%8E%B7%E5%8F%96%E7%BA%BF%E6%80%A7%E8%A1%A8%E7%9A%84%E9%95%BF%E5%BA%A6"><span class="nav-number">3.2.5.</span> <span class="nav-text">2.5 获取线性表的长度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-6-%E8%8E%B7%E5%8F%96%E7%BA%BF%E6%80%A7%E8%A1%A8%E4%B8%AD%E6%8C%87%E5%AE%9A%E4%BD%8D%E7%BD%AE%E7%9A%84%E5%85%83%E7%B4%A0"><span class="nav-number">3.2.6.</span> <span class="nav-text">2.6 获取线性表中指定位置的元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-7-%E8%8E%B7%E5%8F%96%E7%BA%BF%E6%80%A7%E8%A1%A8%E4%B8%AD%E6%8C%87%E5%AE%9A%E5%85%83%E7%B4%A0%E7%9A%84%E4%BD%8D%E7%BD%AE"><span class="nav-number">3.2.7.</span> <span class="nav-text">2.7 获取线性表中指定元素的位置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-8-%E5%9C%A8%E7%BA%BF%E6%80%A7%E8%A1%A8%E4%B8%AD%E6%8C%87%E5%AE%9A%E4%BD%8D%E7%BD%AE%E6%8F%92%E5%85%A5%E5%85%83%E7%B4%A0"><span class="nav-number">3.2.8.</span> <span class="nav-text">2.8 在线性表中指定位置插入元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-9-%E5%9C%A8%E7%BA%BF%E6%80%A7%E8%A1%A8%E4%B8%AD%E6%8C%87%E5%AE%9A%E4%BD%8D%E7%BD%AE%E5%88%A0%E9%99%A4%E5%85%83%E7%B4%A0"><span class="nav-number">3.2.9.</span> <span class="nav-text">2.9 在线性表中指定位置删除元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-10-%E6%89%93%E5%8D%B0%E7%BA%BF%E6%80%A7%E8%A1%A8"><span class="nav-number">3.2.10.</span> <span class="nav-text">2.10 打印线性表</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E9%93%BE%E5%BC%8F%E5%AD%98%E5%82%A8"><span class="nav-number">3.3.</span> <span class="nav-text">3.链式存储</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E5%88%9D%E5%A7%8B%E5%8C%96%E7%BA%BF%E6%80%A7%E8%A1%A8"><span class="nav-number">3.3.1.</span> <span class="nav-text">3.1 初始化线性表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E9%94%80%E6%AF%81%E7%BA%BF%E6%80%A7%E8%A1%A8"><span class="nav-number">3.3.2.</span> <span class="nav-text">3.2 销毁线性表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E6%B8%85%E7%A9%BA%E7%BA%BF%E6%80%A7%E8%A1%A8"><span class="nav-number">3.3.3.</span> <span class="nav-text">3.3 清空线性表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E5%88%A4%E6%96%AD%E7%BA%BF%E6%80%A7%E8%A1%A8%E6%98%AF%E5%90%A6%E4%B8%BA%E7%A9%BA"><span class="nav-number">3.3.4.</span> <span class="nav-text">3.4 判断线性表是否为空</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-%E8%8E%B7%E5%8F%96%E7%BA%BF%E6%80%A7%E8%A1%A8%E7%9A%84%E9%95%BF%E5%BA%A6"><span class="nav-number">3.3.5.</span> <span class="nav-text">3.5 获取线性表的长度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-6-%E8%8E%B7%E5%8F%96%E7%BA%BF%E6%80%A7%E8%A1%A8%E4%B8%AD%E6%8C%87%E5%AE%9A%E4%BD%8D%E7%BD%AE%E7%9A%84%E5%85%83%E7%B4%A0"><span class="nav-number">3.3.6.</span> <span class="nav-text">3.6 获取线性表中指定位置的元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-7-%E8%8E%B7%E5%8F%96%E7%BA%BF%E6%80%A7%E8%A1%A8%E4%B8%AD%E6%8C%87%E5%AE%9A%E5%85%83%E7%B4%A0%E7%9A%84%E4%BD%8D%E7%BD%AE"><span class="nav-number">3.3.7.</span> <span class="nav-text">3.7 获取线性表中指定元素的位置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-8-%E5%9C%A8%E7%BA%BF%E6%80%A7%E8%A1%A8%E4%B8%AD%E6%8C%87%E5%AE%9A%E4%BD%8D%E7%BD%AE%E6%8F%92%E5%85%A5%E5%85%83%E7%B4%A0"><span class="nav-number">3.3.8.</span> <span class="nav-text">3.8 在线性表中指定位置插入元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-9-%E5%88%A0%E9%99%A4%E5%85%83%E7%B4%A0"><span class="nav-number">3.3.9.</span> <span class="nav-text">3.9 删除元素</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="puill"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">puill</p>
+  <div class="site-description" itemprop="description">puill的博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="mailto:2256044190@qq.com" title="E-Mail → mailto:2256044190@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.puill.xin/2025/03/07/19e651a75115/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="puill">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="puill's Blog">
+      <meta itemprop="description" content="puill的博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="线性表 | puill's Blog">
+      <meta itemprop="description" content="第一个简单的线性结构">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          线性表
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-03-07 17:02:57 / 修改时间：20:33:24" itemprop="dateCreated datePublished" datetime="2025-03-07T17:02:57+08:00">2025-03-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">数据结构</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">第一个简单的线性结构</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>这一节开始学习线性结构的知识，线性结构是指数据元素之间存在一对一的线性关系。</p>
+<p>线性表是一个简单的线性结构，可以通过这一个数据结构了解更多的数据结构是实现。</p>
+<h1 id="一、逻辑结构"><a href="#一、逻辑结构" class="headerlink" title="一、逻辑结构"></a>一、逻辑结构</h1><p>线性表是一个若干个数据元素的一个线性序列，它是一个有限序列，其中每个元素都是一个数据元素，每个元素都有一个前驱和一个后继，除了第一个元素没有前驱，最后一个元素没有后继。</p>
+<p>可以了解线性表在存储结构中可以使用数组或者列表来进行存放，因为这个线性表是一个连续的序列。</p>
+<h1 id="二、存储结构"><a href="#二、存储结构" class="headerlink" title="二、存储结构"></a>二、存储结构</h1><p>从逻辑结构那分析出来知道这个线性表可以用顺序存储，也可以用非顺序结构，这里两个存储方式都不会分别实现。</p>
+<h2 id="1-数据类型"><a href="#1-数据类型" class="headerlink" title="1.数据类型"></a>1.数据类型</h2><p>在开始存储前先介绍一下存储的结构，这里的结构如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="type">data_t</span> data[MaxSize];</span><br><span class="line">    <span class="type">int</span> length;</span><br><span class="line">&#125; SqList, *SqListPtr;</span><br></pre></td></tr></table></figure>
+
+<p>data是存放数据的数组，length是存放数据的长度。</p>
+<p>data_t是一个数据类型，这里可以使用int类型来进行存放。</p>
+<p>MaxSize是数组的大小，这里可以使用宏定义来进行定义。</p>
+<h2 id="2-顺序存储"><a href="#2-顺序存储" class="headerlink" title="2.顺序存储"></a>2.顺序存储</h2><p>前面说过顺序存储是存放在一块地址连续的空间，我们可以用数组来进行存放，但是直接使用数组来进行存放就会有一个问题，直接使用数组那它开辟的空间是在栈上的，栈在程序结束时就会被释放，所以我们需要使用动态内存分配来进行存放，这样就会开辟到堆区上。</p>
+<p>在堆区上会一直存放的，直到调用free函数来释放内存。</p>
+<p>然后了解了使用过程后，我们可以开始实现顺序存储了。</p>
+<p>在实现的时候先了解一下我们需要实现的功能，这里列出一些操作类型，等后面会一一实现：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">SqListPtr <span class="title function_">InitList</span><span class="params">()</span>;   <span class="comment">// 初始化线性表</span></span><br><span class="line">Status <span class="title function_">DestroyList</span><span class="params">(SqListPtr* <span class="built_in">list</span>)</span>;      <span class="comment">// 销毁线性表</span></span><br><span class="line">Status <span class="title function_">ClearList</span><span class="params">(SqListPtr <span class="built_in">list</span>)</span>;         <span class="comment">// 清空线性表</span></span><br><span class="line">Status <span class="title function_">ListEmpty</span><span class="params">(SqListPtr <span class="built_in">list</span>)</span>;         <span class="comment">// 判断线性表是否为空</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">ListLength</span><span class="params">(SqListPtr <span class="built_in">list</span>)</span>;           <span class="comment">// 获取线性表的长度</span></span><br><span class="line">Status <span class="title function_">GetElem</span><span class="params">(SqListPtr <span class="built_in">list</span>, <span class="type">int</span> pos, <span class="type">data_t</span> *elem)</span>;   <span class="comment">// 获取线性表中指定位置的元素</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">LocateElem</span><span class="params">(SqListPtr <span class="built_in">list</span>, <span class="type">data_t</span> elem)</span>;   <span class="comment">// 获取线性表中指定元素的位置</span></span><br><span class="line">Status <span class="title function_">ListInsert</span><span class="params">(SqListPtr <span class="built_in">list</span>, <span class="type">int</span> pos, <span class="type">data_t</span> elem)</span>;   <span class="comment">// 在线性表中指定位置插入元素</span></span><br><span class="line">Status <span class="title function_">ListDelete</span><span class="params">(SqListPtr <span class="built_in">list</span>, <span class="type">int</span> pos, <span class="type">data_t</span> *elem)</span>;   <span class="comment">// 在线性表中指定位置删除元素</span></span><br></pre></td></tr></table></figure>
+
+<p>然后还有一些宏定义和类型的重命名：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> MaxSize 100</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OK 1</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ERROR -1</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> IS_NULL 0</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> IS_NOT_NULL 1</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="type">int</span> <span class="type">data_t</span>;</span><br><span class="line"><span class="keyword">typedef</span> <span class="type">int</span> Status;</span><br></pre></td></tr></table></figure>
+
+<p>然后就可以开始写代码了。</p>
+<h3 id="2-1-初始化线性表"><a href="#2-1-初始化线性表" class="headerlink" title="2.1 初始化线性表"></a>2.1 初始化线性表</h3><p>实现需要初始化一下线性表，前面说过，需要使用动态内存分配来进行存放，所以需要使用malloc函数来进行分配内存，然后直接创建结构体即可。</p>
+<p>然后给结构体中的length赋值为0即可，这个length是用来记录线性表中元素的个数的，有些喜欢从-1，然后这个代表最后一个元素的下标。而我们这记录的是元素个数，所以从0开始。</p>
+<p>代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">SqListPtr <span class="title function_">InitList</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    SqListPtr <span class="built_in">list</span> = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="built_in">list</span> = (SqListPtr)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(SqList));</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">list</span> == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">list</span>-&gt;length = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">list</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-销毁线性表"><a href="#2-2-销毁线性表" class="headerlink" title="2.2 销毁线性表"></a>2.2 销毁线性表</h3><p>对于顺序结构来说，销毁直接就释放那个结构体就可以了，因为是连续的空间，不需要释放每个元素。</p>
+<p>代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Status <span class="title function_">DestroyList</span><span class="params">(SqListPtr* <span class="built_in">list</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (*<span class="built_in">list</span> == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">free</span>(*<span class="built_in">list</span>);</span><br><span class="line">    *<span class="built_in">list</span> = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">return</span> OK； </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的参数指针不解释，其实就是二级指针的问题，大家有兴趣可以看我前面介绍的二级指针的内容。</p>
+<h3 id="2-3-清空线性表"><a href="#2-3-清空线性表" class="headerlink" title="2.3 清空线性表"></a>2.3 清空线性表</h3><p>清空其实就是将里面的元素全部清除，但是这里不需要这么麻烦，我们在使用这个线性表的时候是通过<code>length</code>的记录来记录线性表中的个数，当这个<code>length</code>为0的时候，就代表这个线性表中没有元素了，所以我们只需要将<code>length</code>赋值为0即可。</p>
+<p>代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Status <span class="title function_">ClearList</span><span class="params">(SqListPtr <span class="built_in">list</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">list</span> == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">list</span>-&gt;length = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">return</span> OK; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-4-判断线性表是否为空"><a href="#2-4-判断线性表是否为空" class="headerlink" title="2.4 判断线性表是否为空"></a>2.4 判断线性表是否为空</h3><p>判断线性表是否为空，只需要判断<code>length</code>是否为0即可，为0就代表这个线性表中没有元素，不为0就代表这个线性表中有元素。</p>
+<p>代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Status <span class="title function_">ListEmpty</span><span class="params">(SqListPtr <span class="built_in">list</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">list</span> == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">list</span>-&gt;length == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> IS_NULL;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> IS_NOT_NULL; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-5-获取线性表的长度"><a href="#2-5-获取线性表的长度" class="headerlink" title="2.5 获取线性表的长度"></a>2.5 获取线性表的长度</h3><p>获取线性表的长度，只需要返回<code>length</code>的值即可。</p>
+<p>代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">ListLength</span><span class="params">(SqListPtr <span class="built_in">list</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">list</span> == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">list</span>-&gt;length;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-6-获取线性表中指定位置的元素"><a href="#2-6-获取线性表中指定位置的元素" class="headerlink" title="2.6 获取线性表中指定位置的元素"></a>2.6 获取线性表中指定位置的元素</h3><p>获取线性表中指定位置的元素，只需要判断位置是否合法，然后返回指定位置的元素即可。</p>
+<p>代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Status <span class="title function_">GetElem</span><span class="params">(SqListPtr <span class="built_in">list</span>, <span class="type">int</span> pos, <span class="type">data_t</span> *elem)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">list</span> == <span class="literal">NULL</span> || elem == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (pos &lt; <span class="number">0</span> || pos &gt;= <span class="built_in">list</span>-&gt;length)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    *elem = <span class="built_in">list</span>-&gt;data[pos];</span><br><span class="line">    <span class="keyword">return</span> OK; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-7-获取线性表中指定元素的位置"><a href="#2-7-获取线性表中指定元素的位置" class="headerlink" title="2.7 获取线性表中指定元素的位置"></a>2.7 获取线性表中指定元素的位置</h3><p>获取线性表中指定元素的位置，只需要遍历线性表，然后判断元素是否相等，相等就返回位置，不相等就返回-1。</p>
+<p>代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">LocateElem</span><span class="params">(SqListPtr <span class="built_in">list</span>, <span class="type">data_t</span> elem)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">list</span> == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ERROR; </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="built_in">list</span>-&gt;length; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">list</span>-&gt;data[i] == elem)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ERROR;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-8-在线性表中指定位置插入元素"><a href="#2-8-在线性表中指定位置插入元素" class="headerlink" title="2.8 在线性表中指定位置插入元素"></a>2.8 在线性表中指定位置插入元素</h3><p>在线性表中指定位置插入元素，只需要判断位置是否合法，然后将指定位置后面的元素都向后移动一位，然后将元素插入到指定位置即可。</p>
+<p>这里用一个图来演示这个过程：</p>
+<p>这里分为两个情况，一个是在最后插入数据，这种情况不需要移动，另一种是在中间插入数据，这种情况需要移动：</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E7%BA%BF%E6%80%A7%E8%A1%A8%E6%8F%92%E5%85%A5%E6%95%B0%E6%8D%AE1.png"></p>
+<p>首先有一个线性表，这里需要在位置2插入一个元素value，然后需要先找到一下这个线性表中的最后一个元素的下标，用一个指针进行存放，存放后比较一下这个指针存放的下标是否是需要插入的位置，如果是直接插入，如果不是需要让这个指针指向的内容向后移动：</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E7%BA%BF%E6%80%A7%E8%A1%A8%E6%8F%92%E5%85%A5%E6%95%B0%E6%8D%AE2.png"></p>
+<p>然后指针又往前移动，再次比较是不是插入的位置，如果不是将这个指针存放的下标的内容向后移动：</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E7%BA%BF%E6%80%A7%E8%A1%A8%E6%8F%92%E5%85%A5%E6%95%B0%E6%8D%AE3.png"></p>
+<p>如果这个指针指向的下标就是需要插入的位置，那先移动元素，移动完成后将指插入即可：</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E7%BA%BF%E6%80%A7%E8%A1%A8%E6%8F%92%E5%85%A5%E6%95%B0%E6%8D%AE4.png"></p>
+<p>知道这个过程后我们就可以写一下代码了</p>
+<p>代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Status <span class="title function_">ListInsert</span><span class="params">(SqListPtr <span class="built_in">list</span>, <span class="type">int</span> pos, <span class="type">data_t</span> elem)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> i = <span class="built_in">list</span>-&gt;length - <span class="number">1</span>;   <span class="comment">// 因为存放的是元素个数，所以需要减1</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">list</span> == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (pos &lt; <span class="number">0</span> || pos &gt; <span class="built_in">list</span>-&gt;length)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="built_in">list</span>-&gt;length - <span class="number">1</span>; i &gt;= pos; i--)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">list</span>-&gt;data[i + <span class="number">1</span>] = <span class="built_in">list</span>-&gt;data[i];</span><br><span class="line">    &#125; </span><br><span class="line">    <span class="built_in">list</span>-&gt;data[pos] = elem;</span><br><span class="line">    <span class="built_in">list</span>-&gt;length++;         <span class="comment">// 里面的元素增加</span></span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-9-在线性表中指定位置删除元素"><a href="#2-9-在线性表中指定位置删除元素" class="headerlink" title="2.9 在线性表中指定位置删除元素"></a>2.9 在线性表中指定位置删除元素</h3><p>删除和插入一样，也是需要移动元素进行删除，前面插入是往后移动元素，而删除是往前移动，直接覆盖住需要删除的元素，然后让<code>length</code>减1即可。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Status <span class="title function_">ListDelete</span><span class="params">(SqListPtr <span class="built_in">list</span>, <span class="type">int</span> pos, <span class="type">data_t</span> *elem)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">list</span> == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line">    &#125; </span><br><span class="line">    <span class="keyword">if</span> (pos &lt; <span class="number">0</span> || pos &gt; <span class="built_in">list</span>-&gt;length)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    *elem = <span class="built_in">list</span>-&gt;data[pos];</span><br><span class="line">    <span class="keyword">for</span> (i = pos; i &lt; <span class="built_in">list</span>-&gt;length; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">list</span>-&gt;data[i] = <span class="built_in">list</span>-&gt;data[i + <span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">list</span>-&gt;length--;</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-10-打印线性表"><a href="#2-10-打印线性表" class="headerlink" title="2.10 打印线性表"></a>2.10 打印线性表</h3><p>打印线性表，只需要遍历线性表，然后打印每个元素即可。</p>
+<p>代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">PrintList</span><span class="params">(SqListPtr <span class="built_in">list</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">list</span> == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="built_in">list</span>-&gt;length; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%d &quot;</span>, <span class="built_in">list</span>-&gt;data[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;\n&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样线性表的基本操作都做完了，下面来介绍一下链式存储，也就是非顺序存储。</p>
+<h2 id="3-链式存储"><a href="#3-链式存储" class="headerlink" title="3.链式存储"></a>3.链式存储</h2><p>链式存储是指用一组任意的存储单元存储线性表中的数据元素，这组存储单元可以是连续的，也可以是不连续的。</p>
+<p>链式存储是通过指针来进行连接的，每个元素都有一个指针，指向下一个元素，这样就可以通过指针来进行连接，这样就可以实现链式存储，链式存储的长度其实是根据堆区的大小来的，如果堆区空间还有内存，则可以创建结点。</p>
+<p>所以在这里的链式存储结构就没有长度这个属性了，如果要判断这个线性表的长度，可以通过遍历链表来获取长度。</p>
+<p>链式存储的结构如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">Node</span>&#123;</span></span><br><span class="line">    <span class="type">data_t</span> data;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">Node</span> *<span class="title">next</span>;</span>      <span class="comment">// 下一个结点的地址</span></span><br><span class="line">&#125;ListNode, *ListPtr;</span><br></pre></td></tr></table></figure>
+
+<p>data是存放数据的，next是指向下一个结点的地址。</p>
+<p>下面是链式存储的有些函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ListPtr <span class="title function_">InitList</span><span class="params">()</span>;   <span class="comment">// 初始化线性表</span></span><br><span class="line">Status <span class="title function_">DestroyList</span><span class="params">(ListPtr* <span class="built_in">list</span>)</span>;      <span class="comment">// 销毁线性表</span></span><br><span class="line">Status <span class="title function_">ClearList</span><span class="params">(ListPtr <span class="built_in">list</span>)</span>;         <span class="comment">// 清空线性表</span></span><br><span class="line">Status <span class="title function_">ListEmpty</span><span class="params">(ListPtr <span class="built_in">list</span>)</span>;         <span class="comment">// 判断线性表是否为空</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">ListLength</span><span class="params">(ListPtr <span class="built_in">list</span>)</span>;           <span class="comment">// 获取线性表的长度</span></span><br><span class="line">Status <span class="title function_">GetElem</span><span class="params">(ListPtr <span class="built_in">list</span>, <span class="type">int</span> pos, <span class="type">data_t</span> *elem)</span>;   <span class="comment">// 获取线性表中指定位置的元素</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">LocateElem</span><span class="params">(ListPtr <span class="built_in">list</span>, <span class="type">data_t</span> elem)</span>;   <span class="comment">// 获取线性表中指定元素的位置</span></span><br><span class="line">Status <span class="title function_">ListInsert</span><span class="params">(ListPtr <span class="built_in">list</span>, <span class="type">int</span> pos, <span class="type">data_t</span> elem)</span>;   <span class="comment">// 在线性表中指定位置插入元素</span></span><br><span class="line">Status <span class="title function_">ListDelete</span><span class="params">(ListPtr <span class="built_in">list</span>, <span class="type">int</span> pos, <span class="type">data_t</span> *elem)</span>;   <span class="comment">// 在线性表中指定位置删除元素</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-1-初始化线性表"><a href="#3-1-初始化线性表" class="headerlink" title="3.1 初始化线性表"></a>3.1 初始化线性表</h3><p>初始化线性表，只需要创建一个头结点，然后将头结点的指针指向NULL即可，这个头节点不需要任何的数据，相当于是一个指示的结点。</p>
+<p>代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">ListPtr <span class="title function_">InitList</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    ListPtr <span class="built_in">list</span> = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="built_in">list</span> = (ListPtr)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(ListNode));</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">list</span> == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">list</span>-&gt;data = <span class="number">-1</span>;</span><br><span class="line">    <span class="built_in">list</span>-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">list</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-销毁线性表"><a href="#3-2-销毁线性表" class="headerlink" title="3.2 销毁线性表"></a>3.2 销毁线性表</h3><p>销毁线性表，只需要遍历链表，然后释放每个结点即可。</p>
+<p>代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">Status <span class="title function_">DestroyList</span><span class="params">(ListPtr* <span class="built_in">list</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    ListPtr p = *<span class="built_in">list</span>;</span><br><span class="line">    ListPtr q = (*<span class="built_in">list</span>)-&gt;next;</span><br><span class="line">    <span class="keyword">if</span> (*<span class="built_in">list</span> == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span>(p)</span><br><span class="line">    &#123;</span><br><span class="line">       <span class="built_in">free</span>(p); </span><br><span class="line">       p = q;</span><br><span class="line">       q = q-&gt;next;</span><br><span class="line">    &#125;</span><br><span class="line">    *<span class="built_in">list</span> = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-清空线性表"><a href="#3-3-清空线性表" class="headerlink" title="3.3 清空线性表"></a>3.3 清空线性表</h3><p>这里可以直接让头节点的<code>next</code>指向<code>NULL</code>即可，但是后面的结点还是在的，如果不进行释放，那可能会导致内存溢出，所以这里需要先将后面的结点释放掉，然后再将头节点的<code>next</code>指向<code>NULL</code>即可。</p>
+<p>代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">Status <span class="title function_">ClearList</span><span class="params">(ListPtr <span class="built_in">list</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 这里让p指针领先q指针一个结点</span></span><br><span class="line">    ListPtr p = <span class="built_in">list</span>-&gt;next;</span><br><span class="line">    ListPtr q = <span class="built_in">list</span>-&gt;next;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">list</span> == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span>(q)</span><br><span class="line">    &#123;</span><br><span class="line">        p = p-&gt;next;</span><br><span class="line">        <span class="built_in">free</span>(q);</span><br><span class="line">        q = p;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">list</span>-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-4-判断线性表是否为空"><a href="#3-4-判断线性表是否为空" class="headerlink" title="3.4 判断线性表是否为空"></a>3.4 判断线性表是否为空</h3><p>判断线性表是否为空，只需要判断头节点的<code>next</code>是否为<code>NULL</code>即可，为<code>NULL</code>就代表这个线性表中没有元素，不为<code>NULL</code>就代表这个线性表中有元素。</p>
+<p>代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Status <span class="title function_">ListEmpty</span><span class="params">(ListPtr <span class="built_in">list</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">list</span> == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">list</span>-&gt;next == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> IS_NULL;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> IS_NOT_NULL;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-5-获取线性表的长度"><a href="#3-5-获取线性表的长度" class="headerlink" title="3.5 获取线性表的长度"></a>3.5 获取线性表的长度</h3><p>获取线性表的长度，只需要遍历链表，然后记录链表的长度即可。</p>
+<p>代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">ListLength</span><span class="params">(ListPtr <span class="built_in">list</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">list</span> == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">int</span> length = <span class="number">0</span>;</span><br><span class="line">    ListPtr p = <span class="built_in">list</span>-&gt;next;</span><br><span class="line">    <span class="keyword">while</span>(p)</span><br><span class="line">    &#123;</span><br><span class="line">        length++;</span><br><span class="line">        p = p-&gt;next;</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-6-获取线性表中指定位置的元素"><a href="#3-6-获取线性表中指定位置的元素" class="headerlink" title="3.6 获取线性表中指定位置的元素"></a>3.6 获取线性表中指定位置的元素</h3><p>获取线性表中指定位置的元素，只需要遍历链表，然后找到指定位置的元素即可。</p>
+<p>代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Status <span class="title function_">GetElem</span><span class="params">(ListPtr <span class="built_in">list</span>, <span class="type">int</span> pos, <span class="type">data_t</span> *elem)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">list</span> == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (pos &lt; <span class="number">0</span> || pos &gt; ListLength(<span class="built_in">list</span>))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    ListPtr p = <span class="built_in">list</span>-&gt;next;</span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; pos; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        p = p-&gt;next;</span><br><span class="line">    &#125;</span><br><span class="line">    *elem = p-&gt;data;</span><br><span class="line">    <span class="keyword">return</span> OK; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-7-获取线性表中指定元素的位置"><a href="#3-7-获取线性表中指定元素的位置" class="headerlink" title="3.7 获取线性表中指定元素的位置"></a>3.7 获取线性表中指定元素的位置</h3><p>获取线性表中指定元素的位置，只需要遍历链表，然后找到指定元素的位置即可。</p>
+<p>代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">LocateElem</span><span class="params">(ListPtr <span class="built_in">list</span>, <span class="type">data_t</span> elem)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">list</span> == <span class="literal">NULL</span>) </span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ERROR; </span><br><span class="line">    &#125;</span><br><span class="line">    ListPtr p = <span class="built_in">list</span>-&gt;next;</span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(p)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (p-&gt;data == elem)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> i;</span><br><span class="line">        &#125;</span><br><span class="line">        i++;</span><br><span class="line">        p = p-&gt;next;</span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="keyword">return</span> ERROR;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-8-在线性表中指定位置插入元素"><a href="#3-8-在线性表中指定位置插入元素" class="headerlink" title="3.8 在线性表中指定位置插入元素"></a>3.8 在线性表中指定位置插入元素</h3><p>对于链表中，插入元素其实很简单，它不需要移动全部元素，只需要在对应的位置移动指针即可，让插入的结点的<code>next</code>获得前面的那个结点的<code>next</code>，然后让前面的那个结点的<code>next</code>指向这个新插入的结点。</p>
+<p>图示如下：</p>
+<p>有一个链表，第一个是头结点，头节点不算在内，现在需要插入到第1的位置</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E9%93%BE%E8%A1%A8%E6%8F%92%E5%85%A5%E6%95%B0%E6%8D%AE.png"></p>
+<p>先找到要插入位置的结点的前面，相当于是0这个位置，然后让新插入的结点的<code>next</code>指向前面那个结点的<code>next</code></p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E9%93%BE%E8%A1%A8%E6%8F%92%E5%85%A5%E6%95%B0%E6%8D%AE2.png"></p>
+<p>然后让前面那个结点的<code>next</code>指向插入的这个结点</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E9%93%BE%E8%A1%A8%E6%8F%92%E5%85%A5%E6%95%B0%E6%8D%AE3.png"></p>
+<p>代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">Status <span class="title function_">ListInsert</span><span class="params">(ListPtr <span class="built_in">list</span>, <span class="type">int</span> pos, <span class="type">data_t</span> elem)</span></span><br><span class="line">&#123;</span><br><span class="line">    linkList pNext = <span class="literal">NULL</span>;</span><br><span class="line">    linkList pHead = <span class="built_in">list</span>;</span><br><span class="line">    <span class="type">int</span> j = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (pos &lt; <span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (value == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> OK;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> (pHead &amp;&amp; pos - <span class="number">1</span> &gt; j)</span><br><span class="line">    &#123;</span><br><span class="line">        pHead = pHead-&gt;pNext;</span><br><span class="line">        j++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (j &gt; pos - <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="comment">// 如果找不到那个位置的内容</span></span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    pNext = (linkList)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(linkNode));</span><br><span class="line">    <span class="keyword">if</span> (pNext == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    pNext-&gt;pNext = pHead-&gt;pNext;</span><br><span class="line">    pNext-&gt;data = elem;</span><br><span class="line">    pHead-&gt;pNext = pNext;</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-9-删除元素"><a href="#3-9-删除元素" class="headerlink" title="3.9 删除元素"></a>3.9 删除元素</h3><p>删除是比较简单的，其实就是找到想要删除的元素的前一个元素，然后让这个结点的<code>next</code>指向想要删除的结点的<code>next</code>，然后释放需要删除的结点就可以删除成功了。</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%88%A0%E9%99%A4%E7%BB%93%E7%82%B9.png"></p>
+<p>代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">Status <span class="title function_">ListDelete</span><span class="params">(ListPtr <span class="built_in">list</span>, <span class="type">int</span> pos, <span class="type">data_t</span> *elem)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> j = <span class="number">1</span>;</span><br><span class="line">    <span class="type">data_t</span> value = ERROR;</span><br><span class="line">    linklist pNext, pEnd;</span><br><span class="line">    pNext = link-&gt;pNext;</span><br><span class="line">    pEnd = link;</span><br><span class="line">    <span class="keyword">if</span> (pos &lt; <span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (LinkList_ListEmpty(*link) == IS_NULL)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span>(pNext)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (j == pos)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 删除内容</span></span><br><span class="line">            pEnd-&gt;pNext = pNext-&gt;pNext;</span><br><span class="line">            value = pNext-&gt;data;</span><br><span class="line">            <span class="built_in">free</span>(pNext);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        j++;</span><br><span class="line">        pEnd = pNext;</span><br><span class="line">        pNext = pNext-&gt;pNext;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>线性表还是比较简单的一个数据结构，后面还会介绍栈、队列和树这些数据结构。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>puill
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://www.puill.xin/2025/03/07/19e651a75115/" title="线性表">http://www.puill.xin/2025/03/07/19e651a75115/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag"># 数据结构</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/03/07/6d31b87ff14a/" rel="prev" title="数据结构学习开始">
+                  <i class="fa fa-angle-left"></i> 数据结构学习开始
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">puill</span>
+  </div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+--><div>
+<!--添加网站运行时间-->
+<span>小破站已经在风雨中度过了</span>
+<span id="timeDate">载入天数...</span>
+<span id="times">载入时分秒...</span>
+<script>
+    function createtime() {
+        const startTime = '01/10/2025 00:00:00',
+            start = new Date(startTime)
+        let mill = new Date() - start,
+            seconds = Math.floor(mill / 1000),
+            mins = Math.floor(seconds / 60),
+            hours = Math.floor(mins / 60),
+            days = Math.floor(hours / 24)
+        const time = {
+            seconds: seconds - mins * 60,
+            mins: mins - hours * 60,
+            hours: hours - days * 24,
+        }
+        for (const k in time) {
+            time[k] = `${time[k]}`.padStart(2, '0')
+        }
+        document.getElementById("timeDate").innerHTML = ` ${days} 天`
+        document.getElementById("times").innerHTML = ` ${time.hours} 小时 ${time.mins} 分 ${time.seconds} 秒`
+    }
+    setInterval(createtime, 500)
+</script>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

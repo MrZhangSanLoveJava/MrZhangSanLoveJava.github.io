@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.puill.xin","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"show_result":true,"style":"default"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="数据结构的开始">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据结构学习开始">
+<meta property="og:url" content="http://www.puill.xin/2025/03/07/6d31b87ff14a/index.html">
+<meta property="og:site_name" content="puill&#39;s Blog">
+<meta property="og:description" content="数据结构的开始">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E9%9B%86%E5%90%88.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E7%BA%BF%E6%80%A7%E7%BB%93%E6%9E%84.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E6%A0%91%E7%BB%93%E6%9E%84.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%9B%BE%E7%BB%93%E6%9E%84.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E9%A1%BA%E5%BA%8F%E8%A1%A8.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E9%93%BE%E6%8E%A5%E8%A1%A8.png">
+<meta property="article:published_time" content="2025-03-07T06:49:53.772Z">
+<meta property="article:modified_time" content="2025-03-07T09:01:54.832Z">
+<meta property="article:author" content="puill">
+<meta property="article:tag" content="数据结构">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E9%9B%86%E5%90%88.png">
+
+
+<link rel="canonical" href="http://www.puill.xin/2025/03/07/6d31b87ff14a/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.puill.xin/2025/03/07/6d31b87ff14a/","path":"2025/03/07/6d31b87ff14a/","title":"数据结构学习开始"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>数据结构学习开始 | puill's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">puill's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-文章"><a href="/articles/" rel="section"><i class="fa fa-file-text fa-fw"></i>文章</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-友链"><a href="/friendchains/" rel="section"><i class="fa fa-paperclip fa-fw"></i>友链</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E7%A0%94%E7%A9%B6%E7%9A%84%E5%86%85%E5%AE%B9"><span class="nav-number">2.</span> <span class="nav-text">一、数据结构研究的内容</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%9F%BA%E6%9C%AC%E7%9A%84%E6%A6%82%E5%BF%B5%E5%92%8C%E6%9C%AF%E8%AF%AD"><span class="nav-number">3.</span> <span class="nav-text">二、基本的概念和术语</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%95%B0%E6%8D%AE"><span class="nav-number">3.1.</span> <span class="nav-text">1.数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%95%B0%E6%8D%AE%E5%85%83%E7%B4%A0"><span class="nav-number">3.2.</span> <span class="nav-text">2.数据元素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%95%B0%E6%8D%AE%E5%AF%B9%E8%B1%A1"><span class="nav-number">3.3.</span> <span class="nav-text">3.数据对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E9%80%BB%E8%BE%91%E7%BB%93%E6%9E%84"><span class="nav-number">3.4.</span> <span class="nav-text">4.逻辑结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E7%89%A9%E7%90%86%E7%BB%93%E6%9E%84"><span class="nav-number">3.5.</span> <span class="nav-text">5.物理结构</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E9%80%BB%E8%BE%91%E7%BB%93%E6%9E%84%E7%9A%84%E5%88%86%E7%B1%BB"><span class="nav-number">4.</span> <span class="nav-text">三、逻辑结构的分类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E9%9B%86%E5%90%88%E7%BB%93%E6%9E%84"><span class="nav-number">4.1.</span> <span class="nav-text">1.集合结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E7%BA%BF%E6%80%A7%E7%BB%93%E6%9E%84"><span class="nav-number">4.2.</span> <span class="nav-text">2.线性结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%A0%91%E5%BD%A2%E7%BB%93%E6%9E%84"><span class="nav-number">4.3.</span> <span class="nav-text">3.树形结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%9B%BE%E5%BD%A2%E7%BB%93%E6%9E%84"><span class="nav-number">4.4.</span> <span class="nav-text">4.图形结构</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E7%89%A9%E7%90%86%E7%BB%93%E6%9E%84%E7%9A%84%E5%88%86%E7%B1%BB"><span class="nav-number">5.</span> <span class="nav-text">四、物理结构的分类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E9%A1%BA%E5%BA%8F%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84"><span class="nav-number">5.1.</span> <span class="nav-text">1.顺序存储结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E9%9D%9E%E7%BA%BF%E6%80%A7%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84"><span class="nav-number">5.2.</span> <span class="nav-text">2.非线性存储结构</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%92%8C%E6%8A%BD%E8%B1%A1%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">6.</span> <span class="nav-text">五、数据类型和抽象数据类型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">6.1.</span> <span class="nav-text">1.数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%8A%BD%E8%B1%A1%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">6.2.</span> <span class="nav-text">2.抽象数据类型</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="puill"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">puill</p>
+  <div class="site-description" itemprop="description">puill的博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="mailto:2256044190@qq.com" title="E-Mail → mailto:2256044190@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.puill.xin/2025/03/07/6d31b87ff14a/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="puill">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="puill's Blog">
+      <meta itemprop="description" content="puill的博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="数据结构学习开始 | puill's Blog">
+      <meta itemprop="description" content="数据结构的开始">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          数据结构学习开始
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-03-07 14:49:53 / 修改时间：17:01:54" itemprop="dateCreated datePublished" datetime="2025-03-07T14:49:53+08:00">2025-03-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">数据结构</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">数据结构的开始</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>数据结构是一门比较重要的学科，真好这段时间我又重新学习了一下数据结构，然后就开始写下文章来记录我学习的内容。</p>
+<h1 id="一、数据结构研究的内容"><a href="#一、数据结构研究的内容" class="headerlink" title="一、数据结构研究的内容"></a>一、数据结构研究的内容</h1><p>这里在学习数据结构的时候都会给大家介绍，学习数据结构主要是为了处理一些现实问题，跳过数据结构将这些问题抽象成计算机能够处理的方式让计算机进行操作。</p>
+<p>比如在学校，需要通过一个系统来管理学生的信息，这个系统就需要将学生的信息存储起来，然后通过这个系统来管理学生的信息。</p>
+<p>可以将学生的信息抽象成一个结构体，然后将这个结构体存储起来，然后通过这个系统来管理学生的信息。</p>
+<p>这样就可以将学生的信息存储起来，然后通过这个系统来管理学生的信息。</p>
+<p>再比如地图，我们使用导航软件，它可以找到你去那个地方的最快路径的长度，它的实现也是通过将这些地点和道路抽象成一个图，然后通过图的算法来找到最短路径的长度。</p>
+<p>说了这么多大家应该了解到数据结构主要研究的内容了吧，其实研究的是将这些现实问题抽象为一些数据结构，然后通过这些数据结构来解决这些问题。</p>
+<h1 id="二、基本的概念和术语"><a href="#二、基本的概念和术语" class="headerlink" title="二、基本的概念和术语"></a>二、基本的概念和术语</h1><p>这里需要了解几个概念和术语，等后面都会进行使用的：</p>
+<h2 id="1-数据"><a href="#1-数据" class="headerlink" title="1.数据"></a>1.数据</h2><p>数据是指所有能输入到计算机中并被计算机处理的符号的总称。</p>
+<h2 id="2-数据元素"><a href="#2-数据元素" class="headerlink" title="2.数据元素"></a>2.数据元素</h2><p>数据元素是数据的基本单位，在计算机中通常作为一个整体进行考虑和处理。</p>
+<h2 id="3-数据对象"><a href="#3-数据对象" class="headerlink" title="3.数据对象"></a>3.数据对象</h2><p>数据对象是性质相同的数据元素的集合，是数据的一个子集。</p>
+<h2 id="4-逻辑结构"><a href="#4-逻辑结构" class="headerlink" title="4.逻辑结构"></a>4.逻辑结构</h2><p>逻辑结构是指数据对象中数据元素之间的相互关系。它与存储结构无关，是独立于计算机的。</p>
+<h2 id="5-物理结构"><a href="#5-物理结构" class="headerlink" title="5.物理结构"></a>5.物理结构</h2><p>物理结构也称存储结构，是指数据的逻辑结构在计算机中的存储形式。</p>
+<h1 id="三、逻辑结构的分类"><a href="#三、逻辑结构的分类" class="headerlink" title="三、逻辑结构的分类"></a>三、逻辑结构的分类</h1><p>逻辑结构是表示数据之间的关系的，它主要是考察数据之间的关系的，根据这个可以分为下面这几类：</p>
+<h2 id="1-集合结构"><a href="#1-集合结构" class="headerlink" title="1.集合结构"></a>1.集合结构</h2><p>集合结构中的数据元素之间除了同属于一个集合的关系外，无其他关系。</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E9%9B%86%E5%90%88.png"></p>
+<p>可以看到每个元素之间没有任何的联系，所以集合中所有元素没有前驱也没有后继。</p>
+<h2 id="2-线性结构"><a href="#2-线性结构" class="headerlink" title="2.线性结构"></a>2.线性结构</h2><p>线性结构中的数据元素之间是一对一的关系。</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E7%BA%BF%E6%80%A7%E7%BB%93%E6%9E%84.png"></p>
+<p>线性结构中每个元素都有且只有一个前驱和一个后继，除了第一个元素没有前驱，最后一个元素没有后继。</p>
+<h2 id="3-树形结构"><a href="#3-树形结构" class="headerlink" title="3.树形结构"></a>3.树形结构</h2><p>树形结构中的数据元素之间存在一种一对多的层次关系。</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E6%A0%91%E7%BB%93%E6%9E%84.png"></p>
+<p>树形结构中每个元素都有多个前驱和多个后继，除了第一个元素没有前驱，最后一个元素没有后继。</p>
+<h2 id="4-图形结构"><a href="#4-图形结构" class="headerlink" title="4.图形结构"></a>4.图形结构</h2><p>图形结构中的数据元素是多对多的关系。</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%9B%BE%E7%BB%93%E6%9E%84.png"></p>
+<p>图形结构中每个元素都有多个前驱和多个后继。</p>
+<h1 id="四、物理结构的分类"><a href="#四、物理结构的分类" class="headerlink" title="四、物理结构的分类"></a>四、物理结构的分类</h1><p>物理结构也称为存储结构，是指数据的逻辑结构在计算机中的存储形式。</p>
+<p>相当于把前面的逻辑结构使用物理结构进行存放，这里存放的物理结构可分为线性的和非线性的。</p>
+<h2 id="1-顺序存储结构"><a href="#1-顺序存储结构" class="headerlink" title="1.顺序存储结构"></a>1.顺序存储结构</h2><p>顺序存储结构是把数据元素存放在地址连续的存储单元里，其数据间的逻辑关系和物理关系是一致的。</p>
+<p>对于顺序结构是在逻辑上相邻的数据元素，其存储位置也是相邻的，例如下图：</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E9%A1%BA%E5%BA%8F%E8%A1%A8.png"></p>
+<h2 id="2-非线性存储结构"><a href="#2-非线性存储结构" class="headerlink" title="2.非线性存储结构"></a>2.非线性存储结构</h2><p>非线性存储结构是把数据元素存放在任意的存储单元里，这组存储单元可以是连续的，也可以是不连续的。</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E9%93%BE%E6%8E%A5%E8%A1%A8.png"></p>
+<h1 id="五、数据类型和抽象数据类型"><a href="#五、数据类型和抽象数据类型" class="headerlink" title="五、数据类型和抽象数据类型"></a>五、数据类型和抽象数据类型</h1><h2 id="1-数据类型"><a href="#1-数据类型" class="headerlink" title="1.数据类型"></a>1.数据类型</h2><p>以借助程序设计语言的数据类型来描述数据对象的基本操作。</p>
+<h2 id="2-抽象数据类型"><a href="#2-抽象数据类型" class="headerlink" title="2.抽象数据类型"></a>2.抽象数据类型</h2><p>抽象就是抽出实际问题的本质，忽略其非本质的细节。</p>
+<p>一般指由用户定义的、表示应用问题的数学模型，以及定义在这个模型上的一组操作的总称。</p>
+<p>抽象数据类型是指一个数学模型以及定义在该模型上的一组操作。</p>
+<p>抽象数据类型的定义格式为：</p>
+<pre><code>ADT 抽象数据类型名&#123;
+    数据对象：&lt;数据对象的定义&gt;
+    数据关系：&lt;数据关系的定义&gt;
+    基本操作：&lt;基本操作的定义&gt;
+&#125;ADT 抽象数据类型名
+
+# 总结
+
+数据结构是一门非常重要的学科，它可以帮助我们解决一些现实问题，将这些问题抽象为一些数据结构，然后通过这些数据结构来解决这些问题。
+</code></pre>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>puill
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://www.puill.xin/2025/03/07/6d31b87ff14a/" title="数据结构学习开始">http://www.puill.xin/2025/03/07/6d31b87ff14a/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag"># 数据结构</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/02/09/06e37ae090b3/" rel="prev" title="使用stm32控制esp01s">
+                  <i class="fa fa-angle-left"></i> 使用stm32控制esp01s
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/03/07/19e651a75115/" rel="next" title="线性表">
+                  线性表 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">puill</span>
+  </div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+--><div>
+<!--添加网站运行时间-->
+<span>小破站已经在风雨中度过了</span>
+<span id="timeDate">载入天数...</span>
+<span id="times">载入时分秒...</span>
+<script>
+    function createtime() {
+        const startTime = '01/10/2025 00:00:00',
+            start = new Date(startTime)
+        let mill = new Date() - start,
+            seconds = Math.floor(mill / 1000),
+            mins = Math.floor(seconds / 60),
+            hours = Math.floor(mins / 60),
+            days = Math.floor(hours / 24)
+        const time = {
+            seconds: seconds - mins * 60,
+            mins: mins - hours * 60,
+            hours: hours - days * 24,
+        }
+        for (const k in time) {
+            time[k] = `${time[k]}`.padStart(2, '0')
+        }
+        document.getElementById("timeDate").innerHTML = ` ${days} 天`
+        document.getElementById("times").innerHTML = ` ${time.hours} 小时 ${time.mins} 分 ${time.seconds} 秒`
+    }
+    setInterval(createtime, 500)
+</script>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
