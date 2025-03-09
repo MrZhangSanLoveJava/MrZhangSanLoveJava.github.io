@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.puill.xin","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"show_result":true,"style":"default"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="很常用的一个数据结构">
+<meta property="og:type" content="article">
+<meta property="og:title" content="栈">
+<meta property="og:url" content="http://www.puill.xin/2025/03/09/208f3232527f/index.html">
+<meta property="og:site_name" content="puill&#39;s Blog">
+<meta property="og:description" content="很常用的一个数据结构">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E6%A0%88.png">
+<meta property="og:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8.png">
+<meta property="article:published_time" content="2025-03-09T12:49:07.953Z">
+<meta property="article:modified_time" content="2025-03-09T13:56:08.728Z">
+<meta property="article:author" content="puill">
+<meta property="article:tag" content="数据结构">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E6%A0%88.png">
+
+
+<link rel="canonical" href="http://www.puill.xin/2025/03/09/208f3232527f/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://www.puill.xin/2025/03/09/208f3232527f/","path":"2025/03/09/208f3232527f/","title":"栈"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>栈 | puill's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">puill's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-文章"><a href="/articles/" rel="section"><i class="fa fa-file-text fa-fw"></i>文章</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-友链"><a href="/friendchains/" rel="section"><i class="fa fa-paperclip fa-fw"></i>友链</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E9%80%BB%E8%BE%91%E7%BB%93%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text">一、逻辑结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84"><span class="nav-number">3.</span> <span class="nav-text">二、存储结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E9%A1%BA%E5%BA%8F%E8%A1%A8"><span class="nav-number">3.1.</span> <span class="nav-text">1.顺序表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">3.1.1.</span> <span class="nav-text">1.1 数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%87%BD%E6%95%B0%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.1.2.</span> <span class="nav-text">1.2 函数实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-1-%E5%88%9D%E5%A7%8B%E5%8C%96%E6%A0%88"><span class="nav-number">3.1.2.1.</span> <span class="nav-text">1.2.1 初始化栈</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-2-%E5%8E%8B%E5%85%A5%E6%95%B0%E6%8D%AE"><span class="nav-number">3.1.2.2.</span> <span class="nav-text">1.2.2 压入数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-3-%E5%BC%B9%E5%87%BA%E6%95%B0%E6%8D%AE"><span class="nav-number">3.1.2.3.</span> <span class="nav-text">1.2.3 弹出数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-4-%E5%88%A4%E6%96%AD%E6%A0%88%E6%98%AF%E5%90%A6%E4%B8%BA%E7%A9%BA"><span class="nav-number">3.1.2.4.</span> <span class="nav-text">1.2.4 判断栈是否为空</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-5-%E9%87%8A%E6%94%BE%E6%A0%88"><span class="nav-number">3.1.2.5.</span> <span class="nav-text">1.2.5 释放栈</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-6-%E8%8E%B7%E5%8F%96%E6%A0%88%E9%A1%B6%E7%9A%84%E5%80%BC"><span class="nav-number">3.1.2.6.</span> <span class="nav-text">1.2.6 获取栈顶的值</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-7-%E5%88%A4%E6%96%AD%E6%A0%88%E6%98%AF%E5%90%A6%E6%BB%A1"><span class="nav-number">3.1.2.7.</span> <span class="nav-text">1.2.7 判断栈是否满</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E9%93%BE%E5%BC%8F%E6%A0%88"><span class="nav-number">3.2.</span> <span class="nav-text">2.链式栈</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">3.2.1.</span> <span class="nav-text">2.1 数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E5%87%BD%E6%95%B0%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.2.2.</span> <span class="nav-text">2.2 函数实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-1-%E5%88%9D%E5%A7%8B%E5%8C%96%E6%A0%88"><span class="nav-number">3.2.2.1.</span> <span class="nav-text">2.2.1 初始化栈</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-2-%E5%8E%8B%E5%85%A5%E6%95%B0%E6%8D%AE"><span class="nav-number">3.2.2.2.</span> <span class="nav-text">2.2.2 压入数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-3-%E5%BC%B9%E5%87%BA%E6%95%B0%E6%8D%AE"><span class="nav-number">3.2.2.3.</span> <span class="nav-text">2.2.3 弹出数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-4-%E5%88%A4%E6%96%AD%E6%A0%88%E6%98%AF%E5%90%A6%E4%B8%BA%E7%A9%BA"><span class="nav-number">3.2.2.4.</span> <span class="nav-text">2.2.4 判断栈是否为空</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-5-%E9%87%8A%E6%94%BE%E6%A0%88"><span class="nav-number">3.2.2.5.</span> <span class="nav-text">2.2.5 释放栈</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-6-%E8%8E%B7%E5%8F%96%E6%A0%88%E9%A1%B6%E7%9A%84%E5%80%BC"><span class="nav-number">3.2.2.6.</span> <span class="nav-text">2.2.6 获取栈顶的值</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">三、总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="puill"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">puill</p>
+  <div class="site-description" itemprop="description">puill的博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="mailto:2256044190@qq.com" title="E-Mail → mailto:2256044190@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.puill.xin/2025/03/09/208f3232527f/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="puill">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="puill's Blog">
+      <meta itemprop="description" content="puill的博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="栈 | puill's Blog">
+      <meta itemprop="description" content="很常用的一个数据结构">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          栈
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-03-09 20:49:07 / 修改时间：21:56:08" itemprop="dateCreated datePublished" datetime="2025-03-09T20:49:07+08:00">2025-03-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">数据结构</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">很常用的一个数据结构</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>栈在程序中经常使用，比如创建了一个函数，创建的这个函数会压入栈中，然后执行完成后会从栈中弹出。</p>
+<p>还有就是在freeRTOS中，我们创建任务的时候，也会将任务压入栈中，然后执行完成后会从栈中弹出。</p>
+<p>栈是一个比较重要的一个数据结构，好好学习对我们开发有很大的帮助。</p>
+<h1 id="一、逻辑结构"><a href="#一、逻辑结构" class="headerlink" title="一、逻辑结构"></a>一、逻辑结构</h1><p>栈是一种特殊的线性表，其只允许在固定的一端进行插入和删除元素操作。进行数据插入和删除操作的一端称为栈顶，另一端称为栈底。栈中的数据元素遵守后进先出LIFO（Last In First Out）的原则。</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E6%A0%88.png"></p>
+<p>压栈：栈的插入操作叫做进栈&#x2F;压栈&#x2F;入栈，入数据在栈顶。</p>
+<p>出栈：栈的删除操作叫做出栈。出数据也在栈顶。</p>
+<h1 id="二、存储结构"><a href="#二、存储结构" class="headerlink" title="二、存储结构"></a>二、存储结构</h1><p>我们可以使用顺序表来实现，也可以使用链表来实现，这里两种方式都实现一下。</p>
+<h2 id="1-顺序表"><a href="#1-顺序表" class="headerlink" title="1.顺序表"></a>1.顺序表</h2><h3 id="1-1-数据结构"><a href="#1-1-数据结构" class="headerlink" title="1.1 数据结构"></a>1.1 数据结构</h3><p>这里使用线性表来实现，其实本质上也是创建一个数组来进行存放，然后定义两个变量，一个变量指向栈底，另一个指向栈顶。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    <span class="type">data_t</span>* data;</span><br><span class="line">    <span class="type">int</span> len;</span><br><span class="line">    <span class="type">int</span> top;</span><br><span class="line">&#125;stackList, *stackLink;</span><br></pre></td></tr></table></figure>
+
+<p>data是栈的存放空间，这里使用一个指针来进行存放，这样可以动态的开辟栈的空间。</p>
+<p>len是栈的长度，top是栈顶。</p>
+<p>使用这个数据结构创建栈的话需要进行两次开辟空间，第一次是创建栈的头节点，第二次是创建栈中的数组。</p>
+<h3 id="1-2-函数实现"><a href="#1-2-函数实现" class="headerlink" title="1.2 函数实现"></a>1.2 函数实现</h3><p>需要使用的函数如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">stackLink <span class="title function_">Stack_Init</span><span class="params">(<span class="type">int</span> len)</span>;          <span class="comment">// 初始化栈</span></span><br><span class="line">Status <span class="title function_">Stack_Push</span><span class="params">(stackLink <span class="built_in">stack</span>, <span class="type">int</span> value)</span>;   <span class="comment">// 压入数据</span></span><br><span class="line"><span class="type">data_t</span> <span class="title function_">Stack_Pop</span><span class="params">(stackLink <span class="built_in">stack</span>)</span>;               <span class="comment">// 弹出数据</span></span><br><span class="line">Status <span class="title function_">Stack_Emple</span><span class="params">(stackLink <span class="built_in">stack</span>)</span>;             <span class="comment">// 判断栈是否为空</span></span><br><span class="line">Status <span class="title function_">Stack_Free</span><span class="params">(stackLink* <span class="built_in">stack</span>)</span>;              <span class="comment">// 释放栈</span></span><br><span class="line"><span class="type">data_t</span> <span class="title function_">Stack_Get_Top</span><span class="params">(stackList <span class="built_in">stack</span>)</span>;             <span class="comment">// 获取栈顶的值</span></span><br><span class="line">Status <span class="title function_">Stack_Pull</span><span class="params">(stackLink <span class="built_in">stack</span>)</span>;     <span class="comment">// 判断栈是否满</span></span><br></pre></td></tr></table></figure>
+
+<p>相应的一些宏或者数据说明如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> OK 1</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ERROR (-1)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> IS_NULL 1</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> NOT_NULL 0</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> IS_FULL 1</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> NOT_FULL 0</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="type">int</span> <span class="type">data_t</span>;</span><br><span class="line"><span class="keyword">typedef</span> <span class="type">int</span> Status;</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-2-1-初始化栈"><a href="#1-2-1-初始化栈" class="headerlink" title="1.2.1 初始化栈"></a>1.2.1 初始化栈</h4><p>初始化栈的话，需要进行两次开辟空间，第一次是创建栈的头节点，第二次是创建栈中的数组。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">stackLink <span class="title function_">Stack_Init</span><span class="params">(<span class="type">int</span> len)</span>          <span class="comment">// 初始化栈</span></span><br><span class="line">&#123;</span><br><span class="line">    stackLink <span class="built_in">stack</span> = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="built_in">stack</span> = (stackLink)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(stackList));</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">stack</span> == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">stack</span>-&gt;len = len;</span><br><span class="line">    <span class="built_in">stack</span>-&gt;top = <span class="number">-1</span>;</span><br><span class="line">    <span class="built_in">stack</span>-&gt;data = (<span class="type">data_t</span>*)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="type">data_t</span>) * <span class="built_in">stack</span>-&gt;len);</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">stack</span>-&gt;data == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">stack</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里开辟队列的空间长度使用的是参数传递进来的，这样可以实现动态开辟空间。</p>
+<p>然后top指针的值为-1的主要目的是表明这个栈为空，当然你也可以让它为0。</p>
+<h4 id="1-2-2-压入数据"><a href="#1-2-2-压入数据" class="headerlink" title="1.2.2 压入数据"></a>1.2.2 压入数据</h4><p>压入数据的话，需要判断栈是否满，如果满的话就不能压入数据了。</p>
+<p>对于新直接的数据要先对top指针进行自增，自增完成后把需要压入栈的数据放入到top指向的位置。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Status <span class="title function_">Stack_Push</span><span class="params">(stackLink <span class="built_in">stack</span>, <span class="type">int</span> value)</span>   <span class="comment">// 压入数据</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">stack</span>-&gt;top &gt;= <span class="built_in">stack</span>-&gt;len)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">stack</span>-&gt;top++;</span><br><span class="line">    <span class="built_in">stack</span>-&gt;data[<span class="built_in">stack</span>-&gt;top] = value;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>判断栈顶的大小是否大于等于栈的长度，如果大于等于的话就说明栈满了，不能压入数据了。</p>
+<h4 id="1-2-3-弹出数据"><a href="#1-2-3-弹出数据" class="headerlink" title="1.2.3 弹出数据"></a>1.2.3 弹出数据</h4><p>弹出数据的话，需要判断栈是否为空，如果为空的话就不能弹出数据了。</p>
+<p>在读取完数据后需要将top指针进行自减，这样就指向下一个元素的位置。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">data_t</span> <span class="title function_">Stack_Pop</span><span class="params">(stackLink <span class="built_in">stack</span>)</span>               <span class="comment">// 弹出数据</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">stack</span>-&gt;top == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">stack</span>-&gt;data[<span class="built_in">stack</span>-&gt;top];</span><br><span class="line">    <span class="built_in">stack</span>-&gt;top--;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果前面的初始化是从0开始，并且top指针是先存放然后再自增的话，那这里的顺序就得改变一下，需要先对指针进行自减到需要弹出数据的位置，然后再返回数据：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">data_t</span> <span class="title function_">Stack_Pop</span><span class="params">(stackLink <span class="built_in">stack</span>)</span>               <span class="comment">// 弹出数据</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">stack</span>-&gt;top == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">stack</span>-&gt;top--;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">stack</span>-&gt;data[<span class="built_in">stack</span>-&gt;top];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-2-4-判断栈是否为空"><a href="#1-2-4-判断栈是否为空" class="headerlink" title="1.2.4 判断栈是否为空"></a>1.2.4 判断栈是否为空</h4><p>判断栈是否为空的话，只需要判断top指针的值是否为-1，如果为-1的话就说明栈为空。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Status <span class="title function_">Stack_Emple</span><span class="params">(stackLink <span class="built_in">stack</span>)</span>             <span class="comment">// 判断栈是否为空</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">stack</span> == <span class="literal">NULL</span> || <span class="built_in">stack</span>-&gt;data == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> (<span class="built_in">stack</span>-&gt;top == <span class="number">-1</span> ? <span class="number">1</span> : <span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-2-5-释放栈"><a href="#1-2-5-释放栈" class="headerlink" title="1.2.5 释放栈"></a>1.2.5 释放栈</h4><p>释放栈的话，需要释放栈中的数组和栈的头节点。</p>
+<p>需要释放两次，先释放数组，再释放头节点。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Status <span class="title function_">Stack_Free</span><span class="params">(stackLink* <span class="built_in">stack</span>)</span>              <span class="comment">// 释放栈</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> ((*<span class="built_in">stack</span>)-&gt;data != <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">free</span>((*<span class="built_in">stack</span>)-&gt;data);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">free</span>((*<span class="built_in">stack</span>));</span><br><span class="line">    (*<span class="built_in">stack</span>) = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-2-6-获取栈顶的值"><a href="#1-2-6-获取栈顶的值" class="headerlink" title="1.2.6 获取栈顶的值"></a>1.2.6 获取栈顶的值</h4><p>获取栈顶的值的话，只需要返回top指针指向的位置的值即可。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">data_t</span> <span class="title function_">Stack_Get_Top</span><span class="params">(stackList <span class="built_in">stack</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">stack</span>.data[<span class="built_in">stack</span>.top];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-2-7-判断栈是否满"><a href="#1-2-7-判断栈是否满" class="headerlink" title="1.2.7 判断栈是否满"></a>1.2.7 判断栈是否满</h4><p>判断栈是否满的话，只需要判断top指针的值是否等于栈的长度，如果等于的话就说明栈满了。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Status <span class="title function_">Stack_Pull</span><span class="params">(stackLink <span class="built_in">stack</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">stack</span>-&gt;top == <span class="built_in">stack</span>-&gt;len - <span class="number">1</span> ? IS_FULL : NOT_FULL;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样就将顺序栈实现了，下面就是使用链式栈，但链式栈不是很实用，因为链式栈的入栈和出栈都需要遍历一遍栈才可以，当然可以通过双向链表来实现，操作起来比较麻烦。</p>
+<h2 id="2-链式栈"><a href="#2-链式栈" class="headerlink" title="2.链式栈"></a>2.链式栈</h2><p>这里使用的是双向链表，上面我们了解到栈的实现，其实就是先进后出，前面的顺序栈很简单，通过下标就可以操作，但是对于链式的结构来说，你没办法通过下标来查找出栈的下一个元素，所以这里使用的是双向链表，当前面那个元素出栈后可以通过出栈的那个元素找到它的上一个结点。</p>
+<p>可以看到下图就是个双向链表的示意图：</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8.png"></p>
+<p>head是作为头节点使用的，head的next指向的是栈顶元素，head的prev指向的是栈底元素。</p>
+<h3 id="2-1-数据结构"><a href="#2-1-数据结构" class="headerlink" title="2.1 数据结构"></a>2.1 数据结构</h3><p>这里使用的是双向链表来实现，通过上图的解释可以知道，这个结点有两个指针和一个数据域。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">node</span> &#123;</span></span><br><span class="line">    <span class="type">data_t</span> data;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">node</span>* <span class="title">next</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">node</span>* <span class="title">prev</span>;</span> </span><br><span class="line">&#125;node, *stackLink;</span><br></pre></td></tr></table></figure>
+
+<p>data是数据域，next是指向下一个结点的指针，prev是指向上一个结点的指针。</p>
+<p>使用这个数据结构创建栈的话需要进行一次开辟空间，开辟空间的大小就是栈的大小。</p>
+<h3 id="2-2-函数实现"><a href="#2-2-函数实现" class="headerlink" title="2.2 函数实现"></a>2.2 函数实现</h3><p>需要使用的函数如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">stackLink <span class="title function_">Stack_Init</span><span class="params">()</span>;          <span class="comment">// 初始化栈</span></span><br><span class="line">Status <span class="title function_">Stack_Push</span><span class="params">(stackLink <span class="built_in">stack</span>, <span class="type">data_t</span> value)</span>;   <span class="comment">// 压入数据</span></span><br><span class="line"><span class="type">data_t</span> <span class="title function_">Stack_Pop</span><span class="params">(stackLink <span class="built_in">stack</span>)</span>;               <span class="comment">// 弹出数据</span></span><br><span class="line">Status <span class="title function_">Stack_Emple</span><span class="params">(stackLink <span class="built_in">stack</span>)</span>;             <span class="comment">// 判断栈是否为空</span></span><br><span class="line">Status <span class="title function_">Stack_Free</span><span class="params">(stackLink* <span class="built_in">stack</span>)</span>;              <span class="comment">// 释放栈</span></span><br><span class="line"><span class="type">data_t</span> <span class="title function_">Stack_Get_Top</span><span class="params">(stackList <span class="built_in">stack</span>)</span>;             <span class="comment">// 获取栈顶的值</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2-1-初始化栈"><a href="#2-2-1-初始化栈" class="headerlink" title="2.2.1 初始化栈"></a>2.2.1 初始化栈</h4><p>初始化栈的话，需要创建两个结点，第一个结点是栈头，第二个结点相当于是待入栈的结点。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">stackLink <span class="title function_">Stack_Init</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    stackLink <span class="built_in">stack</span> = <span class="literal">NULL</span>;</span><br><span class="line">    stackLink next = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="built_in">stack</span> = (stackLink)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(node));</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">stack</span> == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">stack</span>-&gt;data = <span class="number">-1</span>;</span><br><span class="line">    next = (stackLink)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(node));</span><br><span class="line">    <span class="keyword">if</span> (next == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    next-&gt;data = <span class="number">-1</span>;</span><br><span class="line">    next-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">    next-&gt;prev = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="built_in">stack</span>-&gt;next = next;</span><br><span class="line">    <span class="built_in">stack</span>-&gt;prev = next;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">stack</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2-2-压入数据"><a href="#2-2-2-压入数据" class="headerlink" title="2.2.2 压入数据"></a>2.2.2 压入数据</h4><p>压入数据的话，因为前面是创建了一个额外的结点，那这里的话是先将数据放到这个额外的结点上，然后再开辟一块空间。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Status <span class="title function_">Stack_Push</span><span class="params">(stackLink <span class="built_in">stack</span>, <span class="type">data_t</span> value)</span></span><br><span class="line">&#123;</span><br><span class="line">    stackLink next = <span class="literal">NULL</span>;</span><br><span class="line">    next = (stackLink)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(node));</span><br><span class="line">    <span class="keyword">if</span> (next == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">stack</span>-&gt;next-&gt;data = value;</span><br><span class="line">    next-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">    next-&gt;prev = <span class="built_in">stack</span>-&gt;next;</span><br><span class="line">    next-&gt;data = <span class="number">-1</span>;</span><br><span class="line">    <span class="built_in">stack</span>-&gt;next = next;</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2-3-弹出数据"><a href="#2-2-3-弹出数据" class="headerlink" title="2.2.3 弹出数据"></a>2.2.3 弹出数据</h4><p>弹出数据实现需要先释放头结点的next指向的结点，然后往前移动一个结点，再读取出这个结点的data。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">data_t</span> <span class="title function_">Stack_Pop</span><span class="params">(stackLink <span class="built_in">stack</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    stackLink temp = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="type">data_t</span> data = <span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">stack</span>-&gt;next == <span class="built_in">stack</span>-&gt;prev)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 空栈</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    temp = <span class="built_in">stack</span>-&gt;next;</span><br><span class="line">    <span class="built_in">stack</span>-&gt;next = temp-&gt;prev;</span><br><span class="line">    <span class="built_in">stack</span>-&gt;next-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="built_in">free</span>(temp);</span><br><span class="line">    data = <span class="built_in">stack</span>-&gt;next-&gt;data;</span><br><span class="line">    <span class="keyword">return</span> data;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2-4-判断栈是否为空"><a href="#2-2-4-判断栈是否为空" class="headerlink" title="2.2.4 判断栈是否为空"></a>2.2.4 判断栈是否为空</h4><p>判断栈是否为空的话，只需要判断头结点的next和prev是否相等，如果相等的话就说明栈为空。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Status <span class="title function_">Stack_Emple</span><span class="params">(stackLink <span class="built_in">stack</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">stack</span>-&gt;next == <span class="built_in">stack</span>-&gt;prev? IS_NULL : NOT_NULL;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2-5-释放栈"><a href="#2-2-5-释放栈" class="headerlink" title="2.2.5 释放栈"></a>2.2.5 释放栈</h4><p>释放栈的话，需要释放头结点和头结点的next指向的结点。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Status <span class="title function_">Stack_Free</span><span class="params">(stackLink* <span class="built_in">stack</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    stackLink temp = <span class="literal">NULL</span>;</span><br><span class="line">    temp = (*<span class="built_in">stack</span>)-&gt;next;</span><br><span class="line">    <span class="built_in">free</span>((*<span class="built_in">stack</span>)); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2-6-获取栈顶的值"><a href="#2-2-6-获取栈顶的值" class="headerlink" title="2.2.6 获取栈顶的值"></a>2.2.6 获取栈顶的值</h4><p>获取栈顶的值的话，只需要返回头结点的next指向的结点的数据即可。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">data_t</span> <span class="title function_">Stack_Get_Top</span><span class="params">(stackLink <span class="built_in">stack</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">stack</span>-&gt;next-&gt;data;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="三、总结"><a href="#三、总结" class="headerlink" title="三、总结"></a>三、总结</h1><p>栈的实现比较简单，但是栈的应用比较广泛，比如在函数调用的时候，函数的返回地址、参数、局部变量等都需要压入栈中，在函数返回的时候需要从栈中弹出。</p>
+<p>栈的应用还有很多，比如在编译器中，编译器会将中缀表达式转换为后缀表达式，然后再进行计算。</p>
+<p>对于链式栈的使用比较少，一般都是使用顺序栈，所以链式栈作为一个提高内容就可以了。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>puill
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://www.puill.xin/2025/03/09/208f3232527f/" title="栈">http://www.puill.xin/2025/03/09/208f3232527f/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag"># 数据结构</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/03/07/19e651a75115/" rel="prev" title="线性表">
+                  <i class="fa fa-angle-left"></i> 线性表
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">puill</span>
+  </div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+--><div>
+<!--添加网站运行时间-->
+<span>小破站已经在风雨中度过了</span>
+<span id="timeDate">载入天数...</span>
+<span id="times">载入时分秒...</span>
+<script>
+    function createtime() {
+        const startTime = '01/10/2025 00:00:00',
+            start = new Date(startTime)
+        let mill = new Date() - start,
+            seconds = Math.floor(mill / 1000),
+            mins = Math.floor(seconds / 60),
+            hours = Math.floor(mins / 60),
+            days = Math.floor(hours / 24)
+        const time = {
+            seconds: seconds - mins * 60,
+            mins: mins - hours * 60,
+            hours: hours - days * 24,
+        }
+        for (const k in time) {
+            time[k] = `${time[k]}`.padStart(2, '0')
+        }
+        document.getElementById("timeDate").innerHTML = ` ${days} 天`
+        document.getElementById("times").innerHTML = ` ${time.hours} 小时 ${time.mins} 分 ${time.seconds} 秒`
+    }
+    setInterval(createtime, 500)
+</script>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

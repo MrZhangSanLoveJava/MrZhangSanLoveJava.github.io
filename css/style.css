@@ -1,0 +1,23 @@
+
+  /* 主容器样式 */
+  .main-container {
+    width: 80%;
+    margin: 50px auto;
+    text-align: center;
+  }
+  
+  /* 图片容器样式 */
+  .image-container {
+    margin-bottom: 30px;
+  }
+  
+  .image-container img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* 交流群信息样式 */
+  .group-info p {
+    font-size: 16px;
+    font-weight: bold;
+  }

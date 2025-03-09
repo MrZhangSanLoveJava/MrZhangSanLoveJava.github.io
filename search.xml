@@ -1707,51 +1707,6 @@
       </tags>
   </entry>
   <entry>
-    <title>13 BKP和RTC</title>
-    <url>/2025/01/17/8f874554046b/</url>
-    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>这一节主要是讲解RTC时钟和BKP内部寄存器的，代表着单片机裸机开发就快结束了，后面可能会出RTOS的教程。</p>
-<h1 id="一、BKP备份寄存器"><a href="#一、BKP备份寄存器" class="headerlink" title="一、BKP备份寄存器"></a>一、BKP备份寄存器</h1><h2 id="1-BKP介绍"><a href="#1-BKP介绍" class="headerlink" title="1.BKP介绍"></a>1.BKP介绍</h2><p>该寄存器是在stm32内部的一个RAM寄存器，需要在外部为单片机的<code>VBT</code>引脚接一个电池，保证内部的BKP寄存器中的数据不丢失。</p>
-<p>当系统在待机模式下被唤醒，或系统复位或电源复位时，BKP也不会被复位。</p>
-<p><code>TAMPER</code>引脚产生的侵入事件将所有备份寄存器内容清除，保障重要的内容在被入侵时清空。</p>
-<p>在小容量或者中等容量的单片机中该寄存器中用户可以存放20字节的数据，在大容量和互联型设备中可以存放84字节的数据。</p>
-<h2 id="2-BKP的使用"><a href="#2-BKP的使用" class="headerlink" title="2.BKP的使用"></a>2.BKP的使用</h2><p>BKP是挂载到APB1总线上的设备，所以需要使用<code>RCC_APB1PeriphClockCmd()</code>来对BKP进行时钟的打开。</p>
-<p>BKP需要PWR电源管理设备的配合使用，所以还需要打开一下PWR的时钟，PWR的时钟也是挂载到APB1总线上的，所以这里就知道了，先打开BKP的时钟，然后再打开PWR的时钟。</p>
-<p>最后使能一下PWR，这样就可以对BPK进行使用了。</p>
-<p>这里直接上代码：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*开启时钟*/</span></span><br><span class="line">RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);		<span class="comment">//开启PWR的时钟</span></span><br><span class="line">RCC_APB1PeriphClockCmd(RCC_APB1Periph_BKP, ENABLE);		<span class="comment">//开启BKP的时钟</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*备份寄存器访问使能*/</span></span><br><span class="line">PWR_BackupAccessCmd(ENABLE);							<span class="comment">//使用PWR开启对备份寄存器的访问</span></span><br></pre></td></tr></table></figure>
-
-<p>这样就可以对BKP进行使用了，对于寄存器的使用其实就是读取和写入，我们可以使用<code>BKP_WriteBackupRegister()</code>函数对对应的BKP位置写入数据。</p>
-<p>然后使用<code>BKP_ReadBackupRegister()</code>函数读取对应BKP寄存器中的位置的数据。</p>
-<h1 id="二、RTC实时时钟"><a href="#二、RTC实时时钟" class="headerlink" title="二、RTC实时时钟"></a>二、RTC实时时钟</h1><p>这个是这一节的重点，前面的BKP是和RTC连在一起的，因为都是由VBT引脚进行独立供电的设备。</p>
-<h2 id="1-RTC时钟的介绍"><a href="#1-RTC时钟的介绍" class="headerlink" title="1.RTC时钟的介绍"></a>1.RTC时钟的介绍</h2><p>RTC是一个独立的定时器，可为系统提供时钟和日历的功能，断电不丢失，由VBT引脚提供电源来进行运行。</p>
-<p>32位的可编程计数器，可对应Unix时间戳的秒计数器。20位的可编程预分频器，可适配不同频率的输入时钟</p>
-<p>可选择三种RTC时钟源：</p>
-<ul>
-<li>HSE时钟除以128（通常为8MHz&#x2F;128）</li>
-<li>LSE振荡器时钟（通常为32.768KHz）</li>
-<li>LSI振荡器时钟（40KHz）</li>
-</ul>
-<h2 id="2-RTC内部结构"><a href="#2-RTC内部结构" class="headerlink" title="2.RTC内部结构"></a>2.RTC内部结构</h2><p><img src="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240822201116654-1130494609.png" alt="img"></p>
-<p>这个是RTC的内部框图，可以看到RTC是挂载到APB1总线上的，由RTCCLK输入频率后开始计时，对Unix时钟戳继续计数值。</p>
-<p>我们可以通过RTC来让STM32从待机模式中退出。</p>
-<p>外部时钟通过RTCCLK进行选择后输入到RTC预分频器中进行分频。</p>
-<h2 id="3-RTC代码编写的注意事项"><a href="#3-RTC代码编写的注意事项" class="headerlink" title="3.RTC代码编写的注意事项"></a>3.RTC代码编写的注意事项</h2><p>对RTC时钟的开启也是需要通过打开PWR和BKP的时钟的，打开后还需要使能PWR，使得BPK和RTC都能使用。</p>
-<p>在写入RTC的寄存器前需要使RTC进入配置模式后才能写入RTC的RTC_PRL、RTC_CNT、RTC_ALR寄存器，当写完后还需要退出RTC的配置模式。</p>
-<p>在写完寄存器后还需要查询RTC_CR寄存器中的RTOFF状态位对RTC任何寄存器的写操作，都必须在前一次写操作结束后进行。可以通过查询RTC_CR寄存器中的RTOFF状态位，判断RTC寄存器是否处于更新中。仅当RTOFF状态位是1时，才可以写入RTC寄存器。</p>
-<p>若在读取RTC寄存器时，RTC的APB1接口曾经处于禁止状态，则软件首先必须等待RTC_CRL寄存器中的RSF位（寄存器同步标志）被硬件置1。</p>
-<h2 id="4-代码的实现"><a href="#4-代码的实现" class="headerlink" title="4.代码的实现"></a>4.代码的实现</h2><p>这里直接就上代码吧，本质上来说RTC的操作还是比较的简单的，这里就不细说了，注意等待同步和等待上一次操作完成即可：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);		<span class="comment">//开启PWR的时钟</span></span><br><span class="line">RCC_APB1PeriphClockCmd(RCC_APB1Periph_BKP, ENABLE);		<span class="comment">//开启BKP的时钟RCC_LSEConfig(RCC_LSE_ON);							//开启LSE时钟</span></span><br><span class="line"><span class="keyword">while</span> (RCC_GetFlagStatus(RCC_FLAG_LSERDY) != SET);	<span class="comment">//等待LSE准备就绪</span></span><br><span class="line"></span><br><span class="line">RCC_RTCCLKConfig(RCC_RTCCLKSource_LSE);				<span class="comment">//选择RTCCLK来源为LSE</span></span><br><span class="line">RCC_RTCCLKCmd(ENABLE);								<span class="comment">//RTCCLK使能</span></span><br><span class="line"></span><br><span class="line">RTC_WaitForSynchro();								<span class="comment">//等待同步</span></span><br><span class="line">RTC_WaitForLastTask();								<span class="comment">//等待上一次操作完成</span></span><br><span class="line"></span><br><span class="line">RTC_SetPrescaler(<span class="number">32768</span> - <span class="number">1</span>);						<span class="comment">//设置RTC预分频器，预分频后的计数频率为1Hz</span></span><br><span class="line">RTC_WaitForLastTask();								<span class="comment">//等待上一次操作完成RTC_WaitForSynchro();								//等待同步</span></span><br><span class="line">RTC_WaitForLastTask();								<span class="comment">//等待上一次操作完成</span></span><br></pre></td></tr></table></figure>
-
-
-]]></content>
-      <categories>
-        <category>stm32</category>
-      </categories>
-      <tags>
-        <tag>单片机</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>12 spi通讯协议</title>
     <url>/2025/01/17/fec2c343dcd4/</url>
     <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>前面介绍了IIC协议的通讯，这一节介绍一下比较简单的SPI通讯协议，spi使用的地方也是很多的，而且也很简单，所以这一章就来介绍一下。</p>
@@ -1842,6 +1797,51 @@
 
 <p>如果接收缓冲区中有数据，那<code>TXE</code>中的值为RESET也就是0，当为空了才置为1，同理接收寄存器也是一样得到，如果接收寄存器中有数据就为1，没有数据就为0。</p>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>SPI协议还是比IIC协议简单，但是就是SPI需要的线比IIC的多，对于SPI来说也是需要多去练习才可以学会使用，这里只是讲一下理论，如果需要使用SPI和其它设备进行通讯的话等后面我搞一个专题专门来讲一些驱动的开发。</p>
+]]></content>
+      <categories>
+        <category>stm32</category>
+      </categories>
+      <tags>
+        <tag>单片机</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>13 BKP和RTC</title>
+    <url>/2025/01/17/8f874554046b/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>这一节主要是讲解RTC时钟和BKP内部寄存器的，代表着单片机裸机开发就快结束了，后面可能会出RTOS的教程。</p>
+<h1 id="一、BKP备份寄存器"><a href="#一、BKP备份寄存器" class="headerlink" title="一、BKP备份寄存器"></a>一、BKP备份寄存器</h1><h2 id="1-BKP介绍"><a href="#1-BKP介绍" class="headerlink" title="1.BKP介绍"></a>1.BKP介绍</h2><p>该寄存器是在stm32内部的一个RAM寄存器，需要在外部为单片机的<code>VBT</code>引脚接一个电池，保证内部的BKP寄存器中的数据不丢失。</p>
+<p>当系统在待机模式下被唤醒，或系统复位或电源复位时，BKP也不会被复位。</p>
+<p><code>TAMPER</code>引脚产生的侵入事件将所有备份寄存器内容清除，保障重要的内容在被入侵时清空。</p>
+<p>在小容量或者中等容量的单片机中该寄存器中用户可以存放20字节的数据，在大容量和互联型设备中可以存放84字节的数据。</p>
+<h2 id="2-BKP的使用"><a href="#2-BKP的使用" class="headerlink" title="2.BKP的使用"></a>2.BKP的使用</h2><p>BKP是挂载到APB1总线上的设备，所以需要使用<code>RCC_APB1PeriphClockCmd()</code>来对BKP进行时钟的打开。</p>
+<p>BKP需要PWR电源管理设备的配合使用，所以还需要打开一下PWR的时钟，PWR的时钟也是挂载到APB1总线上的，所以这里就知道了，先打开BKP的时钟，然后再打开PWR的时钟。</p>
+<p>最后使能一下PWR，这样就可以对BPK进行使用了。</p>
+<p>这里直接上代码：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*开启时钟*/</span></span><br><span class="line">RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);		<span class="comment">//开启PWR的时钟</span></span><br><span class="line">RCC_APB1PeriphClockCmd(RCC_APB1Periph_BKP, ENABLE);		<span class="comment">//开启BKP的时钟</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*备份寄存器访问使能*/</span></span><br><span class="line">PWR_BackupAccessCmd(ENABLE);							<span class="comment">//使用PWR开启对备份寄存器的访问</span></span><br></pre></td></tr></table></figure>
+
+<p>这样就可以对BKP进行使用了，对于寄存器的使用其实就是读取和写入，我们可以使用<code>BKP_WriteBackupRegister()</code>函数对对应的BKP位置写入数据。</p>
+<p>然后使用<code>BKP_ReadBackupRegister()</code>函数读取对应BKP寄存器中的位置的数据。</p>
+<h1 id="二、RTC实时时钟"><a href="#二、RTC实时时钟" class="headerlink" title="二、RTC实时时钟"></a>二、RTC实时时钟</h1><p>这个是这一节的重点，前面的BKP是和RTC连在一起的，因为都是由VBT引脚进行独立供电的设备。</p>
+<h2 id="1-RTC时钟的介绍"><a href="#1-RTC时钟的介绍" class="headerlink" title="1.RTC时钟的介绍"></a>1.RTC时钟的介绍</h2><p>RTC是一个独立的定时器，可为系统提供时钟和日历的功能，断电不丢失，由VBT引脚提供电源来进行运行。</p>
+<p>32位的可编程计数器，可对应Unix时间戳的秒计数器。20位的可编程预分频器，可适配不同频率的输入时钟</p>
+<p>可选择三种RTC时钟源：</p>
+<ul>
+<li>HSE时钟除以128（通常为8MHz&#x2F;128）</li>
+<li>LSE振荡器时钟（通常为32.768KHz）</li>
+<li>LSI振荡器时钟（40KHz）</li>
+</ul>
+<h2 id="2-RTC内部结构"><a href="#2-RTC内部结构" class="headerlink" title="2.RTC内部结构"></a>2.RTC内部结构</h2><p><img src="https://img2023.cnblogs.com/blog/3083010/202408/3083010-20240822201116654-1130494609.png" alt="img"></p>
+<p>这个是RTC的内部框图，可以看到RTC是挂载到APB1总线上的，由RTCCLK输入频率后开始计时，对Unix时钟戳继续计数值。</p>
+<p>我们可以通过RTC来让STM32从待机模式中退出。</p>
+<p>外部时钟通过RTCCLK进行选择后输入到RTC预分频器中进行分频。</p>
+<h2 id="3-RTC代码编写的注意事项"><a href="#3-RTC代码编写的注意事项" class="headerlink" title="3.RTC代码编写的注意事项"></a>3.RTC代码编写的注意事项</h2><p>对RTC时钟的开启也是需要通过打开PWR和BKP的时钟的，打开后还需要使能PWR，使得BPK和RTC都能使用。</p>
+<p>在写入RTC的寄存器前需要使RTC进入配置模式后才能写入RTC的RTC_PRL、RTC_CNT、RTC_ALR寄存器，当写完后还需要退出RTC的配置模式。</p>
+<p>在写完寄存器后还需要查询RTC_CR寄存器中的RTOFF状态位对RTC任何寄存器的写操作，都必须在前一次写操作结束后进行。可以通过查询RTC_CR寄存器中的RTOFF状态位，判断RTC寄存器是否处于更新中。仅当RTOFF状态位是1时，才可以写入RTC寄存器。</p>
+<p>若在读取RTC寄存器时，RTC的APB1接口曾经处于禁止状态，则软件首先必须等待RTC_CRL寄存器中的RSF位（寄存器同步标志）被硬件置1。</p>
+<h2 id="4-代码的实现"><a href="#4-代码的实现" class="headerlink" title="4.代码的实现"></a>4.代码的实现</h2><p>这里直接就上代码吧，本质上来说RTC的操作还是比较的简单的，这里就不细说了，注意等待同步和等待上一次操作完成即可：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);		<span class="comment">//开启PWR的时钟</span></span><br><span class="line">RCC_APB1PeriphClockCmd(RCC_APB1Periph_BKP, ENABLE);		<span class="comment">//开启BKP的时钟RCC_LSEConfig(RCC_LSE_ON);							//开启LSE时钟</span></span><br><span class="line"><span class="keyword">while</span> (RCC_GetFlagStatus(RCC_FLAG_LSERDY) != SET);	<span class="comment">//等待LSE准备就绪</span></span><br><span class="line"></span><br><span class="line">RCC_RTCCLKConfig(RCC_RTCCLKSource_LSE);				<span class="comment">//选择RTCCLK来源为LSE</span></span><br><span class="line">RCC_RTCCLKCmd(ENABLE);								<span class="comment">//RTCCLK使能</span></span><br><span class="line"></span><br><span class="line">RTC_WaitForSynchro();								<span class="comment">//等待同步</span></span><br><span class="line">RTC_WaitForLastTask();								<span class="comment">//等待上一次操作完成</span></span><br><span class="line"></span><br><span class="line">RTC_SetPrescaler(<span class="number">32768</span> - <span class="number">1</span>);						<span class="comment">//设置RTC预分频器，预分频后的计数频率为1Hz</span></span><br><span class="line">RTC_WaitForLastTask();								<span class="comment">//等待上一次操作完成RTC_WaitForSynchro();								//等待同步</span></span><br><span class="line">RTC_WaitForLastTask();								<span class="comment">//等待上一次操作完成</span></span><br></pre></td></tr></table></figure>
+
+
 ]]></content>
       <categories>
         <category>stm32</category>
@@ -2533,78 +2533,6 @@
       </categories>
       <tags>
         <tag>编程基础</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>FreeRTOS系统移植</title>
-    <url>/2025/01/20/7aa762eacec7/</url>
-    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>学习RTOS之前最重要的就是要学会将系统移植到单片机中，这里可以直接使用cubemx生成移植好的工程，也可以下载库来进行自己移植，这里我选择下载库来自己移植，因为这样可以配合Linux开发stm32单片机程序。</p>
-<h1 id="一、下载系统代码"><a href="#一、下载系统代码" class="headerlink" title="一、下载系统代码"></a>一、下载系统代码</h1><p>首先打开FreeRTOS的<a href="https://www.freertos.org/zh-cn-cmn-s">官网</a>这个是中文站点，所以速度很快，然后点击下载：</p>
-<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%AE%98%E7%BD%91%E4%B8%8B%E8%BD%BD.png"></p>
-<p>在下载里面不要最新的系统，这里我需要V9.0.0就可以了，因为高版本的增加了很多物联网相关的内容，对于我们现在的系统开发不太需要，所以这里点击更多下载</p>
-<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E4%B8%8B%E8%BD%BD%E5%90%8E%E7%BB%AD.png"></p>
-<p>然后选择下面不带LTS的，LTS没有示例项目，有一些文件我们需要在示例工程中拿，然后需要转到github中去下载</p>
-<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%8E%BBgithub.png"></p>
-<p>来到GitHub中是最新版本，我们要找老版本需要点击<code>Code</code>转去代码那里，然后找到V9.0.0的代码</p>
-<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E6%89%BE%E5%88%B0V9.0.0.png"></p>
-<p>来到了后在标签这找到V9.0.0</p>
-<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/releases%E5%8C%85.png"></p>
-<p>然后点击下载zip格式的文件</p>
-<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E4%B8%8B%E8%BD%BD%E8%BF%99%E4%B8%AA%E5%8C%85.png"></p>
-<p>下载完成后就可以解压，解压完成就是下面这几个软件</p>
-<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E8%A7%A3%E5%8E%8B.png"></p>
-<p>可以看到有两个文件夹，一个是<code>FreeRTOS</code>，另一个是<code>FreeRTOS-Plus</code>，这两个是有区别的，第一个是内核，是我们需要的，第二个Plus的是在内核的基础上增加了一系列扩展组件和工具，提供了更丰富的功能和更高层次的抽象，例如，包含文件系统、TCP&#x2F;IP 协议栈、USB 主机 &#x2F; 设备栈、安全功能（如加密库）、图形用户界面（GUI）库等。如果做一些高级的东西可以用这个，但我们现在只是学习，选择第一个基础的就可以了。</p>
-<p>打开第一个文件夹后会有三个文件夹，我们先看<code>Source</code>文件夹，在<code>Source</code>文件夹中存放的是内核源代码和对应的头文件</p>
-<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E6%BA%90%E6%96%87%E4%BB%B6.png"></p>
-<p>在<code>Source</code>文件夹中有一个<code>portable</code>这个是内核文件，其中内核文件是分平台的，这个平台是编译器的平台，比如我们用Keil，那就在这个文件夹中找到Keil进行移植就可以了，但是这里不能直接把Keil文件夹直接拿过去用，原因在移植的时候会说</p>
-<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%86%85%E6%A0%B8%E6%96%87%E4%BB%B6.png"></p>
-<p>然后在<code>include</code>文件夹中存放的是对应的头文件</p>
-<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%A4%B4%E6%96%87%E4%BB%B6.png"></p>
-<p>回到上一层，有一个<code>Demo</code>文件夹，这个文件夹就是每个芯片所对应的示例工程，有一些文件我们需要在这个示例文件中</p>
-<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%AE%9E%E4%BE%8B%E5%B7%A5%E7%A8%8B.png"></p>
-<p>然后我们就可以开始工程的移植了。</p>
-<h1 id="二、移植工程"><a href="#二、移植工程" class="headerlink" title="二、移植工程"></a>二、移植工程</h1><p>这里需要拿之前做好的标准库工程来进行改，只需要在做好的工程来新增文件就可以了，打开工程后点击这个三个正方形设置文件</p>
-<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%B7%A5%E7%A8%8B%E7%AE%A1%E7%90%86.png"></p>
-<p>在这里面新建一个<code>freeRTOS</code>文件夹，在里面添加一下的<code>.c</code>文件，我这为了工程的干净，不增加<code>.h</code>文件了</p>
-<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E6%8A%8A%E6%96%87%E4%BB%B6%E5%8A%A0%E8%BD%BD%E8%BF%9B%E5%8E%BB.png"></p>
-<p>然后点击<code>Options</code>中点击<code>C/C++</code>点击<code>Include Paths</code>中的三个点，增加一下编译文件目录</p>
-<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E8%AE%BE%E7%BD%AE%E7%BC%96%E8%AF%91%E8%B7%AF%E5%BE%84.png"></p>
-<p>需要添加的文件目录如下：</p>
-<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%8A%A0%E8%BD%BD%E5%90%8E.png"></p>
-<p>然后在<code>main.c</code>中增加两个头文件，并且添加一个测试的内容，这里使用的是最小系统上的测试灯，所以需要进行一下初始化</p>
-<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%BC%95%E5%85%A5%E5%A4%B4%E6%96%87%E4%BB%B6.png"></p>
-<p>然后编写一下控制函数</p>
-<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/LED%E6%8E%A7%E5%88%B6%E5%87%BD%E6%95%B0.png"></p>
-<p>编写一下任务函数，记得这个任务函数的格式是<code>void TaskName(void*)</code></p>
-<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/LED%E4%BB%BB%E5%8A%A1%E5%87%BD%E6%95%B0.png"></p>
-<p>然后在<code>main.c</code>中创建任务并且进行任务的调度：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    NVIC_SetPriorityGrouping(NVIC_PriorityGroup_4); <span class="comment">// 设置中断优先级分组为第四组 这个是为了后面的定时器需要增加的</span></span><br><span class="line">    Init_Led();</span><br><span class="line">    xTaskCreate(LED_Test, <span class="string">&quot;LED_Test&quot;</span>, <span class="number">128</span>, <span class="literal">NULL</span>, <span class="number">1</span>, <span class="literal">NULL</span>); <span class="comment">// 创建任务</span></span><br><span class="line">    vTaskStartScheduler();                          <span class="comment">// 调度任务</span></span><br><span class="line">    </span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E4%B8%BB%E5%87%BD%E6%95%B0%E4%B8%AD%E7%9A%84%E5%86%85%E5%AE%B9.png"></p>
-<p>作为上面的操作后还不能进行测试，如果这样测试的话会导致在<code>vTaskStartScheduler()</code>函数的位置卡死，因为还没有移植成功，需要先在<code>freeRTOSConfig.h</code>文件中的最后面添加这三个宏定义：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> xPortPendSVHandler PendSV_Handler</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> xPortSysTickHandler SysTick_Handler</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> vPortSVCHandler SVC_Handler</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%9C%A8freertosConfig%E4%B8%AD%E6%B7%BB%E5%8A%A0%E8%AF%AD%E5%8F%A5.png"></p>
-<p>然后在<code>stm32f10x_it.c</code>中需要注释一下这三个回调函数，因为这三个回调函数在系统中是进行了一下实现的，如果还没有，那会重复定义：</p>
-<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/it%E4%B8%AD%E6%B3%A8%E9%87%8A1.png"></p>
-<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/it%E4%B8%AD%E6%B3%A8%E9%87%8A2.png"></p>
-<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/it%E4%B8%AD%E6%B3%A8%E9%87%8A3.png"></p>
-<p>这样就可以编译并且运行测试了，可以看到LED灯在闪烁。</p>
-<h1 id="三、完整代码"><a href="#三、完整代码" class="headerlink" title="三、完整代码"></a>三、完整代码</h1><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;stm32f10x.h&quot;</span>                  <span class="comment">// Device header</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;freertos.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;task.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">Init_Led</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    GPIO_InitTypeDef GPIO_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    </span><br><span class="line">    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);</span><br><span class="line">    </span><br><span class="line">    GPIO_InitStruct.GPIO_Mode = GPIO_Mode_Out_PP;</span><br><span class="line">    GPIO_InitStruct.GPIO_Pin = GPIO_Pin_5;</span><br><span class="line">    GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">    GPIO_Init(GPIOA, &amp;GPIO_InitStruct);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">LED_Cmd</span><span class="params">(<span class="type">uint8_t</span> bit)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (bit == <span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        GPIO_ResetBits(GPIOA, GPIO_Pin_5);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (bit == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        GPIO_SetBits(GPIOA, GPIO_Pin_5);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">LED_Test</span><span class="params">(<span class="type">void</span>* param)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        LED_Cmd(<span class="number">1</span>);</span><br><span class="line">        vTaskDelay(<span class="number">500</span>);</span><br><span class="line">        LED_Cmd(<span class="number">0</span>);</span><br><span class="line">        vTaskDelay(<span class="number">500</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    NVIC_SetPriorityGrouping(NVIC_PriorityGroup_4); <span class="comment">// 设置中断优先级分组为第四组</span></span><br><span class="line">    Init_Led();</span><br><span class="line">    xTaskCreate(LED_Test, <span class="string">&quot;LED_Test&quot;</span>, <span class="number">128</span>, <span class="literal">NULL</span>, <span class="number">1</span>, <span class="literal">NULL</span>); <span class="comment">// 创建任务</span></span><br><span class="line">    vTaskStartScheduler();                          <span class="comment">// 调度任务</span></span><br><span class="line">    </span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="四、Linux下的MarkDown文件"><a href="#四、Linux下的MarkDown文件" class="headerlink" title="四、Linux下的MarkDown文件"></a>四、Linux下的MarkDown文件</h1><p>这里上面的工程一模一样，只不过就是需要在那个编译器工程那选择<code>GCC</code>的文件，因为使用的是<code>arm-gcc</code>进行编译，所以这里要选择的是<code>GCC</code>的文件夹</p>
-<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/GCC.png"></p>
-<p>然后其它的内容不改变，然后开始编辑makefile文件：</p>
-<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line">TARGET=test	<span class="comment"># 这里是项目名，改就可以</span></span><br><span class="line">CC=arm-none-eabi-gcc</span><br><span class="line">OBJCOPY=arm-none-eabi-objcopy</span><br><span class="line">RM=rm -f</span><br><span class="line">CORE=3</span><br><span class="line">CPUFLAGS=-mthumb -mcpu=cortex-m<span class="variable">$(CORE)</span></span><br><span class="line">INCFLAGS=-I <span class="variable">$(<span class="built_in">shell</span> pwd)</span>/lib/CMSIS -I <span class="variable">$(<span class="built_in">shell</span> pwd)</span>/lib/ -I <span class="variable">$(<span class="built_in">shell</span> pwd)</span>/freeRTOS/<span class="keyword">include</span> -I <span class="variable">$(<span class="built_in">shell</span> pwd)</span>/freeRTOS/portable/GCC -I <span class="variable">$(<span class="built_in">shell</span> pwd)</span>/freeRTOS/portable/GCC/MemMang FWlib/inc -I <span class="variable">$(<span class="built_in">shell</span> pwd)</span>/freeRTOS/portable/GCC/ARM_CM3 -I <span class="variable">$(<span class="built_in">shell</span> pwd)</span>/user</span><br><span class="line">LDFLAGS = -T stm32_flash.ld -Wl,-cref,-u,Reset_Handler -Wl,-Map=<span class="variable">$(TARGET)</span>.map -Wl,--gc-sections -Wl,--defsym=malloc_getpagesize_P=0x80 -Wl,--start-group -lc -lm -Wl,--end-group</span><br><span class="line">CFLAGS=<span class="variable">$(INCFLAGS)</span> -D STM32F10X_HD -D USE_STDPERIPH_DRIVER -Wall -g</span><br><span class="line">START_SRC=<span class="variable">$(<span class="built_in">shell</span> find ./ -name &#x27;startup_stm32f10x_hd.s&#x27;)</span></span><br><span class="line">START_OBJ=$(START_SRC:%.s=%.o)</span><br><span class="line">C_SRC=<span class="variable">$(<span class="built_in">shell</span> find ./ -name &#x27;*.c&#x27;)</span></span><br><span class="line">C_OBJ=$(C_SRC:%.c=%.o)</span><br><span class="line">INTERRFACE_CFG=/usr/local/share/openocd/scripts/interface/stlink-v2.cfg      <span class="comment"># 这里就是下载器的配置文件，可以在前面提到的文件夹中找到对应下载器的配置文件</span></span><br><span class="line">TARGET_CFG=/usr/local/share/openocd/scripts/target/stm32f1x.cfg </span><br><span class="line"><span class="variable">$(TARGET)</span>:<span class="variable">$(START_OBJ)</span> <span class="variable">$(C_SRC)</span></span><br><span class="line">	<span class="variable">$(CC)</span> <span class="variable">$^</span> <span class="variable">$(CPUFLAGS)</span> <span class="variable">$(LDFLAGS)</span> <span class="variable">$(CFLAGS)</span> -o <span class="variable">$(TARGET)</span>.elf</span><br><span class="line">	<span class="variable">$(OBJCOPY)</span> <span class="variable">$(TARGET)</span>.elf <span class="variable">$(TARGET)</span>.bin</span><br><span class="line">	<span class="variable">$(OBJCOPY)</span> <span class="variable">$(TARGET)</span>.elf -Oihex <span class="variable">$(TARGET)</span>.hex</span><br><span class="line"><span class="variable">$(START_OBJ)</span>:<span class="variable">$(START_SRC)</span></span><br><span class="line">	<span class="variable">$(CC)</span> -c <span class="variable">$^</span> <span class="variable">$(CPUFLAGS)</span> <span class="variable">$(CFLAGS)</span> -o <span class="variable">$@</span></span><br><span class="line"><span class="variable">$(C_OBJ)</span>:%.o:%.c</span><br><span class="line">	<span class="variable">$(CC)</span> -c <span class="variable">$^</span> <span class="variable">$(CPUFLAGS)</span> <span class="variable">$(CFLAGS)</span> -o <span class="variable">$@</span></span><br><span class="line"><span class="section">clear:</span></span><br><span class="line">	<span class="variable">$(RM)</span> <span class="variable">$(<span class="built_in">shell</span> find ./ -name &#x27;*.o&#x27;)</span> <span class="variable">$(TARGET)</span>.*</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这个是一键下载，如果不是stlink下载器可以改对应的变量</span></span><br><span class="line"><span class="section">download:</span></span><br><span class="line">	openocd -f <span class="variable">$(INTERRFACE_CFG)</span> -f <span class="variable">$(TARGET_CFG)</span> -c init -c halt -c <span class="string">&quot;flash write_image erase <span class="variable">$(PWD)</span>/<span class="variable">$(TARGET)</span>.bin&quot;</span> -c reset -c shutdown</span><br></pre></td></tr></table></figure>
-<p>其实最主要的是增加编译的头文件，然后剩下的一样。</p>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>这是一小步，但是系统学习和高级功能实现的一大步，好好搞一下就ok了。</p>
-]]></content>
-      <categories>
-        <category>freeRTOS</category>
-      </categories>
-      <tags>
-        <tag>单片机</tag>
-        <tag>系统</tag>
       </tags>
   </entry>
   <entry>
@@ -3730,6 +3658,78 @@
       </categories>
       <tags>
         <tag>进阶</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>FreeRTOS系统移植</title>
+    <url>/2025/01/20/7aa762eacec7/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>学习RTOS之前最重要的就是要学会将系统移植到单片机中，这里可以直接使用cubemx生成移植好的工程，也可以下载库来进行自己移植，这里我选择下载库来自己移植，因为这样可以配合Linux开发stm32单片机程序。</p>
+<h1 id="一、下载系统代码"><a href="#一、下载系统代码" class="headerlink" title="一、下载系统代码"></a>一、下载系统代码</h1><p>首先打开FreeRTOS的<a href="https://www.freertos.org/zh-cn-cmn-s">官网</a>这个是中文站点，所以速度很快，然后点击下载：</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%AE%98%E7%BD%91%E4%B8%8B%E8%BD%BD.png"></p>
+<p>在下载里面不要最新的系统，这里我需要V9.0.0就可以了，因为高版本的增加了很多物联网相关的内容，对于我们现在的系统开发不太需要，所以这里点击更多下载</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E4%B8%8B%E8%BD%BD%E5%90%8E%E7%BB%AD.png"></p>
+<p>然后选择下面不带LTS的，LTS没有示例项目，有一些文件我们需要在示例工程中拿，然后需要转到github中去下载</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%8E%BBgithub.png"></p>
+<p>来到GitHub中是最新版本，我们要找老版本需要点击<code>Code</code>转去代码那里，然后找到V9.0.0的代码</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E6%89%BE%E5%88%B0V9.0.0.png"></p>
+<p>来到了后在标签这找到V9.0.0</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/releases%E5%8C%85.png"></p>
+<p>然后点击下载zip格式的文件</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E4%B8%8B%E8%BD%BD%E8%BF%99%E4%B8%AA%E5%8C%85.png"></p>
+<p>下载完成后就可以解压，解压完成就是下面这几个软件</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E8%A7%A3%E5%8E%8B.png"></p>
+<p>可以看到有两个文件夹，一个是<code>FreeRTOS</code>，另一个是<code>FreeRTOS-Plus</code>，这两个是有区别的，第一个是内核，是我们需要的，第二个Plus的是在内核的基础上增加了一系列扩展组件和工具，提供了更丰富的功能和更高层次的抽象，例如，包含文件系统、TCP&#x2F;IP 协议栈、USB 主机 &#x2F; 设备栈、安全功能（如加密库）、图形用户界面（GUI）库等。如果做一些高级的东西可以用这个，但我们现在只是学习，选择第一个基础的就可以了。</p>
+<p>打开第一个文件夹后会有三个文件夹，我们先看<code>Source</code>文件夹，在<code>Source</code>文件夹中存放的是内核源代码和对应的头文件</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E6%BA%90%E6%96%87%E4%BB%B6.png"></p>
+<p>在<code>Source</code>文件夹中有一个<code>portable</code>这个是内核文件，其中内核文件是分平台的，这个平台是编译器的平台，比如我们用Keil，那就在这个文件夹中找到Keil进行移植就可以了，但是这里不能直接把Keil文件夹直接拿过去用，原因在移植的时候会说</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%86%85%E6%A0%B8%E6%96%87%E4%BB%B6.png"></p>
+<p>然后在<code>include</code>文件夹中存放的是对应的头文件</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%A4%B4%E6%96%87%E4%BB%B6.png"></p>
+<p>回到上一层，有一个<code>Demo</code>文件夹，这个文件夹就是每个芯片所对应的示例工程，有一些文件我们需要在这个示例文件中</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%AE%9E%E4%BE%8B%E5%B7%A5%E7%A8%8B.png"></p>
+<p>然后我们就可以开始工程的移植了。</p>
+<h1 id="二、移植工程"><a href="#二、移植工程" class="headerlink" title="二、移植工程"></a>二、移植工程</h1><p>这里需要拿之前做好的标准库工程来进行改，只需要在做好的工程来新增文件就可以了，打开工程后点击这个三个正方形设置文件</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%B7%A5%E7%A8%8B%E7%AE%A1%E7%90%86.png"></p>
+<p>在这里面新建一个<code>freeRTOS</code>文件夹，在里面添加一下的<code>.c</code>文件，我这为了工程的干净，不增加<code>.h</code>文件了</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E6%8A%8A%E6%96%87%E4%BB%B6%E5%8A%A0%E8%BD%BD%E8%BF%9B%E5%8E%BB.png"></p>
+<p>然后点击<code>Options</code>中点击<code>C/C++</code>点击<code>Include Paths</code>中的三个点，增加一下编译文件目录</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E8%AE%BE%E7%BD%AE%E7%BC%96%E8%AF%91%E8%B7%AF%E5%BE%84.png"></p>
+<p>需要添加的文件目录如下：</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%8A%A0%E8%BD%BD%E5%90%8E.png"></p>
+<p>然后在<code>main.c</code>中增加两个头文件，并且添加一个测试的内容，这里使用的是最小系统上的测试灯，所以需要进行一下初始化</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%BC%95%E5%85%A5%E5%A4%B4%E6%96%87%E4%BB%B6.png"></p>
+<p>然后编写一下控制函数</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/LED%E6%8E%A7%E5%88%B6%E5%87%BD%E6%95%B0.png"></p>
+<p>编写一下任务函数，记得这个任务函数的格式是<code>void TaskName(void*)</code></p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/LED%E4%BB%BB%E5%8A%A1%E5%87%BD%E6%95%B0.png"></p>
+<p>然后在<code>main.c</code>中创建任务并且进行任务的调度：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    NVIC_SetPriorityGrouping(NVIC_PriorityGroup_4); <span class="comment">// 设置中断优先级分组为第四组 这个是为了后面的定时器需要增加的</span></span><br><span class="line">    Init_Led();</span><br><span class="line">    xTaskCreate(LED_Test, <span class="string">&quot;LED_Test&quot;</span>, <span class="number">128</span>, <span class="literal">NULL</span>, <span class="number">1</span>, <span class="literal">NULL</span>); <span class="comment">// 创建任务</span></span><br><span class="line">    vTaskStartScheduler();                          <span class="comment">// 调度任务</span></span><br><span class="line">    </span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E4%B8%BB%E5%87%BD%E6%95%B0%E4%B8%AD%E7%9A%84%E5%86%85%E5%AE%B9.png"></p>
+<p>作为上面的操作后还不能进行测试，如果这样测试的话会导致在<code>vTaskStartScheduler()</code>函数的位置卡死，因为还没有移植成功，需要先在<code>freeRTOSConfig.h</code>文件中的最后面添加这三个宏定义：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> xPortPendSVHandler PendSV_Handler</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> xPortSysTickHandler SysTick_Handler</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> vPortSVCHandler SVC_Handler</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%9C%A8freertosConfig%E4%B8%AD%E6%B7%BB%E5%8A%A0%E8%AF%AD%E5%8F%A5.png"></p>
+<p>然后在<code>stm32f10x_it.c</code>中需要注释一下这三个回调函数，因为这三个回调函数在系统中是进行了一下实现的，如果还没有，那会重复定义：</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/it%E4%B8%AD%E6%B3%A8%E9%87%8A1.png"></p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/it%E4%B8%AD%E6%B3%A8%E9%87%8A2.png"></p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/it%E4%B8%AD%E6%B3%A8%E9%87%8A3.png"></p>
+<p>这样就可以编译并且运行测试了，可以看到LED灯在闪烁。</p>
+<h1 id="三、完整代码"><a href="#三、完整代码" class="headerlink" title="三、完整代码"></a>三、完整代码</h1><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;stm32f10x.h&quot;</span>                  <span class="comment">// Device header</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;freertos.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;task.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">Init_Led</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    GPIO_InitTypeDef GPIO_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    </span><br><span class="line">    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);</span><br><span class="line">    </span><br><span class="line">    GPIO_InitStruct.GPIO_Mode = GPIO_Mode_Out_PP;</span><br><span class="line">    GPIO_InitStruct.GPIO_Pin = GPIO_Pin_5;</span><br><span class="line">    GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">    GPIO_Init(GPIOA, &amp;GPIO_InitStruct);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">LED_Cmd</span><span class="params">(<span class="type">uint8_t</span> bit)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (bit == <span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        GPIO_ResetBits(GPIOA, GPIO_Pin_5);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (bit == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        GPIO_SetBits(GPIOA, GPIO_Pin_5);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">LED_Test</span><span class="params">(<span class="type">void</span>* param)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        LED_Cmd(<span class="number">1</span>);</span><br><span class="line">        vTaskDelay(<span class="number">500</span>);</span><br><span class="line">        LED_Cmd(<span class="number">0</span>);</span><br><span class="line">        vTaskDelay(<span class="number">500</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    NVIC_SetPriorityGrouping(NVIC_PriorityGroup_4); <span class="comment">// 设置中断优先级分组为第四组</span></span><br><span class="line">    Init_Led();</span><br><span class="line">    xTaskCreate(LED_Test, <span class="string">&quot;LED_Test&quot;</span>, <span class="number">128</span>, <span class="literal">NULL</span>, <span class="number">1</span>, <span class="literal">NULL</span>); <span class="comment">// 创建任务</span></span><br><span class="line">    vTaskStartScheduler();                          <span class="comment">// 调度任务</span></span><br><span class="line">    </span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="四、Linux下的MarkDown文件"><a href="#四、Linux下的MarkDown文件" class="headerlink" title="四、Linux下的MarkDown文件"></a>四、Linux下的MarkDown文件</h1><p>这里上面的工程一模一样，只不过就是需要在那个编译器工程那选择<code>GCC</code>的文件，因为使用的是<code>arm-gcc</code>进行编译，所以这里要选择的是<code>GCC</code>的文件夹</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/GCC.png"></p>
+<p>然后其它的内容不改变，然后开始编辑makefile文件：</p>
+<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line">TARGET=test	<span class="comment"># 这里是项目名，改就可以</span></span><br><span class="line">CC=arm-none-eabi-gcc</span><br><span class="line">OBJCOPY=arm-none-eabi-objcopy</span><br><span class="line">RM=rm -f</span><br><span class="line">CORE=3</span><br><span class="line">CPUFLAGS=-mthumb -mcpu=cortex-m<span class="variable">$(CORE)</span></span><br><span class="line">INCFLAGS=-I <span class="variable">$(<span class="built_in">shell</span> pwd)</span>/lib/CMSIS -I <span class="variable">$(<span class="built_in">shell</span> pwd)</span>/lib/ -I <span class="variable">$(<span class="built_in">shell</span> pwd)</span>/freeRTOS/<span class="keyword">include</span> -I <span class="variable">$(<span class="built_in">shell</span> pwd)</span>/freeRTOS/portable/GCC -I <span class="variable">$(<span class="built_in">shell</span> pwd)</span>/freeRTOS/portable/GCC/MemMang FWlib/inc -I <span class="variable">$(<span class="built_in">shell</span> pwd)</span>/freeRTOS/portable/GCC/ARM_CM3 -I <span class="variable">$(<span class="built_in">shell</span> pwd)</span>/user</span><br><span class="line">LDFLAGS = -T stm32_flash.ld -Wl,-cref,-u,Reset_Handler -Wl,-Map=<span class="variable">$(TARGET)</span>.map -Wl,--gc-sections -Wl,--defsym=malloc_getpagesize_P=0x80 -Wl,--start-group -lc -lm -Wl,--end-group</span><br><span class="line">CFLAGS=<span class="variable">$(INCFLAGS)</span> -D STM32F10X_HD -D USE_STDPERIPH_DRIVER -Wall -g</span><br><span class="line">START_SRC=<span class="variable">$(<span class="built_in">shell</span> find ./ -name &#x27;startup_stm32f10x_hd.s&#x27;)</span></span><br><span class="line">START_OBJ=$(START_SRC:%.s=%.o)</span><br><span class="line">C_SRC=<span class="variable">$(<span class="built_in">shell</span> find ./ -name &#x27;*.c&#x27;)</span></span><br><span class="line">C_OBJ=$(C_SRC:%.c=%.o)</span><br><span class="line">INTERRFACE_CFG=/usr/local/share/openocd/scripts/interface/stlink-v2.cfg      <span class="comment"># 这里就是下载器的配置文件，可以在前面提到的文件夹中找到对应下载器的配置文件</span></span><br><span class="line">TARGET_CFG=/usr/local/share/openocd/scripts/target/stm32f1x.cfg </span><br><span class="line"><span class="variable">$(TARGET)</span>:<span class="variable">$(START_OBJ)</span> <span class="variable">$(C_SRC)</span></span><br><span class="line">	<span class="variable">$(CC)</span> <span class="variable">$^</span> <span class="variable">$(CPUFLAGS)</span> <span class="variable">$(LDFLAGS)</span> <span class="variable">$(CFLAGS)</span> -o <span class="variable">$(TARGET)</span>.elf</span><br><span class="line">	<span class="variable">$(OBJCOPY)</span> <span class="variable">$(TARGET)</span>.elf <span class="variable">$(TARGET)</span>.bin</span><br><span class="line">	<span class="variable">$(OBJCOPY)</span> <span class="variable">$(TARGET)</span>.elf -Oihex <span class="variable">$(TARGET)</span>.hex</span><br><span class="line"><span class="variable">$(START_OBJ)</span>:<span class="variable">$(START_SRC)</span></span><br><span class="line">	<span class="variable">$(CC)</span> -c <span class="variable">$^</span> <span class="variable">$(CPUFLAGS)</span> <span class="variable">$(CFLAGS)</span> -o <span class="variable">$@</span></span><br><span class="line"><span class="variable">$(C_OBJ)</span>:%.o:%.c</span><br><span class="line">	<span class="variable">$(CC)</span> -c <span class="variable">$^</span> <span class="variable">$(CPUFLAGS)</span> <span class="variable">$(CFLAGS)</span> -o <span class="variable">$@</span></span><br><span class="line"><span class="section">clear:</span></span><br><span class="line">	<span class="variable">$(RM)</span> <span class="variable">$(<span class="built_in">shell</span> find ./ -name &#x27;*.o&#x27;)</span> <span class="variable">$(TARGET)</span>.*</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这个是一键下载，如果不是stlink下载器可以改对应的变量</span></span><br><span class="line"><span class="section">download:</span></span><br><span class="line">	openocd -f <span class="variable">$(INTERRFACE_CFG)</span> -f <span class="variable">$(TARGET_CFG)</span> -c init -c halt -c <span class="string">&quot;flash write_image erase <span class="variable">$(PWD)</span>/<span class="variable">$(TARGET)</span>.bin&quot;</span> -c reset -c shutdown</span><br></pre></td></tr></table></figure>
+<p>其实最主要的是增加编译的头文件，然后剩下的一样。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>这是一小步，但是系统学习和高级功能实现的一大步，好好搞一下就ok了。</p>
+]]></content>
+      <categories>
+        <category>freeRTOS</category>
+      </categories>
+      <tags>
+        <tag>单片机</tag>
+        <tag>系统</tag>
       </tags>
   </entry>
   <entry>
@@ -5974,6 +5974,101 @@
       </tags>
   </entry>
   <entry>
+    <title>栈</title>
+    <url>/2025/03/09/208f3232527f/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>栈在程序中经常使用，比如创建了一个函数，创建的这个函数会压入栈中，然后执行完成后会从栈中弹出。</p>
+<p>还有就是在freeRTOS中，我们创建任务的时候，也会将任务压入栈中，然后执行完成后会从栈中弹出。</p>
+<p>栈是一个比较重要的一个数据结构，好好学习对我们开发有很大的帮助。</p>
+<h1 id="一、逻辑结构"><a href="#一、逻辑结构" class="headerlink" title="一、逻辑结构"></a>一、逻辑结构</h1><p>栈是一种特殊的线性表，其只允许在固定的一端进行插入和删除元素操作。进行数据插入和删除操作的一端称为栈顶，另一端称为栈底。栈中的数据元素遵守后进先出LIFO（Last In First Out）的原则。</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E6%A0%88.png"></p>
+<p>压栈：栈的插入操作叫做进栈&#x2F;压栈&#x2F;入栈，入数据在栈顶。</p>
+<p>出栈：栈的删除操作叫做出栈。出数据也在栈顶。</p>
+<h1 id="二、存储结构"><a href="#二、存储结构" class="headerlink" title="二、存储结构"></a>二、存储结构</h1><p>我们可以使用顺序表来实现，也可以使用链表来实现，这里两种方式都实现一下。</p>
+<h2 id="1-顺序表"><a href="#1-顺序表" class="headerlink" title="1.顺序表"></a>1.顺序表</h2><h3 id="1-1-数据结构"><a href="#1-1-数据结构" class="headerlink" title="1.1 数据结构"></a>1.1 数据结构</h3><p>这里使用线性表来实现，其实本质上也是创建一个数组来进行存放，然后定义两个变量，一个变量指向栈底，另一个指向栈顶。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    <span class="type">data_t</span>* data;</span><br><span class="line">    <span class="type">int</span> len;</span><br><span class="line">    <span class="type">int</span> top;</span><br><span class="line">&#125;stackList, *stackLink;</span><br></pre></td></tr></table></figure>
+
+<p>data是栈的存放空间，这里使用一个指针来进行存放，这样可以动态的开辟栈的空间。</p>
+<p>len是栈的长度，top是栈顶。</p>
+<p>使用这个数据结构创建栈的话需要进行两次开辟空间，第一次是创建栈的头节点，第二次是创建栈中的数组。</p>
+<h3 id="1-2-函数实现"><a href="#1-2-函数实现" class="headerlink" title="1.2 函数实现"></a>1.2 函数实现</h3><p>需要使用的函数如下：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">stackLink <span class="title function_">Stack_Init</span><span class="params">(<span class="type">int</span> len)</span>;          <span class="comment">// 初始化栈</span></span><br><span class="line">Status <span class="title function_">Stack_Push</span><span class="params">(stackLink <span class="built_in">stack</span>, <span class="type">int</span> value)</span>;   <span class="comment">// 压入数据</span></span><br><span class="line"><span class="type">data_t</span> <span class="title function_">Stack_Pop</span><span class="params">(stackLink <span class="built_in">stack</span>)</span>;               <span class="comment">// 弹出数据</span></span><br><span class="line">Status <span class="title function_">Stack_Emple</span><span class="params">(stackLink <span class="built_in">stack</span>)</span>;             <span class="comment">// 判断栈是否为空</span></span><br><span class="line">Status <span class="title function_">Stack_Free</span><span class="params">(stackLink* <span class="built_in">stack</span>)</span>;              <span class="comment">// 释放栈</span></span><br><span class="line"><span class="type">data_t</span> <span class="title function_">Stack_Get_Top</span><span class="params">(stackList <span class="built_in">stack</span>)</span>;             <span class="comment">// 获取栈顶的值</span></span><br><span class="line">Status <span class="title function_">Stack_Pull</span><span class="params">(stackLink <span class="built_in">stack</span>)</span>;     <span class="comment">// 判断栈是否满</span></span><br></pre></td></tr></table></figure>
+
+<p>相应的一些宏或者数据说明如下：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> OK 1</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ERROR (-1)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> IS_NULL 1</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> NOT_NULL 0</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> IS_FULL 1</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> NOT_FULL 0</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="type">int</span> <span class="type">data_t</span>;</span><br><span class="line"><span class="keyword">typedef</span> <span class="type">int</span> Status;</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-2-1-初始化栈"><a href="#1-2-1-初始化栈" class="headerlink" title="1.2.1 初始化栈"></a>1.2.1 初始化栈</h4><p>初始化栈的话，需要进行两次开辟空间，第一次是创建栈的头节点，第二次是创建栈中的数组。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">stackLink <span class="title function_">Stack_Init</span><span class="params">(<span class="type">int</span> len)</span>          <span class="comment">// 初始化栈</span></span><br><span class="line">&#123;</span><br><span class="line">    stackLink <span class="built_in">stack</span> = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="built_in">stack</span> = (stackLink)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(stackList));</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">stack</span> == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">stack</span>-&gt;len = len;</span><br><span class="line">    <span class="built_in">stack</span>-&gt;top = <span class="number">-1</span>;</span><br><span class="line">    <span class="built_in">stack</span>-&gt;data = (<span class="type">data_t</span>*)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="type">data_t</span>) * <span class="built_in">stack</span>-&gt;len);</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">stack</span>-&gt;data == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">stack</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里开辟队列的空间长度使用的是参数传递进来的，这样可以实现动态开辟空间。</p>
+<p>然后top指针的值为-1的主要目的是表明这个栈为空，当然你也可以让它为0。</p>
+<h4 id="1-2-2-压入数据"><a href="#1-2-2-压入数据" class="headerlink" title="1.2.2 压入数据"></a>1.2.2 压入数据</h4><p>压入数据的话，需要判断栈是否满，如果满的话就不能压入数据了。</p>
+<p>对于新直接的数据要先对top指针进行自增，自增完成后把需要压入栈的数据放入到top指向的位置。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">Status <span class="title function_">Stack_Push</span><span class="params">(stackLink <span class="built_in">stack</span>, <span class="type">int</span> value)</span>   <span class="comment">// 压入数据</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">stack</span>-&gt;top &gt;= <span class="built_in">stack</span>-&gt;len)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">stack</span>-&gt;top++;</span><br><span class="line">    <span class="built_in">stack</span>-&gt;data[<span class="built_in">stack</span>-&gt;top] = value;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>判断栈顶的大小是否大于等于栈的长度，如果大于等于的话就说明栈满了，不能压入数据了。</p>
+<h4 id="1-2-3-弹出数据"><a href="#1-2-3-弹出数据" class="headerlink" title="1.2.3 弹出数据"></a>1.2.3 弹出数据</h4><p>弹出数据的话，需要判断栈是否为空，如果为空的话就不能弹出数据了。</p>
+<p>在读取完数据后需要将top指针进行自减，这样就指向下一个元素的位置。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">data_t</span> <span class="title function_">Stack_Pop</span><span class="params">(stackLink <span class="built_in">stack</span>)</span>               <span class="comment">// 弹出数据</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">stack</span>-&gt;top == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">stack</span>-&gt;data[<span class="built_in">stack</span>-&gt;top];</span><br><span class="line">    <span class="built_in">stack</span>-&gt;top--;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果前面的初始化是从0开始，并且top指针是先存放然后再自增的话，那这里的顺序就得改变一下，需要先对指针进行自减到需要弹出数据的位置，然后再返回数据：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">data_t</span> <span class="title function_">Stack_Pop</span><span class="params">(stackLink <span class="built_in">stack</span>)</span>               <span class="comment">// 弹出数据</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">stack</span>-&gt;top == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">stack</span>-&gt;top--;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">stack</span>-&gt;data[<span class="built_in">stack</span>-&gt;top];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-2-4-判断栈是否为空"><a href="#1-2-4-判断栈是否为空" class="headerlink" title="1.2.4 判断栈是否为空"></a>1.2.4 判断栈是否为空</h4><p>判断栈是否为空的话，只需要判断top指针的值是否为-1，如果为-1的话就说明栈为空。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">Status <span class="title function_">Stack_Emple</span><span class="params">(stackLink <span class="built_in">stack</span>)</span>             <span class="comment">// 判断栈是否为空</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">stack</span> == <span class="literal">NULL</span> || <span class="built_in">stack</span>-&gt;data == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> (<span class="built_in">stack</span>-&gt;top == <span class="number">-1</span> ? <span class="number">1</span> : <span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-2-5-释放栈"><a href="#1-2-5-释放栈" class="headerlink" title="1.2.5 释放栈"></a>1.2.5 释放栈</h4><p>释放栈的话，需要释放栈中的数组和栈的头节点。</p>
+<p>需要释放两次，先释放数组，再释放头节点。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">Status <span class="title function_">Stack_Free</span><span class="params">(stackLink* <span class="built_in">stack</span>)</span>              <span class="comment">// 释放栈</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> ((*<span class="built_in">stack</span>)-&gt;data != <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">free</span>((*<span class="built_in">stack</span>)-&gt;data);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">free</span>((*<span class="built_in">stack</span>));</span><br><span class="line">    (*<span class="built_in">stack</span>) = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-2-6-获取栈顶的值"><a href="#1-2-6-获取栈顶的值" class="headerlink" title="1.2.6 获取栈顶的值"></a>1.2.6 获取栈顶的值</h4><p>获取栈顶的值的话，只需要返回top指针指向的位置的值即可。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">data_t</span> <span class="title function_">Stack_Get_Top</span><span class="params">(stackList <span class="built_in">stack</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">stack</span>.data[<span class="built_in">stack</span>.top];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-2-7-判断栈是否满"><a href="#1-2-7-判断栈是否满" class="headerlink" title="1.2.7 判断栈是否满"></a>1.2.7 判断栈是否满</h4><p>判断栈是否满的话，只需要判断top指针的值是否等于栈的长度，如果等于的话就说明栈满了。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">Status <span class="title function_">Stack_Pull</span><span class="params">(stackLink <span class="built_in">stack</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">stack</span>-&gt;top == <span class="built_in">stack</span>-&gt;len - <span class="number">1</span> ? IS_FULL : NOT_FULL;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样就将顺序栈实现了，下面就是使用链式栈，但链式栈不是很实用，因为链式栈的入栈和出栈都需要遍历一遍栈才可以，当然可以通过双向链表来实现，操作起来比较麻烦。</p>
+<h2 id="2-链式栈"><a href="#2-链式栈" class="headerlink" title="2.链式栈"></a>2.链式栈</h2><p>这里使用的是双向链表，上面我们了解到栈的实现，其实就是先进后出，前面的顺序栈很简单，通过下标就可以操作，但是对于链式的结构来说，你没办法通过下标来查找出栈的下一个元素，所以这里使用的是双向链表，当前面那个元素出栈后可以通过出栈的那个元素找到它的上一个结点。</p>
+<p>可以看到下图就是个双向链表的示意图：</p>
+<p><img src="https://gitee.com/Mr_zhang_yu_ge/puillimage/raw/master/%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8.png"></p>
+<p>head是作为头节点使用的，head的next指向的是栈顶元素，head的prev指向的是栈底元素。</p>
+<h3 id="2-1-数据结构"><a href="#2-1-数据结构" class="headerlink" title="2.1 数据结构"></a>2.1 数据结构</h3><p>这里使用的是双向链表来实现，通过上图的解释可以知道，这个结点有两个指针和一个数据域。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">node</span> &#123;</span></span><br><span class="line">    <span class="type">data_t</span> data;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">node</span>* <span class="title">next</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">node</span>* <span class="title">prev</span>;</span> </span><br><span class="line">&#125;node, *stackLink;</span><br></pre></td></tr></table></figure>
+
+<p>data是数据域，next是指向下一个结点的指针，prev是指向上一个结点的指针。</p>
+<p>使用这个数据结构创建栈的话需要进行一次开辟空间，开辟空间的大小就是栈的大小。</p>
+<h3 id="2-2-函数实现"><a href="#2-2-函数实现" class="headerlink" title="2.2 函数实现"></a>2.2 函数实现</h3><p>需要使用的函数如下：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">stackLink <span class="title function_">Stack_Init</span><span class="params">()</span>;          <span class="comment">// 初始化栈</span></span><br><span class="line">Status <span class="title function_">Stack_Push</span><span class="params">(stackLink <span class="built_in">stack</span>, <span class="type">data_t</span> value)</span>;   <span class="comment">// 压入数据</span></span><br><span class="line"><span class="type">data_t</span> <span class="title function_">Stack_Pop</span><span class="params">(stackLink <span class="built_in">stack</span>)</span>;               <span class="comment">// 弹出数据</span></span><br><span class="line">Status <span class="title function_">Stack_Emple</span><span class="params">(stackLink <span class="built_in">stack</span>)</span>;             <span class="comment">// 判断栈是否为空</span></span><br><span class="line">Status <span class="title function_">Stack_Free</span><span class="params">(stackLink* <span class="built_in">stack</span>)</span>;              <span class="comment">// 释放栈</span></span><br><span class="line"><span class="type">data_t</span> <span class="title function_">Stack_Get_Top</span><span class="params">(stackList <span class="built_in">stack</span>)</span>;             <span class="comment">// 获取栈顶的值</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2-1-初始化栈"><a href="#2-2-1-初始化栈" class="headerlink" title="2.2.1 初始化栈"></a>2.2.1 初始化栈</h4><p>初始化栈的话，需要创建两个结点，第一个结点是栈头，第二个结点相当于是待入栈的结点。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">stackLink <span class="title function_">Stack_Init</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    stackLink <span class="built_in">stack</span> = <span class="literal">NULL</span>;</span><br><span class="line">    stackLink next = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="built_in">stack</span> = (stackLink)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(node));</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">stack</span> == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">stack</span>-&gt;data = <span class="number">-1</span>;</span><br><span class="line">    next = (stackLink)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(node));</span><br><span class="line">    <span class="keyword">if</span> (next == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    next-&gt;data = <span class="number">-1</span>;</span><br><span class="line">    next-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">    next-&gt;prev = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="built_in">stack</span>-&gt;next = next;</span><br><span class="line">    <span class="built_in">stack</span>-&gt;prev = next;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">stack</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2-2-压入数据"><a href="#2-2-2-压入数据" class="headerlink" title="2.2.2 压入数据"></a>2.2.2 压入数据</h4><p>压入数据的话，因为前面是创建了一个额外的结点，那这里的话是先将数据放到这个额外的结点上，然后再开辟一块空间。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">Status <span class="title function_">Stack_Push</span><span class="params">(stackLink <span class="built_in">stack</span>, <span class="type">data_t</span> value)</span></span><br><span class="line">&#123;</span><br><span class="line">    stackLink next = <span class="literal">NULL</span>;</span><br><span class="line">    next = (stackLink)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(node));</span><br><span class="line">    <span class="keyword">if</span> (next == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">stack</span>-&gt;next-&gt;data = value;</span><br><span class="line">    next-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">    next-&gt;prev = <span class="built_in">stack</span>-&gt;next;</span><br><span class="line">    next-&gt;data = <span class="number">-1</span>;</span><br><span class="line">    <span class="built_in">stack</span>-&gt;next = next;</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2-3-弹出数据"><a href="#2-2-3-弹出数据" class="headerlink" title="2.2.3 弹出数据"></a>2.2.3 弹出数据</h4><p>弹出数据实现需要先释放头结点的next指向的结点，然后往前移动一个结点，再读取出这个结点的data。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">data_t</span> <span class="title function_">Stack_Pop</span><span class="params">(stackLink <span class="built_in">stack</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    stackLink temp = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="type">data_t</span> data = <span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">stack</span>-&gt;next == <span class="built_in">stack</span>-&gt;prev)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 空栈</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    temp = <span class="built_in">stack</span>-&gt;next;</span><br><span class="line">    <span class="built_in">stack</span>-&gt;next = temp-&gt;prev;</span><br><span class="line">    <span class="built_in">stack</span>-&gt;next-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="built_in">free</span>(temp);</span><br><span class="line">    data = <span class="built_in">stack</span>-&gt;next-&gt;data;</span><br><span class="line">    <span class="keyword">return</span> data;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2-4-判断栈是否为空"><a href="#2-2-4-判断栈是否为空" class="headerlink" title="2.2.4 判断栈是否为空"></a>2.2.4 判断栈是否为空</h4><p>判断栈是否为空的话，只需要判断头结点的next和prev是否相等，如果相等的话就说明栈为空。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">Status <span class="title function_">Stack_Emple</span><span class="params">(stackLink <span class="built_in">stack</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">stack</span>-&gt;next == <span class="built_in">stack</span>-&gt;prev? IS_NULL : NOT_NULL;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2-5-释放栈"><a href="#2-2-5-释放栈" class="headerlink" title="2.2.5 释放栈"></a>2.2.5 释放栈</h4><p>释放栈的话，需要释放头结点和头结点的next指向的结点。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">Status <span class="title function_">Stack_Free</span><span class="params">(stackLink* <span class="built_in">stack</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    stackLink temp = <span class="literal">NULL</span>;</span><br><span class="line">    temp = (*<span class="built_in">stack</span>)-&gt;next;</span><br><span class="line">    <span class="built_in">free</span>((*<span class="built_in">stack</span>)); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2-6-获取栈顶的值"><a href="#2-2-6-获取栈顶的值" class="headerlink" title="2.2.6 获取栈顶的值"></a>2.2.6 获取栈顶的值</h4><p>获取栈顶的值的话，只需要返回头结点的next指向的结点的数据即可。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">data_t</span> <span class="title function_">Stack_Get_Top</span><span class="params">(stackLink <span class="built_in">stack</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">stack</span>-&gt;next-&gt;data;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="三、总结"><a href="#三、总结" class="headerlink" title="三、总结"></a>三、总结</h1><p>栈的实现比较简单，但是栈的应用比较广泛，比如在函数调用的时候，函数的返回地址、参数、局部变量等都需要压入栈中，在函数返回的时候需要从栈中弹出。</p>
+<p>栈的应用还有很多，比如在编译器中，编译器会将中缀表达式转换为后缀表达式，然后再进行计算。</p>
+<p>对于链式栈的使用比较少，一般都是使用顺序栈，所以链式栈作为一个提高内容就可以了。</p>
+]]></content>
+      <categories>
+        <category>数据结构</category>
+      </categories>
+      <tags>
+        <tag>数据结构</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>线性表</title>
     <url>/2025/03/07/19e651a75115/</url>
     <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>这一节开始学习线性结构的知识，线性结构是指数据元素之间存在一对一的线性关系。</p>
@@ -6319,203 +6414,6 @@
       </tags>
   </entry>
   <entry>
-    <title>香橙派开发系列-使用蓝牙和手机进行信息的交换</title>
-    <url>/2025/01/17/feaf0486f5af/</url>
-    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>隔了这么久我准备再玩一下香橙派，最近这段时间还是比较的忙，我搭建了个论坛和博客，经常被网络攻击，所以我也是一直在弄网络去了，然后今天比较空闲就想着把单子做一下，这个单子需要使用到HC05蓝牙模块，所以我准备写一篇博客来使用香橙派控制HC05蓝牙模块。</p>
-<h1 id="一、HC05蓝牙模块"><a href="#一、HC05蓝牙模块" class="headerlink" title="一、HC05蓝牙模块"></a>一、HC05蓝牙模块</h1><p>这个模块是非常经典的一个蓝牙模块，我之前有一单也是使用到这个模块，可以看一下我的这个视频<a href="https://www.bilibili.com/video/BV1PH4y117oV/?share_source=copy_web&vd_source=4bb508bdc624514980a5500e28ea3819">【作息控制系统使用说明】</a>，这个项目也是使用到蓝牙模块的，只不过当时时间紧任务重所以就没有写一篇博客来好好记录一下这个项目，等后面我会单独拿一个模块来介绍一下我做的这些小项目。</p>
-<h2 id="1-HC05概述"><a href="#1-HC05概述" class="headerlink" title="1.HC05概述"></a>1.HC05概述</h2><p>HC05是嵌入式蓝牙串口通讯模块，也就是使用串口就可以和HC05进行通讯并发送信息给蓝牙的接收端，这个模块有两种工作方式：</p>
-<p>1 命令响应工作模式</p>
-<p>2 自动连接工作模式</p>
-<p>在自动连接的工作模式下又可以分为主、从、回环这三种模式，当传输数据时，根据事先设定的方式连接并传输数据。</p>
-<p>在命令模式下，用户可以使用串口连接模块，并发送<code>AT</code>指令对模块进行设置。</p>
-<h2 id="2-HC05的连接图"><a href="#2-HC05的连接图" class="headerlink" title="2.HC05的连接图"></a>2.HC05的连接图</h2><p>这里我直接使用<code>TTL to USB</code>进行连接，因为我要设置一下这个模块的一些传输和内容。</p>
-<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131222614043-381623405.jpg" alt="img"></p>
-<p>这里和串口连接的模式一样</p>
-<table>
-<thead>
-<tr>
-<th>HC05</th>
-<th>TTL</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>3.3</td>
-<td>VCC</td>
-</tr>
-<tr>
-<td>TXD</td>
-<td>RXD</td>
-</tr>
-<tr>
-<td>RXD</td>
-<td>TXD</td>
-</tr>
-<tr>
-<td>GND</td>
-<td>GND</td>
-</tr>
-</tbody></table>
-<h2 id="3-进入HC05的命令模式"><a href="#3-进入HC05的命令模式" class="headerlink" title="3.进入HC05的命令模式"></a>3.进入HC05的命令模式</h2><p>首先我们需要通过<code>AT</code>指令来设置模块的一些内容，然后我们才好进入下面的一些操作，首先在这个模块上有一个按钮</p>
-<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131222952266-1526676184.jpg" alt="img"></p>
-<p>在上电之前需要长按这个按键，然后再上电就可以进入命令模式，在进入命令模式后，模块上的LED等会缓慢的闪烁，如果没有进入就会闪得很快。</p>
-<h2 id="4-常用的AT指令"><a href="#4-常用的AT指令" class="headerlink" title="4.常用的AT指令"></a>4.常用的AT指令</h2><p>AT指令列表已经烂大街了，所以这里不全部说明，我只拿出一些常用的来说明即可。</p>
-<h3 id="4-1-检查AT是否上线"><a href="#4-1-检查AT是否上线" class="headerlink" title="4.1 检查AT是否上线"></a>4.1 检查AT是否上线</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AT\r\n</span><br></pre></td></tr></table></figure>
-
-<p>如果模块在就会返回<code>OK</code></p>
-<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131223407901-1242056721.png" alt="img"></p>
-<h3 id="4-2-重启模块"><a href="#4-2-重启模块" class="headerlink" title="4.2 重启模块"></a>4.2 重启模块</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AT+RESET\r\n</span><br></pre></td></tr></table></figure>
-
-<p>如果执行成功就会返回<code>OK</code>，并进入自动连接模式</p>
-<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131223545021-2054088621.png" alt="img"></p>
-<h3 id="4-3-获取软件版本号"><a href="#4-3-获取软件版本号" class="headerlink" title="4.3 获取软件版本号"></a>4.3 获取软件版本号</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AT_VERSION?\r\n</span><br></pre></td></tr></table></figure>
-
-<p>执行完成后会返回版本信息和<code>OK</code></p>
-<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131223713062-1270983779.png" alt="img"></p>
-<h3 id="4-4-恢复默认状态"><a href="#4-4-恢复默认状态" class="headerlink" title="4.4 恢复默认状态"></a>4.4 恢复默认状态</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AT+ORGL\r\n</span><br></pre></td></tr></table></figure>
-
-<p>执行完成后会返回<code>OK</code>，并将模块恢复为出厂设置。</p>
-<h3 id="4-5-获取蓝牙的名称"><a href="#4-5-获取蓝牙的名称" class="headerlink" title="4.5 获取蓝牙的名称"></a>4.5 获取蓝牙的名称</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AT+NAME?\r\n</span><br></pre></td></tr></table></figure>
-
-<p>执行完成后会返回蓝牙名称并返回<code>OK</code></p>
-<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131224015613-183098500.png" alt="img"></p>
-<h3 id="4-6-设置蓝牙模块的波特率"><a href="#4-6-设置蓝牙模块的波特率" class="headerlink" title="4.6 设置蓝牙模块的波特率"></a>4.6 设置蓝牙模块的波特率</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AT+UART=波特率,停止位,校验位\r\n</span><br></pre></td></tr></table></figure>
-
-<p>这里我们设置一个比较常见的，波特率9600，停止位1位，无校验位</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AT+UART=9600,1,0</span><br></pre></td></tr></table></figure>
-
-<p>这样就可以了。</p>
-<h3 id="4-7-查询蓝牙的连接模式"><a href="#4-7-查询蓝牙的连接模式" class="headerlink" title="4.7 查询蓝牙的连接模式"></a>4.7 查询蓝牙的连接模式</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AT+CMODE?\r\n</span><br></pre></td></tr></table></figure>
-
-<p>返回当前模式，1代表任意模式，也就是蓝牙名称和蓝牙地址都可以连接，这里就不多说了，一般默认是1就可以了。</p>
-<h3 id="4-8-查询模块角色"><a href="#4-8-查询模块角色" class="headerlink" title="4.8 查询模块角色"></a>4.8 查询模块角色</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AT+ROLE?</span><br></pre></td></tr></table></figure>
-
-<p>这里默认的是<code>Slave</code>从角色，也就是被动连接，不用动。</p>
-<h2 id="5-连接电脑"><a href="#5-连接电脑" class="headerlink" title="5.连接电脑"></a>5.连接电脑</h2><p>这里我踩了个大坑，因为我之前的设置是将波特率改为9600了，所以在串口的时候我就用9600进行连接，结果没有任何的反应，后面查了一下手册才发现它默认的波特率是<code>38400</code>，就很尴尬。</p>
-<p>这里连接好电脑后先发送个<code>AT</code>指令来查看一下是否返回OK，如果没返回有可能是因为坏了或者是你没长按按键进入命令模式。</p>
-<p>然后修改一下波特率，因为我们后面初始化串口不想给那么大的波特率</p>
-<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131225350954-637982947.png" alt="img"></p>
-<p>初始化完成后要记得重启一下模块，然后模块的波特率就设置好看，但是AT指令模式下还是那个波特率（又踩坑了，当不想改文章）。</p>
-<h2 id="6-通过HC05发送消息"><a href="#6-通过HC05发送消息" class="headerlink" title="6.通过HC05发送消息"></a>6.通过HC05发送消息</h2><p>这里我先用stm32来演示，因为我还在做单子所以先拿这个演示。</p>
-<p>首先先写串口的初始化函数，这里我使用的是<code>USART1</code>，初始化代码就不展示了，因为今天的主题不是stm32，然后在main函数中我们使用重写的<code>printf</code>来通过串口发送数据。不知道的可以看我这篇博客<a href="https://www.cnblogs.com/Lavender-edgar/p/17591746.html">异步通讯点灯</a>。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    OLED_Init();</span><br><span class="line">    MX_Init_KEY();</span><br><span class="line">    MX_Init_HC05();</span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;hello\r\n&quot;</span>);</span><br><span class="line">        OLED_ShowString(<span class="number">1</span>, <span class="number">1</span>, <span class="string">&quot;hello&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>然后需要在手机上下载<code>蓝牙调试宝</code>，在应用商城都可以下载，这我就不给你们压缩包了，要不然我老喜欢挂码。</p>
-<p>首先要把蓝牙模块连接到面包板上，然后就用手机连接好蓝牙</p>
-<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131232923132-1431987147.jpg" alt="img"></p>
-<p>记住串口反接并且要接地即可。</p>
-<p>然后打开蓝牙助手的界面</p>
-<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131233636527-494670284.jpg" alt="img"></p>
-<p>找到里面有一个<code>HC-05</code>，然后连接即可，第一次连接需要你输入一个配对码，这里输入1234或者0000都可以</p>
-<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131233741588-579644404.jpg" alt="img"></p>
-<p>然后给单片机上电后就会显示出hello来</p>
-<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131233820799-2037271568.jpg" alt="img"></p>
-<p>学到这你已经会使用蓝牙进行发送信息了，stm32就先不再出现了，后面就是香橙派的内容了。</p>
-<h2 id="7-stm32完整代码"><a href="#7-stm32完整代码" class="headerlink" title="7.stm32完整代码"></a>7.stm32完整代码</h2><p>usart.c</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;hc05.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">MX_Init_HC05</span><span class="params">()</span>&#123;</span><br><span class="line">    GPIO_InitTypeDef GPIO_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    USART_InitTypeDef USART_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    </span><br><span class="line">    RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);</span><br><span class="line">    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);</span><br><span class="line">    </span><br><span class="line">    GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF_PP;</span><br><span class="line">    GPIO_InitStruct.GPIO_Pin = GPIO_Pin_9;</span><br><span class="line">    GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">    GPIO_Init(GPIOA, &amp;GPIO_InitStruct);</span><br><span class="line">    GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IPU;</span><br><span class="line">    GPIO_InitStruct.GPIO_Pin = GPIO_Pin_10;</span><br><span class="line">    GPIO_Init(GPIOA, &amp;GPIO_InitStruct);</span><br><span class="line">    </span><br><span class="line">    USART_InitStruct.USART_BaudRate = <span class="number">9600</span>;</span><br><span class="line">    USART_InitStruct.USART_HardwareFlowControl = USART_HardwareFlowControl_None;</span><br><span class="line">    USART_InitStruct.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;</span><br><span class="line">    USART_InitStruct.USART_Parity = USART_Parity_No;</span><br><span class="line">    USART_InitStruct.USART_StopBits = USART_StopBits_1;</span><br><span class="line">    USART_InitStruct.USART_WordLength = USART_WordLength_8b;</span><br><span class="line">    USART_Init(USART1, &amp;USART_InitStruct);</span><br><span class="line">    USART_Cmd(USART1, ENABLE);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">fputc</span><span class="params">(<span class="type">int</span> ch, FILE *f)</span></span><br><span class="line">&#123;      </span><br><span class="line">	<span class="keyword">while</span>((USART1-&gt;SR&amp;<span class="number">0X40</span>)==<span class="number">0</span>);  </span><br><span class="line">    USART1-&gt;DR = (u8) ch;      </span><br><span class="line">	<span class="keyword">return</span> ch;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h1 id="二、香橙派串口通讯"><a href="#二、香橙派串口通讯" class="headerlink" title="二、香橙派串口通讯"></a>二、香橙派串口通讯</h1><p>在介绍使用香橙派使用HC05模块前先介绍一下串口通讯，并如何配置串口通讯。</p>
-<h2 id="1-打开串口设备"><a href="#1-打开串口设备" class="headerlink" title="1.打开串口设备"></a>1.打开串口设备</h2><p>在香橙派中，串口通讯是使用设备来进行传输的， 所以我们需要在系统设置中将串口进行打开。</p>
-<p>在打开之前先了解一下香橙派的串口引脚分布</p>
-<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201004955316-115234185.png" alt="img"></p>
-<p>在3b中有3个串口可供选择，然后通过</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo orangepi-config</span><br></pre></td></tr></table></figure>
-
-<p>来开启设备，进入到设置页面</p>
-<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201005302098-113983016.png" alt="img"></p>
-<p>然后选择第一个，按一下回车即可，然后在下面的页面中选择<code>Hardware</code></p>
-<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201005337757-1243728913.png" alt="img"></p>
-<p>然后找到你要开启的串口</p>
-<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201005401317-2122540859.png" alt="img"></p>
-<p>我这选择的是<code>UART7</code>，使用方向键移动到那后按一下空格就选中，然后按一下回车保存，之后会提示是否重启，然后按一下回车就可以重启了。</p>
-<p>重启完成后使用</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ls /dev/ ttyS*</span><br></pre></td></tr></table></figure>
-
-<p>来查看可操作的设备文件，这里只会显示你开启的设备</p>
-<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201005541612-792900492.png" alt="img"></p>
-<p>我们刚才选择了<code>UART7</code>后它这里就会有相应的设备，那个<code>ttyS1</code>是默认开启的，我们不用理他。</p>
-<h2 id="2-接线"><a href="#2-接线" class="headerlink" title="2.接线"></a>2.接线</h2><p>这里就需要非常非常注意了，我在测试的时候就是这里没有弄好，线接反了，导致一直发送不了。</p>
-<p>按照前面给的那张图进行接线后我们就可以写代码了。</p>
-<p><strong>注意：这里很重要，很多人玩51单片机来玩这个会忽略一个问题就是GND必须要和单片机的GND接在一起，很多人会单独给这个引脚接GND是错误的。</strong></p>
-<h2 id="3-串口函数"><a href="#3-串口函数" class="headerlink" title="3.串口函数"></a>3.串口函数</h2><p>这里使用的串口函数库是</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringSerial.h&gt;</span></span></span><br></pre></td></tr></table></figure>
-
-<h3 id="3-1-打开串口文件"><a href="#3-1-打开串口文件" class="headerlink" title="3.1 打开串口文件"></a>3.1 打开串口文件</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">serialOpen</span><span class="params">(<span class="type">const</span> <span class="type">char</span>* path, <span class="type">int</span> butrl)</span>;</span><br></pre></td></tr></table></figure>
-
-<p>第一个参数是设备的路径，比如说我们这需要使用到<code>UART1</code>，那设备地址就是<code>/dev/ttyS7</code>。</p>
-<p>第二个参数是波特率，比如9600。</p>
-<p>这个函数的返回值是一个文件描述符，我们使用一个变量来接收就可以了。</p>
-<h3 id="3-2-关闭串口文件"><a href="#3-2-关闭串口文件" class="headerlink" title="3.2 关闭串口文件"></a>3.2 关闭串口文件</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">serialClose</span><span class="params">(<span class="type">int</span> fd)</span>;</span><br></pre></td></tr></table></figure>
-
-<p>参数是打开的设备描述符。</p>
-<h3 id="3-3-发送一个字符"><a href="#3-3-发送一个字符" class="headerlink" title="3.3 发送一个字符"></a>3.3 发送一个字符</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">serialPutchar</span><span class="params">(<span class="type">int</span> fd, <span class="type">char</span> c)</span>;</span><br></pre></td></tr></table></figure>
-
-<p>将一个字符发送到打开的文件描述符fd所对应的设备文件。</p>
-<h3 id="3-4-发送一个规定好的字符串"><a href="#3-4-发送一个规定好的字符串" class="headerlink" title="3.4 发送一个规定好的字符串"></a>3.4 发送一个规定好的字符串</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">serialPuts</span><span class="params">(<span class="type">int</span> fd, <span class="type">char</span>* s)</span>;</span><br></pre></td></tr></table></figure>
-
-<p>发送一个规定好的字符串，然后以0结尾。</p>
-<h3 id="3-5-printf"><a href="#3-5-printf" class="headerlink" title="3.5 printf"></a>3.5 printf</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">serialPrintf</span><span class="params">(<span class="type">int</span> fd, <span class="type">char</span>* message, ...)</span>;</span><br></pre></td></tr></table></figure>
-
-<p>这个和printf的用法类似。</p>
-<h3 id="3-6-返回等待读取的字符数"><a href="#3-6-返回等待读取的字符数" class="headerlink" title="3.6 返回等待读取的字符数"></a>3.6 返回等待读取的字符数</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">serialDataAvail</span><span class="params">(<span class="type">int</span> fd)</span>;</span><br></pre></td></tr></table></figure>
-
-<p>返回的是等待读取的字符数。</p>
-<h3 id="3-7-读取字符"><a href="#3-7-读取字符" class="headerlink" title="3.7 读取字符"></a>3.7 读取字符</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">serialGetChar</span><span class="params">(<span class="type">int</span> fd)</span>;</span><br></pre></td></tr></table></figure>
-
-<p>返回下一个待读取的字符，如果这个在10s内没有读取到字符就会返回-1。</p>
-<h3 id="3-8-缓冲区函数"><a href="#3-8-缓冲区函数" class="headerlink" title="3.8 缓冲区函数"></a>3.8 缓冲区函数</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">serialFlush</span><span class="params">(<span class="type">int</span> fd)</span>;</span><br></pre></td></tr></table></figure>
-
-<p>抛弃所有接收的数据或者等待写入设备完成。</p>
-<h2 id="4-输出内容"><a href="#4-输出内容" class="headerlink" title="4.输出内容"></a>4.输出内容</h2><p>通过学习了上面的内容后我们可以简单写一个输出字符的代码来输出0~9</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringPi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringSerial.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">int</span> fd = <span class="number">-1</span>, i;</span><br><span class="line">    wiringPiSetup();</span><br><span class="line">    fd = serialOpen(<span class="string">&quot;/dev/ttyS7&quot;</span>, <span class="number">9600</span>);    <span class="comment">// 设置串口设备和波特率</span></span><br><span class="line">    <span class="keyword">if</span> (fd &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="comment">// 设备打开失败</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;设备打开失败\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    serialFlush(fd);</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)&#123;</span><br><span class="line">        serialPutchar(fd, i + <span class="string">&#x27;0&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    serialClose(fd);     <span class="comment">// 关闭设备</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>运行效果如下：</p>
-<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201011437761-796252053.png" alt="img"></p>
-<p>然后也可以使用printf来个高级一点的输出</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringPi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringSerial.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">int</span> fd = <span class="number">-1</span>, i;</span><br><span class="line">    wiringPiSetup();</span><br><span class="line">    fd = serialOpen(<span class="string">&quot;/dev/ttyS7&quot;</span>, <span class="number">9600</span>);    <span class="comment">// 设置串口设备和波特率</span></span><br><span class="line">    <span class="keyword">if</span> (fd &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="comment">// 设备打开失败</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;设备打开失败\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    serialFlush(fd);</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)&#123;</span><br><span class="line">        serialPrintf(fd, <span class="string">&quot;this is%d\r\n&quot;</span>, i);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    serialClose(fd);     <span class="comment">// 关闭设备</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>输出的内容如下：</p>
-<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201011632150-2099482164.png" alt="img"></p>
-<h2 id="5-接收内容"><a href="#5-接收内容" class="headerlink" title="5.接收内容"></a>5.接收内容</h2><p>我们可以通过串口来接收一下用户输入的内容，并判断输入的字符是不是我们需要的，然后通过串口返回</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringPi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringSerial.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">int</span> fd = <span class="number">-1</span>, i;</span><br><span class="line">    <span class="type">int</span> c;</span><br><span class="line">    wiringPiSetup();</span><br><span class="line">    fd = serialOpen(<span class="string">&quot;/dev/ttyS7&quot;</span>, <span class="number">9600</span>);    <span class="comment">// 设置串口设备和波特率</span></span><br><span class="line">    <span class="keyword">if</span> (fd &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="comment">// 设备打开失败</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;设备打开失败\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    serialFlush(fd);</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        c = serialGetchar(fd);</span><br><span class="line">        <span class="keyword">if</span> (c == <span class="number">-1</span>)&#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (c == <span class="string">&#x27;1&#x27;</span>)&#123;</span><br><span class="line">            serialPrintf(fd, <span class="string">&quot;this is 1&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%c&quot;</span>, c);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    serialClose(fd);     <span class="comment">// 关闭设备</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>输出的内容：</p>
-<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201012139484-1871459667.png" alt="img"></p>
-<p>这里大家可以看到我在这个while循环中添加了一个printf，但是没有截屏给出效果，是因为在这个串口运行的过程中一直在读取的是串口的设备，没有使用输入输出流设备，所以导致我们在输入后没办法显示出内容来，这个的解决办法我还不太清楚，等我研究好了我在出一篇文章来介绍。</p>
-<h2 id="6-接收字符串"><a href="#6-接收字符串" class="headerlink" title="6.接收字符串"></a>6.接收字符串</h2><p>做串口最让人沉醉的就是读取字符串的操作了,在<code>wiringSerial</code>中有一个函数可以获取缓冲区的长度，我们可以判断这个来读取输入的数据的长度，然后使用一个<code>for</code>循环来循环读取和放置在一个数组中，之后进行输出即可，代码如下：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringPi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringSerial.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">int</span> fd = <span class="number">-1</span>;</span><br><span class="line">    <span class="type">int</span> i, ch, j = <span class="number">0</span>, len;</span><br><span class="line">    <span class="type">char</span> str[<span class="number">1024</span>];</span><br><span class="line">    wiringPiSetup();</span><br><span class="line">    fd = serialOpen(<span class="string">&quot;/dev/ttyS7&quot;</span>, <span class="number">9600</span>);</span><br><span class="line">    <span class="keyword">if</span> (fd &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;打开设备文件失败\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        len = serialDataAvail(fd);     <span class="comment">// 获取缓冲区的长度</span></span><br><span class="line">        <span class="keyword">if</span> (len == <span class="number">-1</span>)&#123;</span><br><span class="line">            <span class="comment">// 超时退出循环</span></span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(len &gt; <span class="number">0</span>)&#123;</span><br><span class="line">            serialPrintf(fd, <span class="string">&quot;%d\n&quot;</span>, len);    <span class="comment">// 这一行是测试的</span></span><br><span class="line">            <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; len;  i++)&#123;</span><br><span class="line">                ch = serialGetchar(fd);       <span class="comment">// 读取字符</span></span><br><span class="line">                str[j++] = ch;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    str[j] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, str);</span><br><span class="line">    serialClose(fd);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="三、使用hc05连接香橙派"><a href="#三、使用hc05连接香橙派" class="headerlink" title="三、使用hc05连接香橙派"></a>三、使用hc05连接香橙派</h1><p>学会了上面的操作后我们就可以来用香橙派连接hc05了，这个操作也非常非常的简单，和单片机的连接一致，注意不要连错就行了。</p>
-<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201222725359-170013347.jpg" alt="img"></p>
-<h2 id="1-通过蓝牙发送字符串给手机"><a href="#1-通过蓝牙发送字符串给手机" class="headerlink" title="1.通过蓝牙发送字符串给手机"></a>1.通过蓝牙发送字符串给手机</h2><p>本质的思路还是一样的，就是使用串口是输入输出就可以搞定，代码如下：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringPi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringSerial.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">int</span> fd = <span class="number">-1</span>, i;</span><br><span class="line">    <span class="type">int</span> c;</span><br><span class="line">    wiringPiSetup();</span><br><span class="line">    fd = serialOpen(<span class="string">&quot;/dev/ttyS7&quot;</span>, <span class="number">9600</span>);    <span class="comment">// 设置串口设备和波特率</span></span><br><span class="line">    <span class="keyword">if</span> (fd &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="comment">// 设备打开失败</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;设备打开失败\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    serialFlush(fd);</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        serialPrintf(fd, <span class="string">&quot;hello\r\n&quot;</span>);</span><br><span class="line">        delayMicroseconds(<span class="number">30000</span>);     <span class="comment">// 延时函数，免得发送得过快</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    serialClose(fd);     <span class="comment">// 关闭设备</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>然后在调试助手中就可以看到蓝牙模块发送的内容了：</p>
-<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201222924734-1412345816.jpg" alt="img"></p>
-<h2 id="2-手机发送内容给香橙派"><a href="#2-手机发送内容给香橙派" class="headerlink" title="2.手机发送内容给香橙派"></a>2.手机发送内容给香橙派</h2><p>这里可以使用刚才我们测试的接收字符串，只不过这里有一个问题就是这个工具只能发送字符所对应的ascii码，不能正常的输入字符进行输出。</p>
-<p>比如我们手机输入字符0，那就得输入ascii码的30</p>
-<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201223956644-1830750314.jpg" alt="img"></p>
-<p>然后在香橙派中就会显示：</p>
-<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201224021569-740821848.png" alt="img"></p>
-<p>然后我们还可以用这个来输入0~9</p>
-<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201224151378-596771392.jpg" alt="img"></p>
-<p>然后显示</p>
-<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201224204795-1231226835.png" alt="img"></p>
-<p>学会了这个后我们就可以编写一个用蓝牙点灯的程序了，其实就是使用蓝牙接收到关键字后给LED灯高低电平，这里就直接给代码了，不展示图片了</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringPi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringSerial.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">int</span> fd = <span class="number">-1</span>;</span><br><span class="line">    <span class="type">int</span> i, ch, j = <span class="number">0</span>, len;</span><br><span class="line">    <span class="type">char</span> str[<span class="number">1024</span>];</span><br><span class="line">    wiringPiSetup();</span><br><span class="line">    fd = serialOpen(<span class="string">&quot;/dev/ttyS7&quot;</span>, <span class="number">9600</span>);</span><br><span class="line">    <span class="keyword">if</span> (fd &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;打开设备文件失败\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        len = serialDataAvail(fd);</span><br><span class="line">        <span class="keyword">if</span> (len == <span class="number">-1</span>)&#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(len &gt; <span class="number">0</span>)&#123;</span><br><span class="line">            serialPrintf(fd, <span class="string">&quot;%d\n&quot;</span>, len);</span><br><span class="line">            <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; len;  i++)&#123;</span><br><span class="line">                ch = serialGetchar(fd);</span><br><span class="line">                str[j++] = ch;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    str[j] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, str);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">strcmp</span>(str, <span class="string">&quot;0&quot;</span>))&#123;</span><br><span class="line">        <span class="comment">// 点灯</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="comment">// 灭灯</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    serialClose(fd);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>串口很好玩，蓝牙模块也好玩，学会了这一节我们就可以使用蓝牙做一个简单的远程开关灯的项目了，当然拿香橙派做这个项目就很浪费，毕竟香橙派可以直接使用网络来实现，做一个网页，然后内网穿透，这样可以很容易的在远程进行控制了，等我最近忙完有时间我做一个。</p>
-<p>大家可以关注一下我的论坛和博客，有不懂的或者有趣的问题可以放在我的论坛中进行提问</p>
-<p><a href="https://bbs.lavenderedgar.asia/">马桶论坛</a></p>
-<p><a href="https://blog.lavenderedgar.asia/">马桶博客</a></p>
-]]></content>
-      <categories>
-        <category>香橙派</category>
-      </categories>
-      <tags>
-        <tag>单片机</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>香橙派开发系列-使用wiringPi控制26个引脚</title>
     <url>/2025/01/17/833700e426b2/</url>
     <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>不管是对什么开发板来说，开发需要使用到一些包，像stm32就需要用到一些包，香橙派也是一样的，也是需要使用到一些软件包才能进行开发。</p>
@@ -6819,6 +6717,203 @@
 <p>需要注意一下就是要保证你的电脑和香橙派是连接同一个局域网，否则是连接不了的。</p>
 <h1 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h1><p>我后面还会出一些关于香橙派的一些文章，大家感兴趣的可以关注一下我。</p>
 <p>香橙派还是比较便宜的。</p>
+]]></content>
+      <categories>
+        <category>香橙派</category>
+      </categories>
+      <tags>
+        <tag>单片机</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>香橙派开发系列-使用蓝牙和手机进行信息的交换</title>
+    <url>/2025/01/17/feaf0486f5af/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>隔了这么久我准备再玩一下香橙派，最近这段时间还是比较的忙，我搭建了个论坛和博客，经常被网络攻击，所以我也是一直在弄网络去了，然后今天比较空闲就想着把单子做一下，这个单子需要使用到HC05蓝牙模块，所以我准备写一篇博客来使用香橙派控制HC05蓝牙模块。</p>
+<h1 id="一、HC05蓝牙模块"><a href="#一、HC05蓝牙模块" class="headerlink" title="一、HC05蓝牙模块"></a>一、HC05蓝牙模块</h1><p>这个模块是非常经典的一个蓝牙模块，我之前有一单也是使用到这个模块，可以看一下我的这个视频<a href="https://www.bilibili.com/video/BV1PH4y117oV/?share_source=copy_web&vd_source=4bb508bdc624514980a5500e28ea3819">【作息控制系统使用说明】</a>，这个项目也是使用到蓝牙模块的，只不过当时时间紧任务重所以就没有写一篇博客来好好记录一下这个项目，等后面我会单独拿一个模块来介绍一下我做的这些小项目。</p>
+<h2 id="1-HC05概述"><a href="#1-HC05概述" class="headerlink" title="1.HC05概述"></a>1.HC05概述</h2><p>HC05是嵌入式蓝牙串口通讯模块，也就是使用串口就可以和HC05进行通讯并发送信息给蓝牙的接收端，这个模块有两种工作方式：</p>
+<p>1 命令响应工作模式</p>
+<p>2 自动连接工作模式</p>
+<p>在自动连接的工作模式下又可以分为主、从、回环这三种模式，当传输数据时，根据事先设定的方式连接并传输数据。</p>
+<p>在命令模式下，用户可以使用串口连接模块，并发送<code>AT</code>指令对模块进行设置。</p>
+<h2 id="2-HC05的连接图"><a href="#2-HC05的连接图" class="headerlink" title="2.HC05的连接图"></a>2.HC05的连接图</h2><p>这里我直接使用<code>TTL to USB</code>进行连接，因为我要设置一下这个模块的一些传输和内容。</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131222614043-381623405.jpg" alt="img"></p>
+<p>这里和串口连接的模式一样</p>
+<table>
+<thead>
+<tr>
+<th>HC05</th>
+<th>TTL</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>3.3</td>
+<td>VCC</td>
+</tr>
+<tr>
+<td>TXD</td>
+<td>RXD</td>
+</tr>
+<tr>
+<td>RXD</td>
+<td>TXD</td>
+</tr>
+<tr>
+<td>GND</td>
+<td>GND</td>
+</tr>
+</tbody></table>
+<h2 id="3-进入HC05的命令模式"><a href="#3-进入HC05的命令模式" class="headerlink" title="3.进入HC05的命令模式"></a>3.进入HC05的命令模式</h2><p>首先我们需要通过<code>AT</code>指令来设置模块的一些内容，然后我们才好进入下面的一些操作，首先在这个模块上有一个按钮</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131222952266-1526676184.jpg" alt="img"></p>
+<p>在上电之前需要长按这个按键，然后再上电就可以进入命令模式，在进入命令模式后，模块上的LED等会缓慢的闪烁，如果没有进入就会闪得很快。</p>
+<h2 id="4-常用的AT指令"><a href="#4-常用的AT指令" class="headerlink" title="4.常用的AT指令"></a>4.常用的AT指令</h2><p>AT指令列表已经烂大街了，所以这里不全部说明，我只拿出一些常用的来说明即可。</p>
+<h3 id="4-1-检查AT是否上线"><a href="#4-1-检查AT是否上线" class="headerlink" title="4.1 检查AT是否上线"></a>4.1 检查AT是否上线</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AT\r\n</span><br></pre></td></tr></table></figure>
+
+<p>如果模块在就会返回<code>OK</code></p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131223407901-1242056721.png" alt="img"></p>
+<h3 id="4-2-重启模块"><a href="#4-2-重启模块" class="headerlink" title="4.2 重启模块"></a>4.2 重启模块</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AT+RESET\r\n</span><br></pre></td></tr></table></figure>
+
+<p>如果执行成功就会返回<code>OK</code>，并进入自动连接模式</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131223545021-2054088621.png" alt="img"></p>
+<h3 id="4-3-获取软件版本号"><a href="#4-3-获取软件版本号" class="headerlink" title="4.3 获取软件版本号"></a>4.3 获取软件版本号</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AT_VERSION?\r\n</span><br></pre></td></tr></table></figure>
+
+<p>执行完成后会返回版本信息和<code>OK</code></p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131223713062-1270983779.png" alt="img"></p>
+<h3 id="4-4-恢复默认状态"><a href="#4-4-恢复默认状态" class="headerlink" title="4.4 恢复默认状态"></a>4.4 恢复默认状态</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AT+ORGL\r\n</span><br></pre></td></tr></table></figure>
+
+<p>执行完成后会返回<code>OK</code>，并将模块恢复为出厂设置。</p>
+<h3 id="4-5-获取蓝牙的名称"><a href="#4-5-获取蓝牙的名称" class="headerlink" title="4.5 获取蓝牙的名称"></a>4.5 获取蓝牙的名称</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AT+NAME?\r\n</span><br></pre></td></tr></table></figure>
+
+<p>执行完成后会返回蓝牙名称并返回<code>OK</code></p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131224015613-183098500.png" alt="img"></p>
+<h3 id="4-6-设置蓝牙模块的波特率"><a href="#4-6-设置蓝牙模块的波特率" class="headerlink" title="4.6 设置蓝牙模块的波特率"></a>4.6 设置蓝牙模块的波特率</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AT+UART=波特率,停止位,校验位\r\n</span><br></pre></td></tr></table></figure>
+
+<p>这里我们设置一个比较常见的，波特率9600，停止位1位，无校验位</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AT+UART=9600,1,0</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以了。</p>
+<h3 id="4-7-查询蓝牙的连接模式"><a href="#4-7-查询蓝牙的连接模式" class="headerlink" title="4.7 查询蓝牙的连接模式"></a>4.7 查询蓝牙的连接模式</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AT+CMODE?\r\n</span><br></pre></td></tr></table></figure>
+
+<p>返回当前模式，1代表任意模式，也就是蓝牙名称和蓝牙地址都可以连接，这里就不多说了，一般默认是1就可以了。</p>
+<h3 id="4-8-查询模块角色"><a href="#4-8-查询模块角色" class="headerlink" title="4.8 查询模块角色"></a>4.8 查询模块角色</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AT+ROLE?</span><br></pre></td></tr></table></figure>
+
+<p>这里默认的是<code>Slave</code>从角色，也就是被动连接，不用动。</p>
+<h2 id="5-连接电脑"><a href="#5-连接电脑" class="headerlink" title="5.连接电脑"></a>5.连接电脑</h2><p>这里我踩了个大坑，因为我之前的设置是将波特率改为9600了，所以在串口的时候我就用9600进行连接，结果没有任何的反应，后面查了一下手册才发现它默认的波特率是<code>38400</code>，就很尴尬。</p>
+<p>这里连接好电脑后先发送个<code>AT</code>指令来查看一下是否返回OK，如果没返回有可能是因为坏了或者是你没长按按键进入命令模式。</p>
+<p>然后修改一下波特率，因为我们后面初始化串口不想给那么大的波特率</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131225350954-637982947.png" alt="img"></p>
+<p>初始化完成后要记得重启一下模块，然后模块的波特率就设置好看，但是AT指令模式下还是那个波特率（又踩坑了，当不想改文章）。</p>
+<h2 id="6-通过HC05发送消息"><a href="#6-通过HC05发送消息" class="headerlink" title="6.通过HC05发送消息"></a>6.通过HC05发送消息</h2><p>这里我先用stm32来演示，因为我还在做单子所以先拿这个演示。</p>
+<p>首先先写串口的初始化函数，这里我使用的是<code>USART1</code>，初始化代码就不展示了，因为今天的主题不是stm32，然后在main函数中我们使用重写的<code>printf</code>来通过串口发送数据。不知道的可以看我这篇博客<a href="https://www.cnblogs.com/Lavender-edgar/p/17591746.html">异步通讯点灯</a>。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    OLED_Init();</span><br><span class="line">    MX_Init_KEY();</span><br><span class="line">    MX_Init_HC05();</span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;hello\r\n&quot;</span>);</span><br><span class="line">        OLED_ShowString(<span class="number">1</span>, <span class="number">1</span>, <span class="string">&quot;hello&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后需要在手机上下载<code>蓝牙调试宝</code>，在应用商城都可以下载，这我就不给你们压缩包了，要不然我老喜欢挂码。</p>
+<p>首先要把蓝牙模块连接到面包板上，然后就用手机连接好蓝牙</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131232923132-1431987147.jpg" alt="img"></p>
+<p>记住串口反接并且要接地即可。</p>
+<p>然后打开蓝牙助手的界面</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131233636527-494670284.jpg" alt="img"></p>
+<p>找到里面有一个<code>HC-05</code>，然后连接即可，第一次连接需要你输入一个配对码，这里输入1234或者0000都可以</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131233741588-579644404.jpg" alt="img"></p>
+<p>然后给单片机上电后就会显示出hello来</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202401/3083010-20240131233820799-2037271568.jpg" alt="img"></p>
+<p>学到这你已经会使用蓝牙进行发送信息了，stm32就先不再出现了，后面就是香橙派的内容了。</p>
+<h2 id="7-stm32完整代码"><a href="#7-stm32完整代码" class="headerlink" title="7.stm32完整代码"></a>7.stm32完整代码</h2><p>usart.c</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;hc05.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">MX_Init_HC05</span><span class="params">()</span>&#123;</span><br><span class="line">    GPIO_InitTypeDef GPIO_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    USART_InitTypeDef USART_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    </span><br><span class="line">    RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);</span><br><span class="line">    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);</span><br><span class="line">    </span><br><span class="line">    GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF_PP;</span><br><span class="line">    GPIO_InitStruct.GPIO_Pin = GPIO_Pin_9;</span><br><span class="line">    GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">    GPIO_Init(GPIOA, &amp;GPIO_InitStruct);</span><br><span class="line">    GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IPU;</span><br><span class="line">    GPIO_InitStruct.GPIO_Pin = GPIO_Pin_10;</span><br><span class="line">    GPIO_Init(GPIOA, &amp;GPIO_InitStruct);</span><br><span class="line">    </span><br><span class="line">    USART_InitStruct.USART_BaudRate = <span class="number">9600</span>;</span><br><span class="line">    USART_InitStruct.USART_HardwareFlowControl = USART_HardwareFlowControl_None;</span><br><span class="line">    USART_InitStruct.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;</span><br><span class="line">    USART_InitStruct.USART_Parity = USART_Parity_No;</span><br><span class="line">    USART_InitStruct.USART_StopBits = USART_StopBits_1;</span><br><span class="line">    USART_InitStruct.USART_WordLength = USART_WordLength_8b;</span><br><span class="line">    USART_Init(USART1, &amp;USART_InitStruct);</span><br><span class="line">    USART_Cmd(USART1, ENABLE);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">fputc</span><span class="params">(<span class="type">int</span> ch, FILE *f)</span></span><br><span class="line">&#123;      </span><br><span class="line">	<span class="keyword">while</span>((USART1-&gt;SR&amp;<span class="number">0X40</span>)==<span class="number">0</span>);  </span><br><span class="line">    USART1-&gt;DR = (u8) ch;      </span><br><span class="line">	<span class="keyword">return</span> ch;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h1 id="二、香橙派串口通讯"><a href="#二、香橙派串口通讯" class="headerlink" title="二、香橙派串口通讯"></a>二、香橙派串口通讯</h1><p>在介绍使用香橙派使用HC05模块前先介绍一下串口通讯，并如何配置串口通讯。</p>
+<h2 id="1-打开串口设备"><a href="#1-打开串口设备" class="headerlink" title="1.打开串口设备"></a>1.打开串口设备</h2><p>在香橙派中，串口通讯是使用设备来进行传输的， 所以我们需要在系统设置中将串口进行打开。</p>
+<p>在打开之前先了解一下香橙派的串口引脚分布</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201004955316-115234185.png" alt="img"></p>
+<p>在3b中有3个串口可供选择，然后通过</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo orangepi-config</span><br></pre></td></tr></table></figure>
+
+<p>来开启设备，进入到设置页面</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201005302098-113983016.png" alt="img"></p>
+<p>然后选择第一个，按一下回车即可，然后在下面的页面中选择<code>Hardware</code></p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201005337757-1243728913.png" alt="img"></p>
+<p>然后找到你要开启的串口</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201005401317-2122540859.png" alt="img"></p>
+<p>我这选择的是<code>UART7</code>，使用方向键移动到那后按一下空格就选中，然后按一下回车保存，之后会提示是否重启，然后按一下回车就可以重启了。</p>
+<p>重启完成后使用</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ls /dev/ ttyS*</span><br></pre></td></tr></table></figure>
+
+<p>来查看可操作的设备文件，这里只会显示你开启的设备</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201005541612-792900492.png" alt="img"></p>
+<p>我们刚才选择了<code>UART7</code>后它这里就会有相应的设备，那个<code>ttyS1</code>是默认开启的，我们不用理他。</p>
+<h2 id="2-接线"><a href="#2-接线" class="headerlink" title="2.接线"></a>2.接线</h2><p>这里就需要非常非常注意了，我在测试的时候就是这里没有弄好，线接反了，导致一直发送不了。</p>
+<p>按照前面给的那张图进行接线后我们就可以写代码了。</p>
+<p><strong>注意：这里很重要，很多人玩51单片机来玩这个会忽略一个问题就是GND必须要和单片机的GND接在一起，很多人会单独给这个引脚接GND是错误的。</strong></p>
+<h2 id="3-串口函数"><a href="#3-串口函数" class="headerlink" title="3.串口函数"></a>3.串口函数</h2><p>这里使用的串口函数库是</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringSerial.h&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-1-打开串口文件"><a href="#3-1-打开串口文件" class="headerlink" title="3.1 打开串口文件"></a>3.1 打开串口文件</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">serialOpen</span><span class="params">(<span class="type">const</span> <span class="type">char</span>* path, <span class="type">int</span> butrl)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>第一个参数是设备的路径，比如说我们这需要使用到<code>UART1</code>，那设备地址就是<code>/dev/ttyS7</code>。</p>
+<p>第二个参数是波特率，比如9600。</p>
+<p>这个函数的返回值是一个文件描述符，我们使用一个变量来接收就可以了。</p>
+<h3 id="3-2-关闭串口文件"><a href="#3-2-关闭串口文件" class="headerlink" title="3.2 关闭串口文件"></a>3.2 关闭串口文件</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">serialClose</span><span class="params">(<span class="type">int</span> fd)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>参数是打开的设备描述符。</p>
+<h3 id="3-3-发送一个字符"><a href="#3-3-发送一个字符" class="headerlink" title="3.3 发送一个字符"></a>3.3 发送一个字符</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">serialPutchar</span><span class="params">(<span class="type">int</span> fd, <span class="type">char</span> c)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>将一个字符发送到打开的文件描述符fd所对应的设备文件。</p>
+<h3 id="3-4-发送一个规定好的字符串"><a href="#3-4-发送一个规定好的字符串" class="headerlink" title="3.4 发送一个规定好的字符串"></a>3.4 发送一个规定好的字符串</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">serialPuts</span><span class="params">(<span class="type">int</span> fd, <span class="type">char</span>* s)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>发送一个规定好的字符串，然后以0结尾。</p>
+<h3 id="3-5-printf"><a href="#3-5-printf" class="headerlink" title="3.5 printf"></a>3.5 printf</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">serialPrintf</span><span class="params">(<span class="type">int</span> fd, <span class="type">char</span>* message, ...)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这个和printf的用法类似。</p>
+<h3 id="3-6-返回等待读取的字符数"><a href="#3-6-返回等待读取的字符数" class="headerlink" title="3.6 返回等待读取的字符数"></a>3.6 返回等待读取的字符数</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">serialDataAvail</span><span class="params">(<span class="type">int</span> fd)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>返回的是等待读取的字符数。</p>
+<h3 id="3-7-读取字符"><a href="#3-7-读取字符" class="headerlink" title="3.7 读取字符"></a>3.7 读取字符</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">serialGetChar</span><span class="params">(<span class="type">int</span> fd)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>返回下一个待读取的字符，如果这个在10s内没有读取到字符就会返回-1。</p>
+<h3 id="3-8-缓冲区函数"><a href="#3-8-缓冲区函数" class="headerlink" title="3.8 缓冲区函数"></a>3.8 缓冲区函数</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">serialFlush</span><span class="params">(<span class="type">int</span> fd)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>抛弃所有接收的数据或者等待写入设备完成。</p>
+<h2 id="4-输出内容"><a href="#4-输出内容" class="headerlink" title="4.输出内容"></a>4.输出内容</h2><p>通过学习了上面的内容后我们可以简单写一个输出字符的代码来输出0~9</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringPi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringSerial.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">int</span> fd = <span class="number">-1</span>, i;</span><br><span class="line">    wiringPiSetup();</span><br><span class="line">    fd = serialOpen(<span class="string">&quot;/dev/ttyS7&quot;</span>, <span class="number">9600</span>);    <span class="comment">// 设置串口设备和波特率</span></span><br><span class="line">    <span class="keyword">if</span> (fd &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="comment">// 设备打开失败</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;设备打开失败\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    serialFlush(fd);</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)&#123;</span><br><span class="line">        serialPutchar(fd, i + <span class="string">&#x27;0&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    serialClose(fd);     <span class="comment">// 关闭设备</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行效果如下：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201011437761-796252053.png" alt="img"></p>
+<p>然后也可以使用printf来个高级一点的输出</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringPi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringSerial.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">int</span> fd = <span class="number">-1</span>, i;</span><br><span class="line">    wiringPiSetup();</span><br><span class="line">    fd = serialOpen(<span class="string">&quot;/dev/ttyS7&quot;</span>, <span class="number">9600</span>);    <span class="comment">// 设置串口设备和波特率</span></span><br><span class="line">    <span class="keyword">if</span> (fd &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="comment">// 设备打开失败</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;设备打开失败\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    serialFlush(fd);</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)&#123;</span><br><span class="line">        serialPrintf(fd, <span class="string">&quot;this is%d\r\n&quot;</span>, i);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    serialClose(fd);     <span class="comment">// 关闭设备</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出的内容如下：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201011632150-2099482164.png" alt="img"></p>
+<h2 id="5-接收内容"><a href="#5-接收内容" class="headerlink" title="5.接收内容"></a>5.接收内容</h2><p>我们可以通过串口来接收一下用户输入的内容，并判断输入的字符是不是我们需要的，然后通过串口返回</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringPi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringSerial.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">int</span> fd = <span class="number">-1</span>, i;</span><br><span class="line">    <span class="type">int</span> c;</span><br><span class="line">    wiringPiSetup();</span><br><span class="line">    fd = serialOpen(<span class="string">&quot;/dev/ttyS7&quot;</span>, <span class="number">9600</span>);    <span class="comment">// 设置串口设备和波特率</span></span><br><span class="line">    <span class="keyword">if</span> (fd &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="comment">// 设备打开失败</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;设备打开失败\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    serialFlush(fd);</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        c = serialGetchar(fd);</span><br><span class="line">        <span class="keyword">if</span> (c == <span class="number">-1</span>)&#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (c == <span class="string">&#x27;1&#x27;</span>)&#123;</span><br><span class="line">            serialPrintf(fd, <span class="string">&quot;this is 1&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%c&quot;</span>, c);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    serialClose(fd);     <span class="comment">// 关闭设备</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出的内容：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201012139484-1871459667.png" alt="img"></p>
+<p>这里大家可以看到我在这个while循环中添加了一个printf，但是没有截屏给出效果，是因为在这个串口运行的过程中一直在读取的是串口的设备，没有使用输入输出流设备，所以导致我们在输入后没办法显示出内容来，这个的解决办法我还不太清楚，等我研究好了我在出一篇文章来介绍。</p>
+<h2 id="6-接收字符串"><a href="#6-接收字符串" class="headerlink" title="6.接收字符串"></a>6.接收字符串</h2><p>做串口最让人沉醉的就是读取字符串的操作了,在<code>wiringSerial</code>中有一个函数可以获取缓冲区的长度，我们可以判断这个来读取输入的数据的长度，然后使用一个<code>for</code>循环来循环读取和放置在一个数组中，之后进行输出即可，代码如下：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringPi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringSerial.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">int</span> fd = <span class="number">-1</span>;</span><br><span class="line">    <span class="type">int</span> i, ch, j = <span class="number">0</span>, len;</span><br><span class="line">    <span class="type">char</span> str[<span class="number">1024</span>];</span><br><span class="line">    wiringPiSetup();</span><br><span class="line">    fd = serialOpen(<span class="string">&quot;/dev/ttyS7&quot;</span>, <span class="number">9600</span>);</span><br><span class="line">    <span class="keyword">if</span> (fd &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;打开设备文件失败\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        len = serialDataAvail(fd);     <span class="comment">// 获取缓冲区的长度</span></span><br><span class="line">        <span class="keyword">if</span> (len == <span class="number">-1</span>)&#123;</span><br><span class="line">            <span class="comment">// 超时退出循环</span></span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(len &gt; <span class="number">0</span>)&#123;</span><br><span class="line">            serialPrintf(fd, <span class="string">&quot;%d\n&quot;</span>, len);    <span class="comment">// 这一行是测试的</span></span><br><span class="line">            <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; len;  i++)&#123;</span><br><span class="line">                ch = serialGetchar(fd);       <span class="comment">// 读取字符</span></span><br><span class="line">                str[j++] = ch;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    str[j] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, str);</span><br><span class="line">    serialClose(fd);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="三、使用hc05连接香橙派"><a href="#三、使用hc05连接香橙派" class="headerlink" title="三、使用hc05连接香橙派"></a>三、使用hc05连接香橙派</h1><p>学会了上面的操作后我们就可以来用香橙派连接hc05了，这个操作也非常非常的简单，和单片机的连接一致，注意不要连错就行了。</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201222725359-170013347.jpg" alt="img"></p>
+<h2 id="1-通过蓝牙发送字符串给手机"><a href="#1-通过蓝牙发送字符串给手机" class="headerlink" title="1.通过蓝牙发送字符串给手机"></a>1.通过蓝牙发送字符串给手机</h2><p>本质的思路还是一样的，就是使用串口是输入输出就可以搞定，代码如下：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringPi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringSerial.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">int</span> fd = <span class="number">-1</span>, i;</span><br><span class="line">    <span class="type">int</span> c;</span><br><span class="line">    wiringPiSetup();</span><br><span class="line">    fd = serialOpen(<span class="string">&quot;/dev/ttyS7&quot;</span>, <span class="number">9600</span>);    <span class="comment">// 设置串口设备和波特率</span></span><br><span class="line">    <span class="keyword">if</span> (fd &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="comment">// 设备打开失败</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;设备打开失败\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    serialFlush(fd);</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        serialPrintf(fd, <span class="string">&quot;hello\r\n&quot;</span>);</span><br><span class="line">        delayMicroseconds(<span class="number">30000</span>);     <span class="comment">// 延时函数，免得发送得过快</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    serialClose(fd);     <span class="comment">// 关闭设备</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后在调试助手中就可以看到蓝牙模块发送的内容了：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201222924734-1412345816.jpg" alt="img"></p>
+<h2 id="2-手机发送内容给香橙派"><a href="#2-手机发送内容给香橙派" class="headerlink" title="2.手机发送内容给香橙派"></a>2.手机发送内容给香橙派</h2><p>这里可以使用刚才我们测试的接收字符串，只不过这里有一个问题就是这个工具只能发送字符所对应的ascii码，不能正常的输入字符进行输出。</p>
+<p>比如我们手机输入字符0，那就得输入ascii码的30</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201223956644-1830750314.jpg" alt="img"></p>
+<p>然后在香橙派中就会显示：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201224021569-740821848.png" alt="img"></p>
+<p>然后我们还可以用这个来输入0~9</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201224151378-596771392.jpg" alt="img"></p>
+<p>然后显示</p>
+<p><img src="https://img2023.cnblogs.com/blog/3083010/202402/3083010-20240201224204795-1231226835.png" alt="img"></p>
+<p>学会了这个后我们就可以编写一个用蓝牙点灯的程序了，其实就是使用蓝牙接收到关键字后给LED灯高低电平，这里就直接给代码了，不展示图片了</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringPi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wiringSerial.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">int</span> fd = <span class="number">-1</span>;</span><br><span class="line">    <span class="type">int</span> i, ch, j = <span class="number">0</span>, len;</span><br><span class="line">    <span class="type">char</span> str[<span class="number">1024</span>];</span><br><span class="line">    wiringPiSetup();</span><br><span class="line">    fd = serialOpen(<span class="string">&quot;/dev/ttyS7&quot;</span>, <span class="number">9600</span>);</span><br><span class="line">    <span class="keyword">if</span> (fd &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;打开设备文件失败\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        len = serialDataAvail(fd);</span><br><span class="line">        <span class="keyword">if</span> (len == <span class="number">-1</span>)&#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(len &gt; <span class="number">0</span>)&#123;</span><br><span class="line">            serialPrintf(fd, <span class="string">&quot;%d\n&quot;</span>, len);</span><br><span class="line">            <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; len;  i++)&#123;</span><br><span class="line">                ch = serialGetchar(fd);</span><br><span class="line">                str[j++] = ch;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    str[j] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, str);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">strcmp</span>(str, <span class="string">&quot;0&quot;</span>))&#123;</span><br><span class="line">        <span class="comment">// 点灯</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="comment">// 灭灯</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    serialClose(fd);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>串口很好玩，蓝牙模块也好玩，学会了这一节我们就可以使用蓝牙做一个简单的远程开关灯的项目了，当然拿香橙派做这个项目就很浪费，毕竟香橙派可以直接使用网络来实现，做一个网页，然后内网穿透，这样可以很容易的在远程进行控制了，等我最近忙完有时间我做一个。</p>
+<p>大家可以关注一下我的论坛和博客，有不懂的或者有趣的问题可以放在我的论坛中进行提问</p>
+<p><a href="https://bbs.lavenderedgar.asia/">马桶论坛</a></p>
+<p><a href="https://blog.lavenderedgar.asia/">马桶博客</a></p>
 ]]></content>
       <categories>
         <category>香橙派</category>
